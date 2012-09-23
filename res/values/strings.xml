@@ -18,5 +18,7 @@
     <string name="msg_progress">喵~~~喵~~~</string>
     <string name="msg_cache_max_size">缓存满啦！该清理啦～</string>
     <string name="msg_timeout">等到花都谢了也没反应，一会再试吧～</string>
+    <string name="msg_no_url">还没输入网址呢～</string>
+    
     
 </resources>

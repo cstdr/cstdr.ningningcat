@@ -20,11 +20,12 @@ public final class R {
     }
     public static final class id {
         public static final int et_website=0x7f080000;
-        public static final int menu_add=0x7f080004;
-        public static final int menu_exit=0x7f080006;
-        public static final int menu_favorite=0x7f080005;
-        public static final int menu_refresh=0x7f080003;
+        public static final int menu_add=0x7f080005;
+        public static final int menu_exit=0x7f080007;
+        public static final int menu_favorite=0x7f080006;
+        public static final int menu_refresh=0x7f080004;
         public static final int tv_goto=0x7f080001;
+        public static final int wv_notify=0x7f080003;
         public static final int wv_web=0x7f080002;
     }
     public static final class layout {
@@ -44,6 +45,7 @@ public final class R {
         public static final int menu_refresh=0x7f050001;
         public static final int msg_cache_max_size=0x7f05000c;
         public static final int msg_exit=0x7f05000a;
+        public static final int msg_no_url=0x7f05000e;
         public static final int msg_progress=0x7f05000b;
         public static final int msg_timeout=0x7f05000d;
         public static final int title_alert=0x7f050008;

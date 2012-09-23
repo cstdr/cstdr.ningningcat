@@ -28,10 +28,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
+import cstdr.ningningcat.util.ToastUtil;
+import cstdr.ningningcat.util.UrlUtil;
 
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends Activity {
@@ -43,6 +44,8 @@ public class MainActivity extends Activity {
     private ImageView mGoto=null;
 
     private WebView mWebView=null;
+
+    private WebView mNotifyWebView=null;
 
     private WebSettings mWebSettings=null;
 
@@ -76,15 +79,17 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View v) {
                 mEditUrl=mWebsite.getText().toString(); // TODO 需要加一个输入内容的检查方法
-                if(mEditUrl.startsWith(getString(R.string.http))) {
-                    mWebView.loadUrl(mEditUrl);
+                String url=UrlUtil.checkEditUrl(mEditUrl);
+                if(url != null) {
+                    mWebView.loadUrl(url);
                 } else {
-                    mWebView.loadUrl(getString(R.string.http) + mEditUrl);
+                    ToastUtil.shortToast(mContext, getString(R.string.msg_no_url));
                 }
             }
         });
 
         mWebView=(WebView)findViewById(R.id.wv_web);
+
         mWebSettings=mWebView.getSettings();
         mWebSettings.setJavaScriptEnabled(true); // 支持JavaScript
         mWebSettings.setBuiltInZoomControls(true); // 支持页面放大缩小按钮
@@ -100,6 +105,7 @@ public class MainActivity extends Activity {
 
         mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView右侧无空隙
+        mWebView.setVisibility(View.VISIBLE);
         // mWebView.setInitialScale(100); // 初始缩放比例
 
         // mWebView.requestFocusFromTouch(); // 接收触摸焦点
@@ -115,6 +121,9 @@ public class MainActivity extends Activity {
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setDownloadListener(new MyDownloadListener());
+
+        mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
+        mNotifyWebView.setVisibility(View.GONE);
     }
 
     class MyWebChromeClient extends WebChromeClient {
@@ -157,7 +166,7 @@ public class MainActivity extends Activity {
 
         @Override
         public boolean onJsTimeout() {
-            Toast.makeText(mContext, getString(R.string.msg_timeout), Toast.LENGTH_SHORT).show();
+            ToastUtil.shortToast(mContext, getString(R.string.msg_timeout));
             return true;
         }
 
@@ -166,31 +175,30 @@ public class MainActivity extends Activity {
          */
         @Override
         public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
-            Toast.makeText(mContext, getString(R.string.msg_cache_max_size), Toast.LENGTH_SHORT).show();
+            ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size));
             super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
         }
 
-        /**
-         * TODO 接收到有URL的图片后
-         */
-        @Override
-        public void onReceivedTouchIconUrl(WebView view, String url, boolean precomposed) {
-            super.onReceivedTouchIconUrl(view, url, precomposed);
-        }
     }
 
     class MyWebViewClient extends WebViewClient {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if(mWebView.getVisibility() == View.GONE) {
+                mNotifyWebView.setVisibility(View.GONE);
+                mWebView.setVisibility(View.VISIBLE);
+            }
             mWebView.loadUrl(url);
             return false;
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            mWebsite.setText(url.substring(getString(R.string.http).length())); // url除去协议http://
-            mCurrentUrl=url;
+            if(mWebView.getVisibility() == View.VISIBLE) {
+                mWebsite.setText(url.substring(getString(R.string.http).length())); // url除去协议http://
+                mCurrentUrl=url;
+            }
             super.onPageStarted(view, url, favicon);
         }
 
@@ -202,10 +210,20 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            // TODO Auto-generated method stub
+            // TODO 不显示默认出错信息，采用自己的出错页面
+            if(mWebView.getVisibility() == View.VISIBLE) {
+                mWebView.setVisibility(View.GONE);
+                mNotifyWebView.setVisibility(View.VISIBLE);
+            }
+            mNotifyWebView.loadUrl("file:///android_asset/html/error.html");
             super.onReceivedError(view, errorCode, description, failingUrl);
         }
 
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            // TODO Auto-generated method stub
+            super.onPageFinished(view, url);
+        }
     }
 
     class MyDownloadListener implements DownloadListener {
@@ -252,9 +270,13 @@ public class MainActivity extends Activity {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             if(mWebView.canGoBack()) {
                 mWebView.goBack();
+                if(mWebView.getVisibility() == View.GONE) {
+                    mNotifyWebView.setVisibility(View.GONE);
+                    mWebView.setVisibility(View.VISIBLE);
+                }
                 // mWebsite.setText(mWebView.getUrl()); // 不是很管用
             } else if(System.currentTimeMillis() - mLastBackPressTimeMillis > 2000) {
-                Toast.makeText(mContext, R.string.msg_exit, Toast.LENGTH_SHORT).show();
+                ToastUtil.shortToast(mContext, getString(R.string.msg_exit));
                 mLastBackPressTimeMillis=System.currentTimeMillis();
             } else {
                 finish();
