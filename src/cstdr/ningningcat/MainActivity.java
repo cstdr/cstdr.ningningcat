@@ -55,13 +55,13 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); // ±ÿ–Îø™ ºæÕ…Ë÷√
+        // requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); // ÂøÖÈ°ªÂºÄÂßãÂ∞±ËÆæÁΩÆ
         requestWindowFeature(Window.FEATURE_PROGRESS);
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
 
         setContentView(R.layout.activity_main);
         initView();
-        WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // ‘ –Ì«Î«ÛÕ¯“≥icon
+        WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // ÂÖÅËÆ∏ËØ∑Ê±ÇÁΩëÈ°µicon
         mCurrentUrl=getString(R.string.index);
         mWebView.loadUrl(mCurrentUrl);
     }
@@ -75,7 +75,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                mEditUrl=mWebsite.getText().toString(); // TODO –Ë“™º”“ª∏ˆ ‰»Îƒ⁄»›µƒºÏ≤È∑Ω∑®
+                mEditUrl=mWebsite.getText().toString(); // TODO ÈúÄË¶ÅÂä†‰∏Ä‰∏™ËæìÂÖ•ÂÜÖÂÆπÁöÑÊ£ÄÊü•ÊñπÊ≥ï
                 if(mEditUrl.startsWith(getString(R.string.http))) {
                     mWebView.loadUrl(mEditUrl);
                 } else {
@@ -86,29 +86,29 @@ public class MainActivity extends Activity {
 
         mWebView=(WebView)findViewById(R.id.wv_web);
         mWebSettings=mWebView.getSettings();
-        mWebSettings.setJavaScriptEnabled(true); // ÷ß≥÷JavaScript
-        mWebSettings.setBuiltInZoomControls(true); // ÷ß≥÷“≥√Ê∑≈¥ÛÀı–°∞¥≈•
+        mWebSettings.setJavaScriptEnabled(true); // ÊîØÊåÅJavaScript
+        mWebSettings.setBuiltInZoomControls(true); // ÊîØÊåÅÈ°µÈù¢ÊîæÂ§ßÁº©Â∞èÊåâÈíÆ
         mWebSettings.setSupportZoom(true);
-        mWebSettings.setSupportMultipleWindows(true); // TODO ∂‡¥∞ø⁄
-        mWebSettings.setDefaultTextEncodingName("utf-8"); // “≥√Ê±‡¬Î
-        mWebSettings.setAppCacheEnabled(true); // ÷ß≥÷ª∫¥Ê
-        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // ª∫¥Ê◊Ó¥Û÷µ
-        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // ª∫¥Êƒ£ Ω
-        mWebSettings.setLoadsImagesAutomatically(true); // TODO µ±GPRSœ¬Ã· æ «∑Òº”‘ÿÕº∆¨
-        mWebSettings.setUseWideViewPort(true); // …Ë÷√“≥√ÊøÌ∂»∫Õ∆¡ƒª“ª—˘
-        mWebSettings.setLoadWithOverviewMode(true); // …Ë÷√“≥√ÊøÌ∂»∫Õ∆¡ƒª“ª—˘
+        mWebSettings.setSupportMultipleWindows(true); // TODO Â§öÁ™óÂè£
+        mWebSettings.setDefaultTextEncodingName("utf-8"); // È°µÈù¢ÁºñÁ†Å
+        mWebSettings.setAppCacheEnabled(true); // ÊîØÊåÅÁºìÂ≠ò
+        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // ÁºìÂ≠òÊúÄÂ§ßÂÄº
+        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // ÁºìÂ≠òÊ®°Âºè
+        mWebSettings.setLoadsImagesAutomatically(true); // TODO ÂΩìGPRS‰∏ãÊèêÁ§∫ÊòØÂê¶Âä†ËΩΩÂõæÁâá
+        mWebSettings.setUseWideViewPort(true); // ËÆæÁΩÆÈ°µÈù¢ÂÆΩÂ∫¶ÂíåÂ±èÂπï‰∏ÄÊ†∑
+        mWebSettings.setLoadWithOverviewMode(true); // ËÆæÁΩÆÈ°µÈù¢ÂÆΩÂ∫¶ÂíåÂ±èÂπï‰∏ÄÊ†∑
 
-        mWebView.setScrollbarFadingEnabled(true); // πˆ∂ØÃı◊‘∂Øœ˚ ß
-        mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView”“≤‡Œﬁø’œ∂
-        // mWebView.setInitialScale(100); // ≥ı ºÀı∑≈±»¿˝
+        mWebView.setScrollbarFadingEnabled(true); // ÊªöÂä®Êù°Ëá™Âä®Ê∂àÂ§±
+        mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebViewÂè≥‰æßÊó†Á©∫Èöô
+        // mWebView.setInitialScale(100); // ÂàùÂßãÁº©ÊîæÊØî‰æã
 
-        // mWebView.requestFocusFromTouch(); // Ω” ’¥•√˛Ωπµ„
+        // mWebView.requestFocusFromTouch(); // Êé•Êî∂Ëß¶Êë∏ÁÑ¶ÁÇπ
 
         mWebView.setOnTouchListener(new OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mWebView.requestFocusFromTouch(); // ≤ªƒ‹”√requestForcus()£¨Ωπµ„ª·¬“≈‹
+                mWebView.requestFocusFromTouch(); // ‰∏çËÉΩÁî®requestForcus()ÔºåÁÑ¶ÁÇπ‰ºö‰π±Ë∑ë
                 return false;
             }
         });
@@ -132,7 +132,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceivedIcon(WebView view, Bitmap icon) {
-            Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap ◊™ªªŒ™ Drawable
+            Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap ËΩ¨Êç¢‰∏∫ Drawable
             setFeatureDrawable(Window.FEATURE_LEFT_ICON, drawableIcon);
             super.onReceivedIcon(view, icon);
         }
@@ -171,7 +171,7 @@ public class MainActivity extends Activity {
         }
 
         /**
-         * TODO Ω” ’µΩ”–URLµƒÕº∆¨∫Û
+         * TODO Êé•Êî∂Âà∞ÊúâURLÁöÑÂõæÁâáÂêé
          */
         @Override
         public void onReceivedTouchIconUrl(WebView view, String url, boolean precomposed) {
@@ -189,7 +189,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            mWebsite.setText(url.substring(getString(R.string.http).length())); // url≥˝»•–≠“Èhttp://
+            mWebsite.setText(url.substring(getString(R.string.http).length())); // urlÈô§ÂéªÂçèËÆÆhttp://
             mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
         }
@@ -252,7 +252,7 @@ public class MainActivity extends Activity {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             if(mWebView.canGoBack()) {
                 mWebView.goBack();
-                // mWebsite.setText(mWebView.getUrl()); // ≤ª «∫‹π‹”√
+                // mWebsite.setText(mWebView.getUrl()); // ‰∏çÊòØÂæàÁÆ°Áî®
             } else if(System.currentTimeMillis() - mLastBackPressTimeMillis > 2000) {
                 Toast.makeText(mContext, R.string.msg_exit, Toast.LENGTH_SHORT).show();
                 mLastBackPressTimeMillis=System.currentTimeMillis();
@@ -268,7 +268,7 @@ public class MainActivity extends Activity {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        // TODO «–ªªÃ· æ
+        // TODO ÂàáÊç¢ÊèêÁ§∫
         super.onConfigurationChanged(newConfig);
     }
 
