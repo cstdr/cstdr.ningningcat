@@ -1,0 +1,21 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_refresh"
+        android:icon="@drawable/icon"
+        android:orderInCategory="1"
+        android:title="@string/menu_refresh"/>
+    <item
+        android:id="@+id/menu_add"
+        android:orderInCategory="2"
+        android:title="@string/menu_add"/>
+    <item
+        android:id="@+id/menu_favorite"
+        android:orderInCategory="3"
+        android:title="@string/menu_favorite"/>
+    <item
+        android:id="@+id/menu_exit"
+        android:orderInCategory="4"
+        android:title="@string/menu_exit"/>
+
+</menu>
