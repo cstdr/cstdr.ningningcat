@@ -21,10 +21,10 @@ public class CoverActivity extends Activity {
             public void run() {
                 Intent intent=new Intent(CoverActivity.this, MainActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.put_in, R.anim.put_out); // TODO ·âÃæÌø×ª¶¯»­
+                overridePendingTransition(R.anim.put_in, R.anim.put_out); // TODO
                 finish();
             }
-        }, 3000);
+        }, 2000);
     }
 
     @Override

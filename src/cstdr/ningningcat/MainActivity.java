@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -31,6 +32,7 @@ import android.widget.ImageView;
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
+import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UrlUtil;
 
@@ -49,11 +51,13 @@ public class MainActivity extends Activity {
 
     private WebSettings mWebSettings=null;
 
-    private String mEditUrl;
+    private String mEditUrl=null;
 
-    private String mCurrentUrl;
+    private String mCurrentUrl=null;
 
     private long mLastBackPressTimeMillis=0L;
+
+    private SharedPreferences mSp=null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,10 +67,25 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
 
         setContentView(R.layout.activity_main);
+
         initView();
+        initSharedPreferences();
+
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
         mCurrentUrl=getString(R.string.index);
         mWebView.loadUrl(mCurrentUrl);
+    }
+
+    private void initSharedPreferences() {
+        mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
+        if(mSp.getString(getString(R.string.spkey_first_launch_time), null) != null) {
+            SPUtil.commitStringToSP(mSp, new String[]{getString(R.string.spkey_last_launch_time)},
+                new String[]{String.valueOf(System.currentTimeMillis())});
+        } else {
+            ToastUtil.longToast(mContext, getString(R.string.msg_first_launch));
+            SPUtil.commitStringToSP(mSp, new String[]{getString(R.string.spkey_first_launch_time)},
+                new String[]{String.valueOf(System.currentTimeMillis())});
+        }
     }
 
     private void initView() {
