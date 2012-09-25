@@ -15,6 +15,7 @@
             android:layout_marginLeft="3dp"
             android:layout_marginRight="40dp"
             android:hint="@string/website_hint"
+            android:imeActionId="2"
             android:inputType="textWebEditText" />
 
         <ImageView

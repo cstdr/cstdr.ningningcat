@@ -19,6 +19,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.webkit.DownloadListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
@@ -29,9 +31,11 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
+import cstdr.ningningcat.util.NetworkUtil;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UrlUtil;
@@ -39,7 +43,9 @@ import cstdr.ningningcat.util.UrlUtil;
 @SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends Activity {
 
-    private Context mContext=this;
+    private final Context mContext=this;
+
+    private static MainActivity mInstance;
 
     private EditText mWebsite=null;
 
@@ -68,8 +74,13 @@ public class MainActivity extends Activity {
 
         setContentView(R.layout.activity_main);
 
+        mInstance=this;
+
         initView();
         initSharedPreferences();
+        if(!NetworkUtil.checkNetwork(mContext)) {
+            DialogUtil.showNoConnectDialog(this);
+        }
 
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
         mCurrentUrl=getString(R.string.index);
@@ -91,19 +102,30 @@ public class MainActivity extends Activity {
     private void initView() {
         mWebsite=(EditText)findViewById(R.id.et_website);
         mWebsite.setSelectAllOnFocus(true);
+        mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // TODO 自定义键显示改变了，但是监听时没有收到对应的ActionId
+        mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if(LOG.DEBUG) {
+                    LOG.cstdr("actionId=" + actionId);
+                }
+                if(actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
+                    InputMethodManager imm=(InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                    gotoWebsite();
+                    return true;
+                }
+                return false;
+            }
+        });
 
         mGoto=(ImageView)findViewById(R.id.tv_goto);
         mGoto.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                mEditUrl=mWebsite.getText().toString(); // TODO 需要加一个输入内容的检查方法
-                String url=UrlUtil.checkEditUrl(mEditUrl);
-                if(url != null) {
-                    mWebView.loadUrl(url);
-                } else {
-                    ToastUtil.shortToast(mContext, getString(R.string.msg_no_url));
-                }
+                gotoWebsite();
             }
         });
 
@@ -133,6 +155,9 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if(mWebsite.hasFocus()) {
+                    mWebsite.clearFocus();
+                }
                 mWebView.requestFocusFromTouch(); // 不能用requestForcus()，焦点会乱跑
                 return false;
             }
@@ -143,6 +168,19 @@ public class MainActivity extends Activity {
 
         mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
         mNotifyWebView.setVisibility(View.GONE);
+    }
+
+    /**
+     * 跳转到输入的网址
+     */
+    private void gotoWebsite() {
+        mEditUrl=mWebsite.getText().toString(); // TODO 需要加一个输入内容的检查方法
+        String url=UrlUtil.checkEditUrl(mEditUrl);
+        if(url != null) {
+            mWebView.loadUrl(url);
+        } else {
+            ToastUtil.shortToast(mContext, getString(R.string.msg_no_url));
+        }
     }
 
     class MyWebChromeClient extends WebChromeClient {
@@ -265,7 +303,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(LOG.DEBUG) {
-            LOG.dev(item.getItemId());
+            LOG.cstdr(item.getItemId());
         }
         switch(item.getItemId()) {
             case R.id.menu_refresh:
@@ -311,6 +349,14 @@ public class MainActivity extends Activity {
     public void onConfigurationChanged(Configuration newConfig) {
         // TODO 切换提示
         super.onConfigurationChanged(newConfig);
+    }
+
+    public Context getContext() {
+        return mContext;
+    }
+
+    public static MainActivity getInstance() {
+        return mInstance;
     }
 
 }

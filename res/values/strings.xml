@@ -15,9 +15,9 @@
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>
     <string name="spkey_last_launch_time">LAST_LAUNCH_TIME</string>
     
-    
     <string name="title_alert">这是页面的提示信息:)</string>
     <string name="title_confirm">这是页面的确认信息:)</string>
+    <string name="title_no_connect">木网啦</string>
     
     <string name="msg_exit">再按一次宁宁猫就走啦~</string>
     <string name="msg_progress">喵~~~喵~~~</string>
@@ -25,5 +25,10 @@
     <string name="msg_timeout">等到花都谢了也没反应，一会再试吧～</string>
     <string name="msg_no_url">还没输入网址呢～</string>
     <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望您能喜欢:)</string>
+    <string name="msg_no_connect">没有网是万万不能的！马上联网吧:)</string>
+    
+    <string name="btn_ok">OK!</string>
+    <string name="btn_cancel">不啦</string>
+    
     
 </resources>

@@ -20,7 +20,7 @@ public class SPUtil {
     public static void commitStringToSP(SharedPreferences sp, String[] keys, String[] values) {
         if(LOG.DEBUG) {
             if(keys.length == values.length) {
-                LOG.dev("keys.length and values.length is same:" + keys.length);
+                LOG.cstdr("keys.length and values.length is same:" + keys.length);
             } else {
                 return;
             }
