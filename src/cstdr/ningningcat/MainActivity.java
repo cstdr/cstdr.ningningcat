@@ -2,8 +2,10 @@ package cstdr.ningningcat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -33,9 +35,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import cstdr.ningningcat.constants.Constants;
+import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
-import cstdr.ningningcat.util.NetworkUtil;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UrlUtil;
@@ -65,6 +67,8 @@ public class MainActivity extends Activity {
 
     private SharedPreferences mSp=null;
 
+    private BroadcastReceiver mConnectitvityReceiver=null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,13 +82,19 @@ public class MainActivity extends Activity {
 
         initView();
         initSharedPreferences();
-        if(!NetworkUtil.checkNetwork(mContext)) {
-            DialogUtil.showNoConnectDialog(this);
-        }
+        // if(!NetworkUtil.checkNetwork(mContext)) {
+        // DialogUtil.showNoConnectDialog(this);
+        // }
 
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
         mCurrentUrl=getString(R.string.index);
         mWebView.loadUrl(mCurrentUrl);
+    }
+
+    private void initReceiver() {
+        mConnectitvityReceiver=new ConnectivityReceiver();
+        IntentFilter filter=new IntentFilter(ConnectivityReceiver.ACTION_CONNECT_CHANGE);
+        registerReceiver(mConnectitvityReceiver, filter);
     }
 
     private void initSharedPreferences() {
@@ -357,6 +367,19 @@ public class MainActivity extends Activity {
 
     public static MainActivity getInstance() {
         return mInstance;
+    }
+
+    @Override
+    protected void onDestroy() {
+        unregisterReceiver(mConnectitvityReceiver);
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        initReceiver();
+        super.onResume();
+
     }
 
 }
