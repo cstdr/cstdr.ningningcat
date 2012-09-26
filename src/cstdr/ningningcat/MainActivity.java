@@ -34,7 +34,6 @@ import android.webkit.WebViewClient;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
@@ -69,6 +68,10 @@ public class MainActivity extends Activity {
 
     private BroadcastReceiver mConnectitvityReceiver=null;
 
+    private boolean isNetworkMode=false;
+
+    private boolean isWebError=false;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,7 +95,9 @@ public class MainActivity extends Activity {
     }
 
     private void initReceiver() {
-        mConnectitvityReceiver=new ConnectivityReceiver();
+        if(mConnectitvityReceiver == null) {
+            mConnectitvityReceiver=new ConnectivityReceiver();
+        }
         IntentFilter filter=new IntentFilter(ConnectivityReceiver.ACTION_CONNECT_CHANGE);
         registerReceiver(mConnectitvityReceiver, filter);
     }
@@ -147,9 +152,11 @@ public class MainActivity extends Activity {
         mWebSettings.setSupportZoom(true);
         mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
         mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
-        mWebSettings.setAppCacheEnabled(true); // 支持缓存
-        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
-        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 缓存模式
+        // mWebSettings.setAppCacheEnabled(false); // 支持缓存
+        // mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
+        // mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // TODO 缓存模式
+        mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
+
         mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
         mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
@@ -252,20 +259,14 @@ public class MainActivity extends Activity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if(mWebView.getVisibility() == View.GONE) {
-                mNotifyWebView.setVisibility(View.GONE);
-                mWebView.setVisibility(View.VISIBLE);
-            }
             mWebView.loadUrl(url);
-            return false;
+            return true;
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            if(mWebView.getVisibility() == View.VISIBLE) {
-                mWebsite.setText(url.substring(getString(R.string.http).length())); // url除去协议http://
-                mCurrentUrl=url;
-            }
+            mWebsite.setText(url.substring(getString(R.string.http).length())); // url除去协议http://
+            mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
         }
 
@@ -278,17 +279,25 @@ public class MainActivity extends Activity {
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
             // TODO 不显示默认出错信息，采用自己的出错页面
-            if(mWebView.getVisibility() == View.VISIBLE) {
-                mWebView.setVisibility(View.GONE);
-                mNotifyWebView.setVisibility(View.VISIBLE);
-            }
+            setWebError(true);
             mNotifyWebView.loadUrl("file:///android_asset/html/error.html");
             super.onReceivedError(view, errorCode, description, failingUrl);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            // TODO Auto-generated method stub
+            if(isWebError()) {
+                if(mWebView.getVisibility() == View.VISIBLE) {
+                    mWebView.setVisibility(View.GONE);
+                    mNotifyWebView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                if(mWebView.getVisibility() == View.GONE) {
+                    mNotifyWebView.setVisibility(View.GONE);
+                    mWebView.setVisibility(View.VISIBLE);
+                }
+            }
+            setWebError(false);
             super.onPageFinished(view, url);
         }
     }
@@ -337,10 +346,6 @@ public class MainActivity extends Activity {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             if(mWebView.canGoBack()) {
                 mWebView.goBack();
-                if(mWebView.getVisibility() == View.GONE) {
-                    mNotifyWebView.setVisibility(View.GONE);
-                    mWebView.setVisibility(View.VISIBLE);
-                }
                 // mWebsite.setText(mWebView.getUrl()); // 不是很管用
             } else if(System.currentTimeMillis() - mLastBackPressTimeMillis > 2000) {
                 ToastUtil.shortToast(mContext, getString(R.string.msg_exit));
@@ -366,6 +371,9 @@ public class MainActivity extends Activity {
     }
 
     public static MainActivity getInstance() {
+        if(mInstance == null) {
+            mInstance=new MainActivity();
+        }
         return mInstance;
     }
 
@@ -380,6 +388,22 @@ public class MainActivity extends Activity {
         initReceiver();
         super.onResume();
 
+    }
+
+    public boolean isNetworkMode() {
+        return isNetworkMode;
+    }
+
+    public void setNetworkMode(boolean isNetworkMode) {
+        this.isNetworkMode=isNetworkMode;
+    }
+
+    public boolean isWebError() {
+        return isWebError;
+    }
+
+    public void setWebError(boolean isWebError) {
+        this.isWebError=isWebError;
     }
 
 }

@@ -15,8 +15,13 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals(ACTION_CONNECT_CHANGE)) {
             if(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-                DialogUtil.showNoConnectDialog(MainActivity.getInstance()); // 这里必须传Activity，若传Context则报错
+                if(!MainActivity.getInstance().isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
+                    DialogUtil.showNoConnectDialog(MainActivity.getInstance()); // 这里必须传Activity，若传Context则报错
+                } else {
+                    MainActivity.getInstance().setNetworkMode(false);
+                }
             } else {
+                MainActivity.getInstance().setNetworkMode(true);
                 // ToastUtil.shortToast(context, "可以自由自在的上网啦~");
             }
         }

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.webkit.JsResult;
+import cstdr.ningningcat.MainActivity;
 import cstdr.ningningcat.R;
 
 public class DialogUtil {
@@ -59,6 +60,7 @@ public class DialogUtil {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
+                    MainActivity.getInstance().setNetworkMode(true); // 避免了设置完返回界面时二次提示
                     Intent intent=new Intent(ACTION_WIRELESS_SETTINGS);
                     context.startActivity(intent);
                 }
