@@ -5,6 +5,7 @@
     android:orientation="vertical" >
 
     <RelativeLayout
+        android:id="@+id/rl_website_navigation"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
@@ -12,18 +13,21 @@
             android:id="@+id/et_website"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_marginLeft="3dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="43dp"
+            android:background="@null"
             android:hint="@string/website_hint"
-            android:inputType="textWebEditText" />
+            android:inputType="textWebEditText"
+            android:selectAllOnFocus="true"
+            android:textColorHighlight="#99CC00" />
 
         <ImageView
-            android:id="@+id/tv_goto"
-            android:layout_width="35dp"
-            android:layout_height="wrap_content"
+            android:id="@+id/iv_goto"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="3dp"
             android:layout_toLeftOf="@id/et_website"
             android:src="@drawable/icon" />
     </RelativeLayout>

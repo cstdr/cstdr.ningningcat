@@ -27,6 +27,11 @@
             android:configChanges="keyboardHidden|orientation"
             android:launchMode="singleTask" >
         </activity>
+        <activity
+            android:name=".FavoriteActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:launchMode="singleTask" >
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET" />

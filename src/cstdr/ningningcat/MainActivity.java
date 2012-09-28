@@ -116,7 +116,6 @@ public class MainActivity extends Activity {
 
     private void initView() {
         mWebsite=(EditText)findViewById(R.id.et_website);
-        mWebsite.setSelectAllOnFocus(true);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // TODO 自定义键显示改变了，但是监听时没有收到对应的ActionId
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -126,8 +125,6 @@ public class MainActivity extends Activity {
                     LOG.cstdr("actionId=" + actionId);
                 }
                 if(actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
-                    InputMethodManager imm=(InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                     gotoWebsite();
                     return true;
                 }
@@ -135,7 +132,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        mGoto=(ImageView)findViewById(R.id.tv_goto);
+        mGoto=(ImageView)findViewById(R.id.iv_goto);
         mGoto.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -265,6 +262,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+            hideInputWindow(view);
             mWebsite.setText(url.substring(getString(R.string.http).length())); // url除去协议http://
             mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
@@ -332,6 +330,9 @@ public class MainActivity extends Activity {
 
                 break;
             case R.id.menu_favorite: // TODO
+                Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);
+                startActivity(intent);
+
                 break;
             case R.id.menu_exit:
                 finish();
@@ -404,6 +405,11 @@ public class MainActivity extends Activity {
 
     public void setWebError(boolean isWebError) {
         this.isWebError=isWebError;
+    }
+
+    private void hideInputWindow(final View v) {
+        InputMethodManager imm=(InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
 }
