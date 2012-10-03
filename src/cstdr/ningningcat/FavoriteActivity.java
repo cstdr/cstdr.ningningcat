@@ -6,156 +6,180 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.ListActivity;
-import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
-import android.net.Uri;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cstdr.ningningcat.receiver.GotoReceiver;
+import cstdr.ningningcat.util.DatabaseUtil;
+import cstdr.ningningcat.util.DialogUtil;
+import cstdr.ningningcat.util.ToastUtil;
 
 public class FavoriteActivity extends ListActivity {
 
-    private List<Map<String, Object>> mFavoriteList=null;
+	private static List<Map<String, Object>> mFavoriteList = null;
 
-    private Context mContext=MainActivity.getInstance().getContext();
+	private Context mContext = MainActivity.getInstance().getContext();
 
-    private ContentResolver resolver=null;
+	private SQLiteDatabase mDB = null;
 
-    public static final Uri URI_BOOKMARKS=android.provider.Browser.BOOKMARKS_URI;
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		SQLiteOpenHelper mDBHelper = new DatabaseUtil(mContext,
+				DatabaseUtil.mDatabaseName, null, 1);
+		mDB = mDBHelper.getWritableDatabase();
+		mFavoriteList = getFavoriteList();
+		getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
-    public static final String COLUMN_WEBICON=android.provider.Browser.BookmarkColumns.FAVICON;
+			@Override
+			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
+					int position, long arg3) {
+				DialogUtil.showConfirmDialog(FavoriteActivity.this, getString(R.string.msg_web_delete_confirm), position);
+				return true;
+			}
+		});
 
-    public static final String COLUMN_WEBTITLE=android.provider.Browser.BookmarkColumns.TITLE;
+		ListAdapter adapter = new FavoriteAdapter(mContext);
+		setListAdapter(adapter);
+	}
+	
+	public static void deleteFavorite(Context mContext, int position) { // TODO 删除完后列表刷新
+				DatabaseUtil mDBHelper = new DatabaseUtil(mContext,
+						DatabaseUtil.mDatabaseName, null, 1);
 
-    public static final String COLUMN_WEBURL=android.provider.Browser.BookmarkColumns.URL;
+				mDBHelper.getWritableDatabase().delete(
+						DatabaseUtil.mTableName,
+						DatabaseUtil.COLUMN_URL + "=?",
+						new String[] { (String) (mFavoriteList.get(position)
+								.get(DatabaseUtil.COLUMN_URL)) });
+				ToastUtil.shortToast(mContext,
+						mContext.getString(R.string.msg_web_delete));
+	}
 
-    public static final String COLUMN_COUNT=android.provider.Browser.BookmarkColumns._COUNT;
+	/**
+	 * 从数据库取得收藏夹数据 TODO
+	 * 
+	 * @return
+	 */
+	private List<Map<String, Object>> getFavoriteList() {
+		mFavoriteList = new ArrayList<Map<String, Object>>();
+		Cursor cursor = mDB.query(DatabaseUtil.mTableName, new String[] {
+				DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL }, null,
+				null, null, null, null);
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        resolver=getContentResolver();
-        mFavoriteList=getFavoriteList();
-        ListAdapter adapter=new FavoriteAdapter(mContext);
-        setListAdapter(adapter);
-    }
+		for (cursor.moveToFirst(); !cursor.isAfterLast()
+				&& (cursor.getString(1) != null); cursor.moveToNext()) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			String webTitle = cursor.getString(cursor
+					.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
+			String webUrl = cursor.getString(cursor
+					.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
+			map.put(DatabaseUtil.COLUMN_TITLE, webTitle);
+			map.put(DatabaseUtil.COLUMN_URL, webUrl);
+			mFavoriteList.add(map);
+		}
+		return mFavoriteList;
 
-    /**
-     * 从数据库取得收藏夹数据 TODO
-     * @return
-     */
-    public List<Map<String, Object>> getFavoriteList() {
-        List<Map<String, Object>> list=new ArrayList<Map<String, Object>>();
+	}
 
-        ContentResolver resolver=getContentResolver();
-        Cursor cursor=resolver.query(URI_BOOKMARKS, new String[]{COLUMN_WEBICON, COLUMN_WEBTITLE, COLUMN_WEBURL}, null, null, null);
-        while(!cursor.isLast()) {
-            Map<String, Object> map=new HashMap<String, Object>();
-            int webIcon=cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_WEBICON));
-            String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_WEBTITLE));
-            String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_WEBURL));
-            map.put(COLUMN_WEBICON, webIcon);
-            map.put(COLUMN_WEBTITLE, webTitle);
-            map.put(COLUMN_WEBURL, webUrl);
-            list.add(map);
-        }
-        return list;
+	public static class ViewHolder {
 
-    }
+		public RelativeLayout webRL;
 
-    public final class ViewHolder {
+		public ImageView webIcon;
 
-        public ImageView webIcon;
+		public TextView webTitle;
 
-        public TextView webTitle;
+		public TextView webUrl;
+	}
 
-        public TextView webUrl;
-    }
+	public class FavoriteAdapter extends BaseAdapter {
 
-    public class FavoriteAdapter extends BaseAdapter {
+		private LayoutInflater mInflater = null;
 
-        private LayoutInflater mInflater=null;
+		private ViewHolder holder = null;
 
-        private ViewHolder holder=null;
+		FavoriteAdapter(Context context) {
+			mInflater = LayoutInflater.from(context);
+		}
 
-        FavoriteAdapter(Context context) {
-            mInflater=LayoutInflater.from(context);
-        }
+		@Override
+		public int getCount() {
+			return mFavoriteList.size();
+		}
 
-        @Override
-        public int getCount() {
-            Cursor cursor=resolver.query(URI_BOOKMARKS, new String[]{COLUMN_COUNT}, null, null, null);
-            int count=cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_COUNT));
-            return count;
-        }
+		@Override
+		public Object getItem(int position) {
+			return mFavoriteList.get(position);
+		}
 
-        @Override
-        public Object getItem(int position) {
-            // TODO Auto-generated method stub
-            return null;
-        }
+		@Override
+		public long getItemId(int position) {
+			return position;
+		}
 
-        @Override
-        public long getItemId(int position) {
-            // TODO Auto-generated method stub
-            return 0;
-        }
+		@Override
+		public View getView(int position, View convertView, ViewGroup parent) {
 
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+			if (convertView == null) {
 
-            if(convertView == null) {
+				holder = new ViewHolder();
 
-                holder=new ViewHolder();
+				convertView = mInflater.inflate(R.layout.list_favorite, null);
+				// 这里需要convertView.findViewById()，而不能直接是findViewById()，否则会空指针
+				holder.webRL = (RelativeLayout) convertView
+						.findViewById(R.id.rl_favorites);
+				holder.webIcon = (ImageView) convertView
+						.findViewById(R.id.iv_web_icon);
+				holder.webTitle = (TextView) convertView
+						.findViewById(R.id.tv_web_title);
+				holder.webUrl = (TextView) convertView
+						.findViewById(R.id.tv_web_url);
 
-                convertView=mInflater.inflate(R.layout.list_favorite, null);
-                holder.webIcon=(ImageView)findViewById(R.id.iv_web_icon);
-                holder.webTitle=(TextView)findViewById(R.id.tv_web_title);
-                holder.webUrl=(TextView)findViewById(R.id.tv_web_url);
+				convertView.setTag(holder);
 
-                convertView.setTag(holder);
+			} else {
+				holder = (ViewHolder) convertView.getTag();
+			}
 
-            } else {
-                holder=(ViewHolder)convertView.getTag();
-            }
+			holder.webIcon.setBackgroundResource(R.drawable.icon);
+			holder.webTitle.setText((String) mFavoriteList.get(position).get(
+					DatabaseUtil.COLUMN_TITLE));
+			holder.webUrl.setText((String) mFavoriteList.get(position).get(
+					DatabaseUtil.COLUMN_URL));
 
-            holder.webIcon.setBackgroundResource((Integer)mFavoriteList.get(position).get("webIcon"));
-            holder.webTitle.setText((String)mFavoriteList.get(position).get("webTitle"));
-            holder.webUrl.setText((String)mFavoriteList.get(position).get("webUrl"));
+			return convertView;
+		}
+	}
 
-            holder.webTitle.setOnClickListener(new OnClickListener() {
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+		Intent intent = new Intent(GotoReceiver.ACTION_GOTO);
+		intent.putExtra(
+				DatabaseUtil.COLUMN_URL,
+				(String) mFavoriteList.get(position).get(
+						DatabaseUtil.COLUMN_URL));
+		sendBroadcast(intent);
+	}
 
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-            holder.webUrl.setOnClickListener(new OnClickListener() {
-
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-
-            return convertView;
-        }
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        // TODO Auto-generated method stub
-        super.onListItemClick(l, v, position, id);
-    }
+	@Override
+	protected void onDestroy() {
+		mDB.close();
+		super.onDestroy();
+	}
 
 }

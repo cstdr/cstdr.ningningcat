@@ -6,13 +6,14 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.webkit.JsResult;
+import cstdr.ningningcat.FavoriteActivity;
 import cstdr.ningningcat.MainActivity;
 import cstdr.ningningcat.R;
 
 public class DialogUtil {
 
     private static final String ACTION_WIRELESS_SETTINGS="android.settings.WIRELESS_SETTINGS";
-
+    
     public static void showJsAlertDialog(Context context, String message, final JsResult result) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
         builder.setTitle(R.string.title_alert).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -49,6 +50,23 @@ public class DialogUtil {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
+            }
+        }).create().show();
+    }
+    
+    public static void showConfirmDialog(final Context context, String message, final int position) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        builder.setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	FavoriteActivity.deleteFavorite(context, position);
+            }
+        }).setNegativeButton(android.R.string.cancel, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            	FavoriteActivity.deleteFavorite(context, position);
             }
         }).create().show();
     }
