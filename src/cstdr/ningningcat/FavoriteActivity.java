@@ -39,6 +39,7 @@ public class FavoriteActivity extends ListActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		this.setTitle(getString(R.string.title_favorite));
 		SQLiteOpenHelper mDBHelper = new DatabaseUtil(mContext,
 				DatabaseUtil.mDatabaseName, null, 1);
 		mDB = mDBHelper.getWritableDatabase();

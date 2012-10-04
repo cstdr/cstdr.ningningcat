@@ -56,17 +56,17 @@ public class DialogUtil {
     
     public static void showConfirmDialog(final Context context, String message, final int position) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
+        builder.setMessage(message).setPositiveButton(context.getString(R.string.btn_ok), new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
             	FavoriteActivity.deleteFavorite(context, position);
             }
-        }).setNegativeButton(android.R.string.cancel, new OnClickListener() {
+        }).setNegativeButton(context.getString(R.string.btn_cancel), new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-            	FavoriteActivity.deleteFavorite(context, position);
+            	
             }
         }).create().show();
     }

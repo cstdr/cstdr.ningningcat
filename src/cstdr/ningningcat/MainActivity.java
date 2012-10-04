@@ -135,8 +135,7 @@ public class MainActivity extends Activity {
 
 	private void initView() {
 		mWebsite = (EditText) findViewById(R.id.et_website);
-		mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // TODO
-															// 自定义键显示改变了，但是监听时没有收到对应的ActionId
+		mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // TODO 自定义键显示改变了，但是监听时没有收到对应的ActionId
 		mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
 			@Override
@@ -145,7 +144,7 @@ public class MainActivity extends Activity {
 				if (LOG.DEBUG) {
 					LOG.cstdr("actionId=" + actionId);
 				}
-				if (actionId == EditorInfo.IME_ACTION_UNSPECIFIED) {
+				if (actionId == EditorInfo.IME_ACTION_GO) {
 					gotoWebsite();
 					return true;
 				}
