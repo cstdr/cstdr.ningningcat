@@ -2,7 +2,6 @@
 
     <item
         android:id="@+id/menu_refresh"
-        android:icon="@drawable/icon"
         android:orderInCategory="1"
         android:title="@string/menu_refresh"/>
     <item
@@ -17,5 +16,9 @@
         android:id="@+id/menu_exit"
         android:orderInCategory="4"
         android:title="@string/menu_exit"/>
+    <item
+        android:id="@+id/menu_more"
+        android:orderInCategory="5"
+        android:title="@string/menu_more"/>
 
 </menu>

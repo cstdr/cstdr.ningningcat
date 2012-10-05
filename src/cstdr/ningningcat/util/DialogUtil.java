@@ -12,81 +12,100 @@ import cstdr.ningningcat.R;
 
 public class DialogUtil {
 
-    private static final String ACTION_WIRELESS_SETTINGS="android.settings.WIRELESS_SETTINGS";
-    
-    public static void showJsAlertDialog(Context context, String message, final JsResult result) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setTitle(R.string.title_alert).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
+	private static final String ACTION_WIRELESS_SETTINGS = "android.settings.WIRELESS_SETTINGS";
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                result.confirm();
-            }
-        }).create().show();
+	public static void showJsAlertDialog(Context context, String message,
+			final JsResult result) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(R.string.title_alert).setMessage(message)
+				.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
-    }
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						result.confirm();
+					}
+				}).create().show();
 
-    public static void showJsConfirmDialog(Context context, String message, final JsResult result) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setTitle(R.string.title_confirm).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
+	}
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                result.confirm();
-            }
-        }).setNegativeButton(android.R.string.cancel, new OnClickListener() {
+	public static void showJsConfirmDialog(Context context, String message,
+			final JsResult result) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(R.string.title_confirm)
+				.setMessage(message)
+				.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                result.cancel();
-            }
-        }).create().show();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						result.confirm();
+					}
+				})
+				.setNegativeButton(android.R.string.cancel,
+						new OnClickListener() {
 
-    }
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								result.cancel();
+							}
+						}).create().show();
 
-    public static void showAlertDialog(Context context, String message) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setTitle(R.string.title_alert).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
+	}
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        }).create().show();
-    }
-    
-    public static void showConfirmDialog(final Context context, String message, final int position) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setMessage(message).setPositiveButton(context.getString(R.string.btn_ok), new OnClickListener() {
+	public static void showAlertDialog(Context context, String message) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(R.string.title_alert).setMessage(message)
+				.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            	FavoriteActivity.deleteFavorite(context, position);
-            }
-        }).setNegativeButton(context.getString(R.string.btn_cancel), new OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				}).create().show();
+	}
 
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            	
-            }
-        }).create().show();
-    }
+	public static void showConfirmDialog(final Context context, String message,
+			final int position) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setMessage(message)
+				.setPositiveButton(context.getString(R.string.btn_ok),
+						new OnClickListener() {
 
-    public static void showNoConnectDialog(final Context context) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setTitle(R.string.title_no_connect).setMessage(R.string.msg_no_connect)
-            .setPositiveButton(R.string.btn_ok, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								FavoriteActivity.deleteFavorite(context,
+										position);
+							}
+						})
+				.setNegativeButton(context.getString(R.string.btn_cancel),
+						new OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    MainActivity.getInstance().setNetworkMode(true); // 避免了设置完返回界面时二次提示
-                    Intent intent=new Intent(ACTION_WIRELESS_SETTINGS);
-                    context.startActivity(intent);
-                }
-            }).setNegativeButton(R.string.btn_cancel, new OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                }
-            }).create().show();
-    }
+							}
+						}).create().show();
+	}
+
+	public static void showNoConnectDialog(final Context context) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+		builder.setTitle(R.string.title_no_connect)
+				.setMessage(R.string.msg_no_connect)
+				.setPositiveButton(R.string.btn_ok, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						MainActivity.getInstance().setNetworkMode(true); // 避免了设置完返回界面时二次提示
+						Intent intent = new Intent(ACTION_WIRELESS_SETTINGS);
+						context.startActivity(intent);
+					}
+				})
+				.setNegativeButton(R.string.btn_cancel, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+					}
+				}).create().show();
+	}
 }

@@ -49,7 +49,8 @@ public class FavoriteActivity extends ListActivity {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> arg0, View arg1,
 					int position, long arg3) {
-				DialogUtil.showConfirmDialog(FavoriteActivity.this, getString(R.string.msg_web_delete_confirm), position);
+				DialogUtil.showConfirmDialog(FavoriteActivity.this,
+						getString(R.string.msg_web_delete_confirm), position);
 				return true;
 			}
 		});
@@ -57,18 +58,19 @@ public class FavoriteActivity extends ListActivity {
 		ListAdapter adapter = new FavoriteAdapter(mContext);
 		setListAdapter(adapter);
 	}
-	
-	public static void deleteFavorite(Context mContext, int position) { // TODO 删除完后列表刷新
-				DatabaseUtil mDBHelper = new DatabaseUtil(mContext,
-						DatabaseUtil.mDatabaseName, null, 1);
 
-				mDBHelper.getWritableDatabase().delete(
-						DatabaseUtil.mTableName,
-						DatabaseUtil.COLUMN_URL + "=?",
-						new String[] { (String) (mFavoriteList.get(position)
-								.get(DatabaseUtil.COLUMN_URL)) });
-				ToastUtil.shortToast(mContext,
-						mContext.getString(R.string.msg_web_delete));
+	public static void deleteFavorite(Context mContext, int position) { // TODO
+																		// 删除完后列表刷新
+		DatabaseUtil mDBHelper = new DatabaseUtil(mContext,
+				DatabaseUtil.mDatabaseName, null, 1);
+
+		mDBHelper.getWritableDatabase().delete(
+				DatabaseUtil.mTableName,
+				DatabaseUtil.COLUMN_URL + "=?",
+				new String[] { (String) (mFavoriteList.get(position)
+						.get(DatabaseUtil.COLUMN_URL)) });
+		ToastUtil.shortToast(mContext,
+				mContext.getString(R.string.msg_web_delete));
 	}
 
 	/**

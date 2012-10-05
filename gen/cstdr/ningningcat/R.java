@@ -19,20 +19,21 @@ public final class R {
         public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int et_website=0x7f080001;
-        public static final int iv_goto=0x7f080002;
-        public static final int iv_web_icon=0x7f080007;
-        public static final int ll_favorites=0x7f080005;
-        public static final int menu_add=0x7f08000b;
-        public static final int menu_exit=0x7f08000d;
-        public static final int menu_favorite=0x7f08000c;
-        public static final int menu_refresh=0x7f08000a;
-        public static final int rl_favorites=0x7f080006;
-        public static final int rl_website_navigation=0x7f080000;
-        public static final int tv_web_title=0x7f080008;
-        public static final int tv_web_url=0x7f080009;
-        public static final int wv_notify=0x7f080004;
-        public static final int wv_web=0x7f080003;
+        public static final int et_website=0x7f090001;
+        public static final int iv_goto=0x7f090002;
+        public static final int iv_web_icon=0x7f090007;
+        public static final int ll_favorites=0x7f090005;
+        public static final int menu_add=0x7f09000b;
+        public static final int menu_exit=0x7f09000d;
+        public static final int menu_favorite=0x7f09000c;
+        public static final int menu_more=0x7f09000e;
+        public static final int menu_refresh=0x7f09000a;
+        public static final int rl_favorites=0x7f090006;
+        public static final int rl_website_navigation=0x7f090000;
+        public static final int tv_web_title=0x7f090008;
+        public static final int tv_web_url=0x7f090009;
+        public static final int wv_notify=0x7f090004;
+        public static final int wv_web=0x7f090003;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -40,38 +41,43 @@ public final class R {
         public static final int list_favorite=0x7f030002;
     }
     public static final class menu {
-        public static final int activity_main=0x7f070000;
+        public static final int activity_main=0x7f080000;
     }
     public static final class string {
-        public static final int app_name=0x7f050000;
-        public static final int btn_cancel=0x7f05001a;
-        public static final int btn_ok=0x7f050019;
-        public static final int http=0x7f050006;
-        public static final int index=0x7f050007;
-        public static final int menu_add=0x7f050002;
-        public static final int menu_exit=0x7f050004;
-        public static final int menu_favorite=0x7f050003;
-        public static final int menu_refresh=0x7f050001;
-        public static final int msg_cache_max_size=0x7f050011;
-        public static final int msg_exit=0x7f05000f;
-        public static final int msg_first_launch=0x7f050014;
-        public static final int msg_no_connect=0x7f050015;
-        public static final int msg_no_url=0x7f050013;
-        public static final int msg_progress=0x7f050010;
-        public static final int msg_timeout=0x7f050012;
-        public static final int msg_web_delete=0x7f050017;
-        public static final int msg_web_delete_confirm=0x7f050018;
-        public static final int msg_web_insert=0x7f050016;
-        public static final int sp_main=0x7f050008;
-        public static final int spkey_first_launch_time=0x7f050009;
-        public static final int spkey_last_launch_time=0x7f05000a;
-        public static final int title_alert=0x7f05000b;
-        public static final int title_confirm=0x7f05000c;
-        public static final int title_favorite=0x7f05000e;
-        public static final int title_no_connect=0x7f05000d;
-        public static final int website_hint=0x7f050005;
+        public static final int app_name=0x7f060000;
+        public static final int btn_cancel=0x7f06001c;
+        public static final int btn_ok=0x7f06001b;
+        public static final int http=0x7f060007;
+        public static final int index=0x7f060008;
+        public static final int menu_add=0x7f060002;
+        public static final int menu_exit=0x7f060004;
+        public static final int menu_favorite=0x7f060003;
+        public static final int menu_more=0x7f060005;
+        public static final int menu_refresh=0x7f060001;
+        public static final int msg_cache_max_size=0x7f060013;
+        public static final int msg_exit=0x7f060011;
+        public static final int msg_first_launch=0x7f060016;
+        public static final int msg_no_connect=0x7f060017;
+        public static final int msg_no_url=0x7f060015;
+        public static final int msg_progress=0x7f060012;
+        public static final int msg_timeout=0x7f060014;
+        public static final int msg_web_delete=0x7f060019;
+        public static final int msg_web_delete_confirm=0x7f06001a;
+        public static final int msg_web_insert=0x7f060018;
+        public static final int sp_main=0x7f060009;
+        public static final int spkey_first_launch_time=0x7f06000a;
+        public static final int spkey_index=0x7f06000c;
+        public static final int spkey_last_launch_time=0x7f06000b;
+        public static final int title_alert=0x7f06000d;
+        public static final int title_confirm=0x7f06000e;
+        public static final int title_favorite=0x7f060010;
+        public static final int title_no_connect=0x7f06000f;
+        public static final int website_hint=0x7f060006;
     }
     public static final class style {
-        public static final int AppTheme=0x7f060000;
+        public static final int AppTheme=0x7f070000;
+    }
+    public static final class xml {
+        public static final int more=0x7f050000;
     }
 }

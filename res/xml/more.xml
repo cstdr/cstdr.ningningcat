@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:defaultValue=""
+        android:key="@string/sp"
+        android:summary=""
+        android:title="@string/" />
+    <CheckBoxPreference
+        android:defaultValue=""
+        android:key=""
+        android:summary=""
+        android:title="@string/" />
+    <CheckBoxPreference
+        android:defaultValue=""
+        android:key=""
+        android:summary=""
+        android:title="@string/" />
+    <CheckBoxPreference
+        android:defaultValue=""
+        android:key=""
+        android:summary=""
+        android:title="@string/" />
+
+    <ListPreference 
+        android:entries=""
+        android:entryValues=""
+        />
+
+</PreferenceScreen>

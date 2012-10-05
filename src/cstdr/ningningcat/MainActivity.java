@@ -28,6 +28,7 @@ import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
+import android.webkit.WebSettings.PluginState;
 import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -98,10 +99,12 @@ public class MainActivity extends Activity {
 
 		WebIconDatabase.getInstance().open(
 				getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
-		mCurrentUrl = getString(R.string.index);
-		mWebView.loadUrl(mCurrentUrl);
+		mWebView.loadUrl(mCurrentUrl); // 加载首页
 	}
 
+	/**
+	 * 初始化BroadcastReceiver
+	 */
 	private void initReceiver() {
 		if (mConnectitvityReceiver == null) {
 			mConnectitvityReceiver = new ConnectivityReceiver();
@@ -117,6 +120,9 @@ public class MainActivity extends Activity {
 		registerReceiver(mGotoReceiver, filter);
 	}
 
+	/**
+	 * 初始化SharedPreferences
+	 */
 	private void initSharedPreferences() {
 		mSp = SPUtil.getSP(mContext, getString(R.string.sp_main));
 		if (mSp.getString(getString(R.string.spkey_first_launch_time), null) != null) {
@@ -131,11 +137,16 @@ public class MainActivity extends Activity {
 					new String[] { getString(R.string.spkey_first_launch_time) },
 					new String[] { String.valueOf(System.currentTimeMillis()) });
 		}
+
+		mCurrentUrl = mSp.getString(getString(R.string.spkey_index),
+				getString(R.string.index));
 	}
 
 	private void initView() {
+
+		/** EditText输入框的配置 **/
 		mWebsite = (EditText) findViewById(R.id.et_website);
-		mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // TODO 自定义键显示改变了，但是监听时没有收到对应的ActionId
+		mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // 自定义键显示改变了，但是监听时没有收到对应的ActionId
 		mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
 			@Override
@@ -152,6 +163,7 @@ public class MainActivity extends Activity {
 			}
 		});
 
+		/** 跳转按钮的配置 **/
 		mGoto = (ImageView) findViewById(R.id.iv_goto);
 		mGoto.setOnClickListener(new OnClickListener() {
 
@@ -163,6 +175,7 @@ public class MainActivity extends Activity {
 
 		mWebView = (WebView) findViewById(R.id.wv_web);
 
+		/** WebSettings配置 **/
 		mWebSettings = mWebView.getSettings();
 		mWebSettings.setJavaScriptEnabled(true); // 支持JavaScript
 		mWebSettings.setBuiltInZoomControls(true); // 支持页面放大缩小按钮
@@ -174,11 +187,13 @@ public class MainActivity extends Activity {
 		// mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
 		// TODO 缓存模式
 		mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-
+		mWebSettings.setPluginState(PluginState.ON);
+		mWebSettings.setPluginsEnabled(true);
 		mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
 		mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
 		mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
 
+		/** WebView配置 **/
 		mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
 		mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView右侧无空隙
 		mWebView.setVisibility(View.VISIBLE);
@@ -192,8 +207,8 @@ public class MainActivity extends Activity {
 			public boolean onTouch(View v, MotionEvent event) {
 				if (mWebsite.hasFocus()) {
 					mWebsite.clearFocus();
+					mWebView.requestFocusFromTouch(); // 不能用requestForcus()，焦点会乱跑
 				}
-				mWebView.requestFocusFromTouch(); // 不能用requestForcus()，焦点会乱跑
 				return false;
 			}
 		});
@@ -201,6 +216,7 @@ public class MainActivity extends Activity {
 		mWebView.setWebViewClient(new MyWebViewClient());
 		mWebView.setDownloadListener(new MyDownloadListener());
 
+		/** 提示页面 **/
 		mNotifyWebView = (WebView) findViewById(R.id.wv_notify);
 		mNotifyWebView.setVisibility(View.GONE);
 	}
@@ -329,6 +345,11 @@ public class MainActivity extends Activity {
 		}
 	}
 
+	/**
+	 * 监听下载链接
+	 * 
+	 * @author Administrator
+	 */
 	class MyDownloadListener implements DownloadListener {
 
 		@Override
@@ -350,13 +371,13 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (LOG.DEBUG) {
-			LOG.cstdr(item.getItemId());
+			LOG.cstdr("itemId = " + item.getItemId());
 		}
 		switch (item.getItemId()) {
-		case R.id.menu_refresh:
+		case R.id.menu_refresh: // 刷新
 			mWebView.loadUrl(mCurrentUrl);
 			break;
-		case R.id.menu_add: // TODO 判断数据库是否已有相同数据
+		case R.id.menu_add: // 添加收藏 TODO 判断数据库是否已有相同数据
 			if (!isWebError()) {
 				DatabaseUtil mDBHelper = new DatabaseUtil(mContext,
 						DatabaseUtil.mDatabaseName, null, 1);
@@ -366,17 +387,22 @@ public class MainActivity extends Activity {
 						+ DatabaseUtil.COLUMN_URL + ") values(\""
 						+ mCurrentTitle + "\",\"" + mCurrentUrl + "\")";
 				DatabaseUtil.insert(mDBHelper, sql);
-				ToastUtil.shortToast(mContext, getString(R.string.msg_web_insert));
+				ToastUtil.shortToast(mContext,
+						getString(R.string.msg_web_insert));
 			}
 			break;
-		case R.id.menu_favorite:
+		case R.id.menu_favorite: // 查看已收藏页面
 			Intent intent = new Intent(MainActivity.this,
 					FavoriteActivity.class);
 			startActivity(intent);
 			break;
-		case R.id.menu_exit:
+		case R.id.menu_exit: // 退出
+			saveIndexToSP(mCurrentUrl);
 			finish();
 			android.os.Process.killProcess(android.os.Process.myPid());
+			break;
+		case R.id.menu_more: // 更多设置 TODO
+
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -411,6 +437,11 @@ public class MainActivity extends Activity {
 		return mContext;
 	}
 
+	/**
+	 * 获取实例
+	 * 
+	 * @return
+	 */
 	public static MainActivity getInstance() {
 		if (mInstance == null) {
 			mInstance = new MainActivity();
@@ -425,6 +456,20 @@ public class MainActivity extends Activity {
 		super.onDestroy();
 	}
 
+	/**
+	 * 设置首页
+	 * 
+	 * @param url
+	 */
+	private void saveIndexToSP(String url) {
+		if (mSp == null) {
+			mSp = SPUtil.getSP(mContext, getString(R.string.sp_main));
+		}
+		SPUtil.commitStringToSP(mSp,
+				new String[] { getString(R.string.spkey_index) },
+				new String[] { url });
+	}
+
 	@Override
 	protected void onResume() {
 		initReceiver();
@@ -432,6 +477,11 @@ public class MainActivity extends Activity {
 
 	}
 
+	/**
+	 * 是否网络模式
+	 * 
+	 * @return
+	 */
 	public boolean isNetworkMode() {
 		return isNetworkMode;
 	}
@@ -440,6 +490,11 @@ public class MainActivity extends Activity {
 		this.isNetworkMode = isNetworkMode;
 	}
 
+	/**
+	 * 是否处于出错页面
+	 * 
+	 * @return
+	 */
 	public boolean isWebError() {
 		return isWebError;
 	}
@@ -452,6 +507,11 @@ public class MainActivity extends Activity {
 		return mWebView;
 	}
 
+	/**
+	 * 隐藏键盘
+	 * 
+	 * @param v
+	 */
 	private void hideInputWindow(final View v) {
 		InputMethodManager imm = (InputMethodManager) v.getContext()
 				.getSystemService(Context.INPUT_METHOD_SERVICE);
