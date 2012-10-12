@@ -34,24 +34,5 @@
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>
     <string name="spkey_last_launch_time">LAST_LAUNCH_TIME</string>
     <string name="spkey_index">INDEX</string>
-    <string name="spkey_">INDEX</string>
-    <string name="spkey_index">INDEX</string>
-    <string name="spkey_index">INDEX</string>
-    <string name="spkey_index">INDEX</string>
-        
-    <string name="spdefaultvalue_"></string>
-    <string name="spdefaultvalue_"></string>
-    <string name="spdefaultvalue_"></string>
-    <string name="spdefaultvalue_"></string>
-        
-    <string name="spsummary_"></string>
-    <string name="spsummary_"></string>
-    <string name="spsummary_"></string>
-    <string name="spsummary_"></string>
-        
-    <string name="sptitle_"></string>
-    <string name="sptitle_"></string>
-    <string name="sptitle_"></string>
-    <string name="sptitle_"></string>
         
 </resources>

@@ -16,9 +16,11 @@
         android:id="@+id/menu_exit"
         android:orderInCategory="4"
         android:title="@string/menu_exit"/>
-    <item
+    <!--
+        <item
         android:id="@+id/menu_more"
         android:orderInCategory="5"
         android:title="@string/menu_more"/>
+    -->
 
 </menu>
