@@ -1,5 +1,7 @@
 package cstdr.ningningcat;
 
+import java.io.File;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -23,6 +25,7 @@ import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.CacheManager;
 import android.webkit.DownloadListener;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
@@ -102,7 +105,7 @@ public class MainActivity extends Activity {
         // }
 
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
-        mWebView.loadUrl(mCurrentUrl); // 加载首页
+        loadUrl(mCurrentUrl); // 加载首页
     }
 
     /**
@@ -136,14 +139,14 @@ public class MainActivity extends Activity {
                 new String[]{String.valueOf(System.currentTimeMillis())});
         }
 
-        mCurrentUrl=mSp.getString(getString(R.string.spkey_index), getString(R.string.index));
+        mCurrentUrl=mSp.getString(getString(R.string.spkey_index), getString(R.string.index)); // 最后一次浏览的页面保存为首页
     }
 
     private void initView() {
 
         /** EditText输入框的配置 **/
         mWebsite=(EditText)findViewById(R.id.et_website);
-        mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO); // 自定义键显示改变了，但是监听时没有收到对应的ActionId
+        mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
             @Override
@@ -152,7 +155,7 @@ public class MainActivity extends Activity {
                     LOG.cstdr("actionId=" + actionId);
                 }
                 if(actionId == EditorInfo.IME_ACTION_GO) {
-                    gotoWebsite();
+                    gotoByEditText();
                     return true;
                 }
                 return false;
@@ -165,7 +168,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                gotoWebsite();
+                gotoByEditText();
             }
         });
 
@@ -176,14 +179,13 @@ public class MainActivity extends Activity {
         mWebSettings.setJavaScriptEnabled(true); // 支持JavaScript
         mWebSettings.setBuiltInZoomControls(true); // 支持页面放大缩小按钮
         mWebSettings.setSupportZoom(true);
-        mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
+        // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
         mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
         // mWebSettings.setAppCacheEnabled(false); // 支持缓存
         // mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
         // mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
-        // TODO 缓存模式
-        mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        mWebSettings.setPluginState(PluginState.ON);
+        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
+        mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
         mWebSettings.setPluginsEnabled(true);
         mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
@@ -218,11 +220,19 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 跳转到输入的网址
+     * 跳转到在EditText中输入的网址
      */
-    private void gotoWebsite() {
+    private void gotoByEditText() {
         mEditUrl=mWebsite.getText().toString(); // TODO 需要加一个输入内容的检查方法
-        String url=UrlUtil.checkEditUrl(mEditUrl);
+        String url=UrlUtil.checkEditUrl(mEditUrl); // 只有用户输入的URL才应该检查
+        loadUrl(url);
+    }
+
+    /**
+     * 在WebView中跳转到传入的URL
+     * @param url
+     */
+    private void loadUrl(String url) {
         if(url != null) {
             mWebView.loadUrl(url);
         } else {
@@ -245,8 +255,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceivedIcon(WebView view, Bitmap icon) {
-            Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap 转换为
-                                                            // Drawable
+            Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap 转换为 Drawable
             setFeatureDrawable(Window.FEATURE_LEFT_ICON, drawableIcon);
             super.onReceivedIcon(view, icon);
         }
@@ -277,7 +286,7 @@ public class MainActivity extends Activity {
         }
 
         /**
-         * TODO
+         * TODO 没有效果
          */
         @Override
         public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
@@ -291,7 +300,7 @@ public class MainActivity extends Activity {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            mWebView.loadUrl(url);
+            loadUrl(url);
             return true;
         }
 
@@ -363,27 +372,22 @@ public class MainActivity extends Activity {
         }
         switch(item.getItemId()) {
             case R.id.menu_refresh: // 刷新
-                mWebView.loadUrl(mCurrentUrl);
+                loadUrl(mCurrentUrl);
                 break;
             case R.id.menu_add: // 添加收藏 TODO 判断数据库是否已有相同数据
-                if(!isWebError()) {
-                    DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-
-                    String sql=
-                        "insert into " + DatabaseUtil.mTableName + "(" + DatabaseUtil.COLUMN_TITLE + "," + DatabaseUtil.COLUMN_URL
-                            + ") values(\"" + mCurrentTitle + "\",\"" + mCurrentUrl + "\")";
-                    DatabaseUtil.insert(mDBHelper, sql);
-                    ToastUtil.shortToast(mContext, getString(R.string.msg_web_insert));
-                }
+                DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
+                String sql=
+                    "insert into " + DatabaseUtil.mTableName + "(" + DatabaseUtil.COLUMN_TITLE + "," + DatabaseUtil.COLUMN_URL
+                        + ") values(\"" + mCurrentTitle + "\",\"" + mCurrentUrl + "\")";
+                DatabaseUtil.insert(mDBHelper, sql);
+                ToastUtil.shortToast(mContext, getString(R.string.msg_web_insert));
                 break;
             case R.id.menu_favorite: // 查看已收藏页面
                 Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);
                 startActivity(intent);
                 break;
             case R.id.menu_exit: // 退出
-                saveIndexToSP(mCurrentUrl);
-                finish();
-                android.os.Process.killProcess(android.os.Process.myPid());
+                exit();
                 break;
         // case R.id.menu_more: // 更多设置 TODO
         //
@@ -402,13 +406,34 @@ public class MainActivity extends Activity {
                 ToastUtil.shortToast(mContext, getString(R.string.msg_exit));
                 mLastBackPressTimeMillis=System.currentTimeMillis();
             } else {
-                finish();
-                android.os.Process.killProcess(android.os.Process.myPid());
+                exit();
             }
             return true;
         }
 
         return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * 退出前处理数据
+     */
+    private void exit() {
+        saveIndexToSP(mCurrentUrl);
+        clearCache();
+        finish();
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
+    /**
+     * 清楚网页缓存 deprecated TODO
+     */
+    private void clearCache() {
+        File file=CacheManager.getCacheFileBaseDir();
+        for(File item: file.listFiles()) {
+            item.delete();
+        }
+        deleteDatabase("webview.db");
+        deleteDatabase("webviewCache.db");
     }
 
     @Override

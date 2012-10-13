@@ -38,6 +38,8 @@ public class FavoriteActivity extends ListActivity {
 
     private Context mContext=MainActivity.getInstance().getContext();
 
+    private static ListAdapter mAdapter;
+
     private SQLiteDatabase mDB=null;
 
     @Override
@@ -55,22 +57,30 @@ public class FavoriteActivity extends ListActivity {
                 return true;
             }
         });
-
-        ListAdapter adapter=new FavoriteAdapter(mContext);
-        setListAdapter(adapter);
+        if(mAdapter == null) {
+            mAdapter=new FavoriteAdapter(mContext);
+        }
+        setListAdapter(mAdapter);
     }
 
-    public static void deleteFavorite(Context mContext, int position) { // TODO
-                                                                        // 删除完后列表刷新
+    /**
+     * 删除收藏完后列表刷新
+     * @param mContext
+     * @param position
+     */
+    public static void deleteFavorite(Context mContext, int position) {
         DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-
         mDBHelper.getWritableDatabase().delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?",
             new String[]{(String)(mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL))});
+        if(mFavoriteList.get(position) != null) {
+            mFavoriteList.remove(position);
+        }
+        ((BaseAdapter)mAdapter).notifyDataSetChanged();
         ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
     }
 
     /**
-     * 从数据库取得收藏夹数据 TODO
+     * 从数据库取得收藏夹数据
      * @return
      */
     private List<Map<String, Object>> getFavoriteList() {

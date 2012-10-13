@@ -44,8 +44,8 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f060000;
-        public static final int btn_cancel=0x7f060018;
-        public static final int btn_ok=0x7f060017;
+        public static final int btn_cancel=0x7f060019;
+        public static final int btn_ok=0x7f060018;
         public static final int http=0x7f060002;
         public static final int index=0x7f060003;
         public static final int menu_add=0x7f060005;
@@ -60,13 +60,14 @@ public final class R {
         public static final int msg_no_url=0x7f060011;
         public static final int msg_progress=0x7f06000e;
         public static final int msg_timeout=0x7f060010;
-        public static final int msg_web_delete=0x7f060015;
-        public static final int msg_web_delete_confirm=0x7f060016;
+        public static final int msg_web_delete=0x7f060016;
+        public static final int msg_web_delete_confirm=0x7f060017;
         public static final int msg_web_insert=0x7f060014;
-        public static final int sp_main=0x7f060019;
-        public static final int spkey_first_launch_time=0x7f06001a;
-        public static final int spkey_index=0x7f06001c;
-        public static final int spkey_last_launch_time=0x7f06001b;
+        public static final int msg_web_insert_error=0x7f060015;
+        public static final int sp_main=0x7f06001a;
+        public static final int spkey_first_launch_time=0x7f06001b;
+        public static final int spkey_index=0x7f06001d;
+        public static final int spkey_last_launch_time=0x7f06001c;
         public static final int title_alert=0x7f060009;
         public static final int title_confirm=0x7f06000a;
         public static final int title_favorite=0x7f06000c;
