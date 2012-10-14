@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -25,7 +28,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
-import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.ToastUtil;
 
 /**
@@ -34,26 +36,31 @@ import cstdr.ningningcat.util.ToastUtil;
  */
 public class FavoriteActivity extends ListActivity {
 
-    private static List<Map<String, Object>> mFavoriteList=null;
+    public static List<Map<String, Object>> mFavoriteList=null;
 
-    private Context mContext=MainActivity.getInstance().getContext();
+    private Context mContext=null;
 
-    private static ListAdapter mAdapter;
+    private ListAdapter mAdapter=null;
 
     private SQLiteDatabase mDB=null;
+
+    public FavoriteActivity() {
+        mContext=MainActivity.getInstance().getContext();
+        SQLiteOpenHelper mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
+        mDB=mDBHelper.getWritableDatabase();
+        mFavoriteList=getFavoriteList();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setTitle(getString(R.string.title_favorite));
-        SQLiteOpenHelper mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-        mDB=mDBHelper.getWritableDatabase();
-        mFavoriteList=getFavoriteList();
+
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                DialogUtil.showConfirmDialog(FavoriteActivity.this, getString(R.string.msg_web_delete_confirm), position);
+                deleteFavorite(FavoriteActivity.this, position);
                 return true;
             }
         });
@@ -64,19 +71,50 @@ public class FavoriteActivity extends ListActivity {
     }
 
     /**
+     * 添加收藏
+     * @param title
+     * @param url
+     */
+    public void insertFavorite(String title, String url) {
+        if(hasUrlInDB(url)) {
+            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert_same));
+        } else {
+            DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
+            String sql=
+                "insert into " + DatabaseUtil.mTableName + "(" + DatabaseUtil.COLUMN_TITLE + "," + DatabaseUtil.COLUMN_URL
+                    + ") values(\"" + title + "\",\"" + url + "\")";
+            DatabaseUtil.insert(mDBHelper, sql);
+            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert));
+        }
+    }
+
+    /**
      * 删除收藏完后列表刷新
      * @param mContext
      * @param position
      */
-    public static void deleteFavorite(Context mContext, int position) {
-        DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-        mDBHelper.getWritableDatabase().delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?",
-            new String[]{(String)(mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL))});
-        if(mFavoriteList.get(position) != null) {
-            mFavoriteList.remove(position);
-        }
-        ((BaseAdapter)mAdapter).notifyDataSetChanged();
-        ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
+    private void deleteFavorite(Context context, final int position) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage(getString(R.string.msg_web_delete_confirm))
+            .setPositiveButton(context.getString(R.string.btn_ok), new OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    mDB.delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?",
+                        new String[]{(String)(mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL))});
+                    if(mFavoriteList.get(position) != null) {
+                        mFavoriteList.remove(position);
+                    }
+                    ((BaseAdapter)mAdapter).notifyDataSetChanged();
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
+                }
+            }).setNegativeButton(context.getString(R.string.btn_cancel), new OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }).create().show();
     }
 
     /**
@@ -89,7 +127,7 @@ public class FavoriteActivity extends ListActivity {
             mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null, null,
                 null, null);
 
-        for(cursor.moveToFirst(); !cursor.isAfterLast() && (cursor.getString(1) != null); cursor.moveToNext()) {
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
             Map<String, Object> map=new HashMap<String, Object>();
             String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
             String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
@@ -99,6 +137,21 @@ public class FavoriteActivity extends ListActivity {
         }
         return mFavoriteList;
 
+    }
+
+    /**
+     * 查询数据库中是否有相同URL的数据
+     * @param url
+     * @return
+     */
+    private boolean hasUrlInDB(String url) {
+        Cursor cursor=mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
+        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+            if(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL)).equals(url)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static class ViewHolder {

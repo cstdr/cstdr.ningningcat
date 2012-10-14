@@ -1,4 +1,9 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="android:Theme.Light" />
-</resources>
+
+    <style name="MainTheme" parent="@android:style/Theme.Light">
+        <item name="android:windowTitleSize">30dp</item>
+    </style>
+
+</resources>

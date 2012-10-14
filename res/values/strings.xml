@@ -6,7 +6,7 @@
     <string name="index">http://m.google.cn</string>
     
     <string name="menu_refresh">刷新</string>
-    <string name="menu_add">抓下来</string>
+    <string name="menu_add">添加收藏</string>
     <string name="menu_favorite">我的收藏</string>
     <string name="menu_exit">拜拜</string>
     <string name="menu_more">More</string>
@@ -23,8 +23,9 @@
     <string name="msg_no_url">你想跳转到哪里呢？</string>
     <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望您能喜欢:)</string>
     <string name="msg_no_connect">没有网是万万不能的！马上联网吧:)</string>
-    <string name="msg_web_insert">已经抓下来啦！</string>
-    <string name="msg_web_insert_error">这个抓不下来=_=</string>
+    <string name="msg_web_insert">已经收藏好啦！</string>
+    <string name="msg_web_insert_error">这个收藏不下来=_=</string>
+    <string name="msg_web_insert_same">这个已经收藏过啦！</string>
     <string name="msg_web_delete">丢掉啦！</string>
     <string name="msg_web_delete_confirm">真的要丢掉吗？</string>
     

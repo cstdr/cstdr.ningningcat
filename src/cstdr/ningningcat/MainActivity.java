@@ -40,7 +40,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
-import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
@@ -57,6 +56,8 @@ public class MainActivity extends Activity {
     private final Context mContext=this;
 
     private static MainActivity mInstance;
+
+    private FavoriteActivity mFavorite;
 
     private EditText mWebsite=null;
 
@@ -97,6 +98,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mInstance=this;
+        mFavorite=new FavoriteActivity();
 
         initView();
         initSharedPreferences();
@@ -375,12 +377,7 @@ public class MainActivity extends Activity {
                 loadUrl(mCurrentUrl);
                 break;
             case R.id.menu_add: // 添加收藏 TODO 判断数据库是否已有相同数据
-                DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-                String sql=
-                    "insert into " + DatabaseUtil.mTableName + "(" + DatabaseUtil.COLUMN_TITLE + "," + DatabaseUtil.COLUMN_URL
-                        + ") values(\"" + mCurrentTitle + "\",\"" + mCurrentUrl + "\")";
-                DatabaseUtil.insert(mDBHelper, sql);
-                ToastUtil.shortToast(mContext, getString(R.string.msg_web_insert));
+                mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
                 break;
             case R.id.menu_favorite: // 查看已收藏页面
                 Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);

@@ -28,7 +28,8 @@
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation"
-            android:launchMode="singleTask" >
+            android:launchMode="singleTask"
+            android:theme="@style/MainTheme" >
         </activity>
         <activity
             android:name=".FavoriteActivity"
