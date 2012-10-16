@@ -1,5 +1,6 @@
 package cstdr.ningningcat.util;
 
+import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
 
 /**
@@ -15,12 +16,24 @@ public class UrlUtil {
      */
     public static String checkEditUrl(String editUrl) {
         if(editUrl != null && editUrl.length() > 0) {
-            if(editUrl.startsWith(Constants.HTTP)) {
-                return editUrl;
-            } else {
-                return Constants.HTTP + editUrl;
-            }
+            return url2HttpUrl(editUrl);
         }
         return null;
+    }
+
+    public static String url2HttpUrl(String url) {
+        if(url.startsWith(Constants.HTTP)) {
+            return url;
+        } else {
+            return Constants.HTTP + url;
+        }
+    }
+
+    public static String httpUrl2url(String httpUrl) {
+        if(httpUrl.startsWith(Constants.HTTP)) {
+            return httpUrl.substring(Constants.HTTP.length());
+        } else {
+            return httpUrl;
+        }
     }
 }

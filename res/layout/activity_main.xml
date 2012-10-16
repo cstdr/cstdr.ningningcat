@@ -9,32 +9,20 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <AutoCompleteTextView
-            android:id="@+id/actv_website"
+        <MultiAutoCompleteTextView
+            android:id="@+id/mactv_website"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="50dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="50dp"
-            android:background="@null"
+            android:background="@android:color/transparent"
             android:hint="@string/website_hint"
             android:inputType="textWebEditText"
             android:selectAllOnFocus="true"
+            android:textColor="#000000"
             android:textColorHighlight="#0099CC" />
-        <!--
-              <EditText
-            android:id="@+id/et_website"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="50dp"
-            android:background="@null"
-            android:hint="@string/website_hint"
-            android:inputType="textWebEditText"
-            android:selectAllOnFocus="true"
-            android:textColorHighlight="#0099CC" />
-        -->
+        <!-- android:background="@null" -->
 
         <ImageView
             android:id="@+id/iv_goto"
@@ -42,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/actv_website"
+            android:layout_toLeftOf="@id/mactv_website"
             android:src="@drawable/icon" />
     </RelativeLayout>
 

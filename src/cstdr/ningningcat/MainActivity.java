@@ -1,6 +1,8 @@
 package cstdr.ningningcat;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -35,10 +37,12 @@ import android.webkit.WebSettings.PluginState;
 import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
@@ -61,7 +65,7 @@ public class MainActivity extends Activity {
 
     private FavoriteActivity mFavorite;
 
-    private AutoCompleteTextView mWebsite=null;
+    private MultiAutoCompleteTextView mWebsite=null;
 
     private ImageView mGoto=null;
 
@@ -88,6 +92,12 @@ public class MainActivity extends Activity {
     private boolean isNetworkMode=false;
 
     private boolean isWebError=false;
+
+    private static WebBackForwardList mWebBackForwardList;
+
+    private static ArrayAdapter<String> mAutoCompleteAdapter;
+
+    private static List<String> mHistoryUrlList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -149,7 +159,7 @@ public class MainActivity extends Activity {
     private void initView() {
 
         /** EditText输入框的配置 **/
-        mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
+        mWebsite=(MultiAutoCompleteTextView)findViewById(R.id.mactv_website);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -163,6 +173,25 @@ public class MainActivity extends Activity {
                     return true;
                 }
                 return false;
+            }
+        });
+        mAutoCompleteAdapter=new ArrayAdapter<String>(mContext, R.layout.list_autocomplete);
+        mHistoryUrlList=new LinkedList<String>();
+        mWebsite.setThreshold(1); // 最小匹配字符为1个字符
+        mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer()); // 用户必须提供一个MultiAutoCompleteTextView.Tokenizer用来区分不同的子串
+        mWebsite.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWebsite.requestFocus();
+            }
+        });
+        mWebsite.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
+                String url=(String)adapter.getItemAtPosition(position);
+                loadUrl(UrlUtil.url2HttpUrl(url));
             }
         });
 
@@ -196,7 +225,7 @@ public class MainActivity extends Activity {
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
         mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
-        mWebSettings.setSaveFormData(true); // TODO 保存表单数据，但是显示字体为白色
+        mWebSettings.setSaveFormData(true); // O
         mWebSettings.setSavePassword(true); // 保存密码
 
         /** WebView配置 **/
@@ -315,7 +344,8 @@ public class MainActivity extends Activity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             hideInputWindow(view);
-            mWebsite.setText(url.substring(getString(R.string.http).length())); // url除去协议http://
+            mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http://
+            // mWebsite.setText(url);
             mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
         }
@@ -522,14 +552,15 @@ public class MainActivity extends Activity {
      * 得到浏览历史记录 TODO
      */
     private void setAutoComplete() {
-        WebBackForwardList list=mWebView.copyBackForwardList();
+        mWebBackForwardList=mWebView.copyBackForwardList();
         String url;
-        ArrayAdapter<String> adapter=new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
-        for(int i=0; i < list.getSize(); i++) {
-            url=list.getItemAtIndex(i).getOriginalUrl();
-            adapter.add(url);
+        for(int i=0; i < mWebBackForwardList.getSize(); i++) {
+            url=mWebBackForwardList.getItemAtIndex(i).getUrl();
+            if(!mHistoryUrlList.contains(url)) {
+                mHistoryUrlList.add(url);
+                mAutoCompleteAdapter.add(UrlUtil.httpUrl2url(url));
+            }
         }
-        mWebsite.setAdapter(adapter);
+        mWebsite.setAdapter(mAutoCompleteAdapter);
     }
-
 }

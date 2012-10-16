@@ -20,10 +20,10 @@ public final class R {
         public static final int icon=0x7f020002;
     }
     public static final class id {
-        public static final int actv_website=0x7f090001;
         public static final int iv_goto=0x7f090002;
         public static final int iv_web_icon=0x7f090007;
         public static final int ll_favorites=0x7f090005;
+        public static final int mactv_website=0x7f090001;
         public static final int menu_add=0x7f09000b;
         public static final int menu_exit=0x7f09000d;
         public static final int menu_favorite=0x7f09000c;
@@ -38,7 +38,8 @@ public final class R {
     public static final class layout {
         public static final int activity_main=0x7f030000;
         public static final int cover=0x7f030001;
-        public static final int list_favorite=0x7f030002;
+        public static final int list_autocomplete=0x7f030002;
+        public static final int list_favorite=0x7f030003;
     }
     public static final class menu {
         public static final int activity_main=0x7f080000;
