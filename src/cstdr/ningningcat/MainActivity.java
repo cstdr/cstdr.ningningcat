@@ -9,7 +9,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -28,6 +27,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.webkit.CacheManager;
 import android.webkit.DownloadListener;
 import android.webkit.JsResult;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
@@ -35,6 +35,8 @@ import android.webkit.WebSettings.PluginState;
 import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
 
     private FavoriteActivity mFavorite;
 
-    private EditText mWebsite=null;
+    private AutoCompleteTextView mWebsite=null;
 
     private ImageView mGoto=null;
 
@@ -147,7 +149,7 @@ public class MainActivity extends Activity {
     private void initView() {
 
         /** EditText输入框的配置 **/
-        mWebsite=(EditText)findViewById(R.id.et_website);
+        mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -179,6 +181,7 @@ public class MainActivity extends Activity {
         /** WebSettings配置 **/
         mWebSettings=mWebView.getSettings();
         mWebSettings.setJavaScriptEnabled(true); // 支持JavaScript
+        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true); // JS打开新窗口
         mWebSettings.setBuiltInZoomControls(true); // 支持页面放大缩小按钮
         mWebSettings.setSupportZoom(true);
         // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
@@ -192,6 +195,9 @@ public class MainActivity extends Activity {
         mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
         mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
+        // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
+        mWebSettings.setSaveFormData(true); // TODO 保存表单数据，但是显示字体为白色
+        mWebSettings.setSavePassword(true); // 保存密码
 
         /** WebView配置 **/
         mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
@@ -205,9 +211,9 @@ public class MainActivity extends Activity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if(mWebsite.hasFocus()) {
+                if(!mWebView.hasFocus() || mWebsite.hasFocus()) {
                     mWebsite.clearFocus();
-                    mWebView.requestFocusFromTouch(); // 不能用requestForcus()，焦点会乱跑
+                    mWebView.requestFocusFromTouch(); // 不能用requestFocus()，焦点会乱跑
                 }
                 return false;
             }
@@ -225,7 +231,7 @@ public class MainActivity extends Activity {
      * 跳转到在EditText中输入的网址
      */
     private void gotoByEditText() {
-        mEditUrl=mWebsite.getText().toString(); // TODO 需要加一个输入内容的检查方法
+        mEditUrl=mWebsite.getText().toString().trim();
         String url=UrlUtil.checkEditUrl(mEditUrl); // 只有用户输入的URL才应该检查
         loadUrl(url);
     }
@@ -341,6 +347,7 @@ public class MainActivity extends Activity {
                     mWebView.setVisibility(View.VISIBLE);
                 }
             }
+            setAutoComplete(); // TODO 这个位置需要考虑
             setWebError(false);
             super.onPageFinished(view, url);
         }
@@ -376,7 +383,7 @@ public class MainActivity extends Activity {
             case R.id.menu_refresh: // 刷新
                 loadUrl(mCurrentUrl);
                 break;
-            case R.id.menu_add: // 添加收藏 TODO 判断数据库是否已有相同数据
+            case R.id.menu_add: // 添加收藏
                 mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
                 break;
             case R.id.menu_favorite: // 查看已收藏页面
@@ -415,6 +422,7 @@ public class MainActivity extends Activity {
      * 退出前处理数据
      */
     private void exit() {
+        hideInputWindow(mWebView);
         saveIndexToSP(mCurrentUrl);
         clearCache();
         finish();
@@ -431,12 +439,6 @@ public class MainActivity extends Activity {
         }
         deleteDatabase("webview.db");
         deleteDatabase("webviewCache.db");
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        // TODO 切换提示
-        super.onConfigurationChanged(newConfig);
     }
 
     public Context getContext() {
@@ -514,6 +516,20 @@ public class MainActivity extends Activity {
     private void hideInputWindow(final View v) {
         InputMethodManager imm=(InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+    }
+
+    /**
+     * 得到浏览历史记录 TODO
+     */
+    private void setAutoComplete() {
+        WebBackForwardList list=mWebView.copyBackForwardList();
+        String url;
+        ArrayAdapter<String> adapter=new ArrayAdapter<String>(mContext, android.R.layout.simple_dropdown_item_1line);
+        for(int i=0; i < list.getSize(); i++) {
+            url=list.getItemAtIndex(i).getOriginalUrl();
+            adapter.add(url);
+        }
+        mWebsite.setAdapter(adapter);
     }
 
 }

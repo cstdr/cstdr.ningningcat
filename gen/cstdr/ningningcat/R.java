@@ -20,7 +20,7 @@ public final class R {
         public static final int icon=0x7f020002;
     }
     public static final class id {
-        public static final int et_website=0x7f090001;
+        public static final int actv_website=0x7f090001;
         public static final int iv_goto=0x7f090002;
         public static final int iv_web_icon=0x7f090007;
         public static final int ll_favorites=0x7f090005;
