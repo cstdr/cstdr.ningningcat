@@ -9,8 +9,8 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" >
 
-        <MultiAutoCompleteTextView
-            android:id="@+id/mactv_website"
+        <AutoCompleteTextView
+            android:id="@+id/actv_website"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:layout_centerVertical="true"
@@ -30,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@id/mactv_website"
+            android:layout_toLeftOf="@id/actv_website"
             android:src="@drawable/icon" />
     </RelativeLayout>
 

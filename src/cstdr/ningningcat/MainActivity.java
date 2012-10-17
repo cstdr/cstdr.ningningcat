@@ -40,9 +40,9 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
@@ -65,7 +65,7 @@ public class MainActivity extends Activity {
 
     private FavoriteActivity mFavorite;
 
-    private MultiAutoCompleteTextView mWebsite=null;
+    private AutoCompleteTextView mWebsite=null;
 
     private ImageView mGoto=null;
 
@@ -159,7 +159,7 @@ public class MainActivity extends Activity {
     private void initView() {
 
         /** EditText输入框的配置 **/
-        mWebsite=(MultiAutoCompleteTextView)findViewById(R.id.mactv_website);
+        mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -178,7 +178,8 @@ public class MainActivity extends Activity {
         mAutoCompleteAdapter=new ArrayAdapter<String>(mContext, R.layout.list_autocomplete);
         mHistoryUrlList=new LinkedList<String>();
         mWebsite.setThreshold(1); // 最小匹配字符为1个字符
-        mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer()); // 用户必须提供一个MultiAutoCompleteTextView.Tokenizer用来区分不同的子串
+        // mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer()); //
+        // 用户必须提供一个MultiAutoCompleteTextView.Tokenizer用来区分不同的子串
         mWebsite.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -191,6 +192,9 @@ public class MainActivity extends Activity {
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
                 String url=(String)adapter.getItemAtPosition(position);
+                if(LOG.DEBUG) {
+                    LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2url(url));
+                }
                 loadUrl(UrlUtil.url2HttpUrl(url));
             }
         });
@@ -270,6 +274,7 @@ public class MainActivity extends Activity {
      * @param url
      */
     private void loadUrl(String url) {
+        hideInputWindow(mWebView);
         if(url != null) {
             mWebView.loadUrl(url);
         } else {
@@ -343,9 +348,10 @@ public class MainActivity extends Activity {
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
-            hideInputWindow(view);
+            if(LOG.DEBUG) {
+                LOG.cstdr("onPageStarted -> " + UrlUtil.httpUrl2url(url));
+            }
             mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http://
-            // mWebsite.setText(url);
             mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
         }
@@ -558,6 +564,9 @@ public class MainActivity extends Activity {
             url=mWebBackForwardList.getItemAtIndex(i).getUrl();
             if(!mHistoryUrlList.contains(url)) {
                 mHistoryUrlList.add(url);
+                if(LOG.DEBUG) {
+                    LOG.cstdr("setAutoComplete -> " + UrlUtil.httpUrl2url(url));
+                }
                 mAutoCompleteAdapter.add(UrlUtil.httpUrl2url(url));
             }
         }
