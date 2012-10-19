@@ -6,6 +6,9 @@ import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.LinearLayout;
 
 /**
  * 封面页
@@ -18,6 +21,10 @@ public class CoverActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.cover);
+        LinearLayout cover=(LinearLayout)findViewById(R.id.ll_cover);
+        cover.setBackgroundResource(R.drawable.cover);
+        Animation animCover=AnimationUtils.loadAnimation(this, android.R.anim.fade_in); // 简单的渐进动画效果，显示更平滑
+        cover.setAnimation(animCover);
 
         new Handler().postDelayed(new Runnable() {
 
