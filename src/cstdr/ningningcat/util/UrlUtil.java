@@ -1,6 +1,5 @@
 package cstdr.ningningcat.util;
 
-import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
 
 /**
