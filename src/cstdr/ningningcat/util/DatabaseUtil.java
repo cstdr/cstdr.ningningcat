@@ -1,6 +1,7 @@
 package cstdr.ningningcat.util;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteDatabase.CursorFactory;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -63,6 +64,16 @@ public class DatabaseUtil extends SQLiteOpenHelper {
         dbHelper.getWritableDatabase().execSQL(sql);
 
         dbHelper.close();
+    }
+
+    /**
+     * 使用完游标后及时关闭
+     * @param cursor
+     */
+    public static void closeCursor(Cursor cursor) {
+        if(cursor != null) {
+            cursor.close();
+        }
     }
 
 }

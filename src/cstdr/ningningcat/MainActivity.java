@@ -34,7 +34,6 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
-import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -102,7 +101,6 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS); //
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
@@ -114,12 +112,11 @@ public class MainActivity extends Activity {
 
         initView();
         initSharedPreferences();
-        // if(!NetworkUtil.checkNetwork(mContext)) {
-        // DialogUtil.showNoConnectDialog(this);
-        // }
 
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
-        loadUrl(mCurrentUrl); // 加载首页
+
+        onNewIntent(getIntent());
+
     }
 
     /**
@@ -327,15 +324,6 @@ public class MainActivity extends Activity {
             return true;
         }
 
-        /**
-         * TODO 没有效果
-         */
-        @Override
-        public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
-            ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size));
-            super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
-        }
-
     }
 
     class MyWebViewClient extends WebViewClient {
@@ -354,12 +342,6 @@ public class MainActivity extends Activity {
             mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http://
             mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
-        }
-
-        @Override
-        public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
-            // TODO Auto-generated method stub
-            super.doUpdateVisitedHistory(view, url, isReload);
         }
 
         @Override
@@ -397,11 +379,14 @@ public class MainActivity extends Activity {
 
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+            if(LOG.DEBUG) {
+                LOG.cstdr("MyDownloadListener : mimetype -> " + mimetype);
+            }
+            Intent intent=new Intent(Intent.ACTION_VIEW);
             Uri uri=Uri.parse(url);
-            Intent intent=new Intent(Intent.ACTION_VIEW, uri);
+            intent.setDataAndType(uri, mimetype);
             startActivity(intent);
         }
-
     }
 
     @Override
@@ -555,7 +540,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 得到浏览历史记录 TODO
+     * 得到浏览历史记录
      */
     private void setAutoComplete() {
         mWebBackForwardList=mWebView.copyBackForwardList();
@@ -571,5 +556,18 @@ public class MainActivity extends Activity {
             }
         }
         mWebsite.setAdapter(mAutoCompleteAdapter);
+    }
+
+    /**
+     * 因为singleTask模式，启动时会调用此类 TODO
+     */
+    @Override
+    protected void onNewIntent(Intent intent) {
+        Uri uri=intent.getData();
+        if(uri != null) {
+            loadUrl(uri.getPath());
+        } else {
+            loadUrl(mCurrentUrl); // 加载首页
+        }
     }
 }

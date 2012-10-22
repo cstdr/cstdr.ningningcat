@@ -123,17 +123,22 @@ public class FavoriteActivity extends ListActivity {
      */
     private List<Map<String, Object>> getFavoriteList() {
         mFavoriteList=new ArrayList<Map<String, Object>>();
-        Cursor cursor=
-            mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null, null,
-                null, null);
+        Cursor cursor=null;
+        try {
+            cursor=
+                mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null,
+                    null, null, null);
 
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            Map<String, Object> map=new HashMap<String, Object>();
-            String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
-            String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
-            map.put(DatabaseUtil.COLUMN_TITLE, webTitle);
-            map.put(DatabaseUtil.COLUMN_URL, webUrl);
-            mFavoriteList.add(map);
+            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                Map<String, Object> map=new HashMap<String, Object>();
+                String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
+                String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
+                map.put(DatabaseUtil.COLUMN_TITLE, webTitle);
+                map.put(DatabaseUtil.COLUMN_URL, webUrl);
+                mFavoriteList.add(map);
+            }
+        } finally {
+            DatabaseUtil.closeCursor(cursor);
         }
         return mFavoriteList;
 
@@ -145,11 +150,16 @@ public class FavoriteActivity extends ListActivity {
      * @return
      */
     private boolean hasUrlInDB(String url) {
-        Cursor cursor=mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
-        for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-            if(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL)).equals(url)) {
-                return true;
+        Cursor cursor=null;
+        try {
+            cursor=mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
+            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                if(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL)).equals(url)) {
+                    return true;
+                }
             }
+        } finally {
+            DatabaseUtil.closeCursor(cursor);
         }
         return false;
     }
