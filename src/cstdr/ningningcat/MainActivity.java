@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
@@ -43,8 +44,10 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import cstdr.ningningcat.receiver.BrowseReceiver;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
+import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
@@ -68,7 +71,7 @@ public class MainActivity extends Activity {
 
     private ImageView mGoto=null;
 
-    private WebView mWebView=null;
+    private MyWebView mWebView=null;
 
     private WebView mNotifyWebView=null;
 
@@ -115,7 +118,7 @@ public class MainActivity extends Activity {
 
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
 
-        onNewIntent(getIntent());
+        processData();
 
     }
 
@@ -177,11 +180,14 @@ public class MainActivity extends Activity {
         mWebsite.setThreshold(1); // 最小匹配字符为1个字符
         // mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer()); //
         // 用户必须提供一个MultiAutoCompleteTextView.Tokenizer用来区分不同的子串
-        mWebsite.setOnClickListener(new OnClickListener() {
+        mWebsite.setOnFocusChangeListener(new OnFocusChangeListener() {
 
             @Override
-            public void onClick(View v) {
-                mWebsite.requestFocus();
+            public void onFocusChange(View v, boolean hasFocus) {
+                // 设置点击后全选
+                if(hasFocus) {
+                    mWebsite.setSelection(0, mWebsite.getText().length());
+                }
             }
         });
         mWebsite.setOnItemClickListener(new OnItemClickListener() {
@@ -206,7 +212,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        mWebView=(WebView)findViewById(R.id.wv_web);
+        mWebView=(MyWebView)findViewById(R.id.wv_web);
 
         /** WebSettings配置 **/
         mWebSettings=mWebView.getSettings();
@@ -255,6 +261,24 @@ public class MainActivity extends Activity {
         /** 提示页面 **/
         mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
         mNotifyWebView.setVisibility(View.GONE);
+    }
+
+    /**
+     * 自定义WebView类
+     * @author ran.ding@downjoy.com
+     */
+    public class MyWebView extends WebView {
+
+        public MyWebView(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+            super.onScrollChanged(l, t, oldl, oldt);
+            
+        }
+
     }
 
     /**
@@ -398,7 +422,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(LOG.DEBUG) {
-            LOG.cstdr("itemId = " + item.getItemId());
+            // LOG.cstdr("itemId = " + item.getItemId());
         }
         switch(item.getItemId()) {
             case R.id.menu_refresh: // 刷新
@@ -563,11 +587,39 @@ public class MainActivity extends Activity {
      */
     @Override
     protected void onNewIntent(Intent intent) {
-        Uri uri=intent.getData();
-        if(uri != null) {
-            loadUrl(uri.getPath());
+        setIntent(intent);
+        processData();
+
+    }
+
+    /**
+     * 处理intent传来的数据
+     * @param intent
+     */
+    private void processData() {
+        Intent intent=getIntent();
+        String action=intent.getAction();
+        if(LOG.DEBUG) {
+            LOG.cstdr("processData : action =  " + action);
+        }
+        if(action != null) {
+            if(action.equals(GotoReceiver.ACTION_GOTO)) {
+                String url=intent.getStringExtra(DatabaseUtil.COLUMN_URL);
+                loadUrl(url);
+            } else if(action.equals(BrowseReceiver.ACTION_BROWSE)) {
+                Uri uri=intent.getData();
+                if(LOG.DEBUG) {
+                    LOG.cstdr("processData : uri =  " + uri);
+                }
+                if(uri != null) {
+                    loadUrl(uri.getPath());
+                } else {
+                    loadUrl(mCurrentUrl); // 加载首页
+                }
+            }
         } else {
             loadUrl(mCurrentUrl); // 加载首页
         }
+
     }
 }

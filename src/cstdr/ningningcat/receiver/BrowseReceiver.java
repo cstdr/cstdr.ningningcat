@@ -6,12 +6,12 @@ import android.content.Intent;
 import cstdr.ningningcat.MainActivity;
 
 /**
- * 页面跳转Receiver
+ * 接收系统上网广播Receiver
  * @author cstdingran@gmail.com
  */
-public class GotoReceiver extends BroadcastReceiver {
+public class BrowseReceiver extends BroadcastReceiver {
 
-    public static final String ACTION_GOTO="cstdr.ningningcat.ACTION_GOTO";
+    public static final String ACTION_BROWSE="android.intent.action.VIEW";
 
     @Override
     public void onReceive(Context context, Intent intent) {
