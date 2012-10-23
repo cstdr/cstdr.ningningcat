@@ -25,6 +25,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CacheManager;
@@ -43,6 +45,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import cstdr.ningningcat.receiver.BrowseReceiver;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
@@ -53,6 +56,8 @@ import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UrlUtil;
+import cstdr.ningningcat.widget.MyWebView;
+import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
 
 /**
  * 宁宁猫主界面
@@ -66,6 +71,8 @@ public class MainActivity extends Activity {
     private static MainActivity mInstance;
 
     private FavoriteActivity mFavorite;
+
+    private RelativeLayout mWebsiteNavigation;
 
     private AutoCompleteTextView mWebsite=null;
 
@@ -157,6 +164,10 @@ public class MainActivity extends Activity {
     }
 
     private void initView() {
+
+        /** RelativeLayout导航栏 **/
+        mWebsiteNavigation=(RelativeLayout)findViewById(R.id.rl_website_navigation);
+        mWebsiteNavigation.setVisibility(View.VISIBLE);
 
         /** EditText输入框的配置 **/
         mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
@@ -254,6 +265,25 @@ public class MainActivity extends Activity {
                 return false;
             }
         });
+        mWebView.setOnScrollChangedListener(new ScrollInterface() {
+
+            @Override
+            public void onScrollChange(int l, int t, int oldl, int oldt) {
+                if((t - oldt) > 50) {
+                    if(mWebsiteNavigation.isShown()) {
+                        Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
+                        mWebsiteNavigation.startAnimation(animation);
+                        mWebsiteNavigation.setVisibility(View.GONE);
+                    }
+                } else if((oldt - t) > 50) {
+                    if(!mWebsiteNavigation.isShown()) {
+                        Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+                        mWebsiteNavigation.startAnimation(animation);
+                        mWebsiteNavigation.setVisibility(View.VISIBLE);
+                    }
+                }
+            }
+        });
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setDownloadListener(new MyDownloadListener());
@@ -267,19 +297,6 @@ public class MainActivity extends Activity {
      * 自定义WebView类
      * @author ran.ding@downjoy.com
      */
-    public class MyWebView extends WebView {
-
-        public MyWebView(Context context) {
-            super(context);
-        }
-
-        @Override
-        protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-            super.onScrollChanged(l, t, oldl, oldt);
-            
-        }
-
-    }
 
     /**
      * 跳转到在EditText中输入的网址
