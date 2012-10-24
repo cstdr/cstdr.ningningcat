@@ -266,23 +266,23 @@ public class MainActivity extends Activity {
         });
         mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
 
-            @Override
-            public void onScrollChange(int l, int t, int oldl, int oldt) {
-                if((t - oldt) > 20) {
-                    if(mWebsiteNavigation.isShown()) {
-                        mWebsiteNavigation.setVisibility(View.GONE);
-                        Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
-                        mWebsiteNavigation.startAnimation(animation);
-                    }
-                } else if((oldt - t) > 20) {
-                    if(!mWebsiteNavigation.isShown()) {
-                        mWebsiteNavigation.setVisibility(View.VISIBLE);
-                        Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
-                        mWebsiteNavigation.startAnimation(animation);
+                @Override
+                public void onScrollChange(int l, int t, int oldl, int oldt) {
+                    if((t - oldt) > 20) {
+                        if(mWebsiteNavigation.isShown()) {
+                            mWebsiteNavigation.setVisibility(View.GONE);
+                            Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
+                            mWebsiteNavigation.startAnimation(animation);
+                        }
+                    } else if((oldt - t) > 20) {
+                        if(!mWebsiteNavigation.isShown()) {
+                            mWebsiteNavigation.setVisibility(View.VISIBLE);
+                            Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+                            mWebsiteNavigation.startAnimation(animation);
+                        }
                     }
                 }
-            }
-        });
+            });
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setDownloadListener(new MyDownloadListener());
@@ -424,8 +424,13 @@ public class MainActivity extends Activity {
             }
             Intent intent=new Intent(Intent.ACTION_VIEW);
             Uri uri=Uri.parse(url);
-            intent.setDataAndType(uri, mimetype);
-            startActivity(intent);
+            intent.setData(uri);
+            if(mimetype.equals("application/vnd.android.package-archive")) { // 下载链接时调用系统浏览器下载
+                startActivity(intent);
+            } else {
+                intent.setType(mimetype);
+                startActivity(intent);
+            }
         }
     }
 
