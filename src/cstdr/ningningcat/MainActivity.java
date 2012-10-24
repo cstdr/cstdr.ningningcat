@@ -377,7 +377,7 @@ public class MainActivity extends Activity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if(LOG.DEBUG) {
-                LOG.cstdr("onPageStarted -> " + UrlUtil.httpUrl2url(url));
+                LOG.cstdr("onPageStarted -> url = " + url);
             }
             mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http://
             mCurrentUrl=url;
@@ -424,11 +424,11 @@ public class MainActivity extends Activity {
             }
             Intent intent=new Intent(Intent.ACTION_VIEW);
             Uri uri=Uri.parse(url);
-            intent.setData(uri);
             if(mimetype.equals("application/vnd.android.package-archive")) { // 下载链接时调用系统浏览器下载
+                intent.setData(uri);
                 startActivity(intent);
             } else {
-                intent.setType(mimetype);
+                intent.setDataAndType(uri, mimetype); // 只用setType方法会清除先前放入的data数据
                 startActivity(intent);
             }
         }
