@@ -47,7 +47,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import cstdr.ningningcat.receiver.BrowseReceiver;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -269,17 +268,17 @@ public class MainActivity extends Activity {
 
             @Override
             public void onScrollChange(int l, int t, int oldl, int oldt) {
-                if((t - oldt) > 50) {
+                if((t - oldt) > 20) {
                     if(mWebsiteNavigation.isShown()) {
                         Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
                         mWebsiteNavigation.startAnimation(animation);
-                        mWebsiteNavigation.setVisibility(View.GONE);
+                        // mWebsiteNavigation.setVisibility(View.GONE);
                     }
-                } else if((oldt - t) > 50) {
+                } else if((oldt - t) > 20) {
                     if(!mWebsiteNavigation.isShown()) {
                         Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
                         mWebsiteNavigation.startAnimation(animation);
-                        mWebsiteNavigation.setVisibility(View.VISIBLE);
+                        // mWebsiteNavigation.setVisibility(View.VISIBLE);
                     }
                 }
             }
@@ -600,7 +599,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 因为singleTask模式，启动时会调用此类 TODO
+     * 因为singleTask模式，启动时会调用此类
      */
     @Override
     protected void onNewIntent(Intent intent) {
@@ -623,15 +622,15 @@ public class MainActivity extends Activity {
             if(action.equals(GotoReceiver.ACTION_GOTO)) {
                 String url=intent.getStringExtra(DatabaseUtil.COLUMN_URL);
                 loadUrl(url);
-            } else if(action.equals(BrowseReceiver.ACTION_BROWSE)) {
+            } else if(action.equals(GotoReceiver.ACTION_VIEW)) { // TODO
                 Uri uri=intent.getData();
                 if(LOG.DEBUG) {
                     LOG.cstdr("processData : uri =  " + uri);
                 }
                 if(uri != null) {
-                    loadUrl(uri.getPath());
+                    loadUrl(UrlUtil.url2HttpUrl(uri.toString()));
                 } else {
-                    loadUrl(mCurrentUrl); // 加载首页
+                    loadUrl(getString(R.string.index)); // 加载首页
                 }
             }
         } else {
