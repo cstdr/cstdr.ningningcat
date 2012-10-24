@@ -26,6 +26,7 @@ import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.Window;
 import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
@@ -91,6 +92,8 @@ public class MainActivity extends Activity {
 
     private long mLastBackPressTimeMillis=0L;
 
+    private long mLastScrollTimeMillis=0L;
+
     private SharedPreferences mSp=null;
 
     private BroadcastReceiver mConnectitvityReceiver=null;
@@ -106,6 +109,10 @@ public class MainActivity extends Activity {
     private static ArrayAdapter<String> mAutoCompleteAdapter;
 
     private static List<String> mHistoryUrlList;
+
+    private Animation animFadeOut;
+
+    private Animation animFadeIn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -167,6 +174,42 @@ public class MainActivity extends Activity {
         /** RelativeLayout导航栏 **/
         mWebsiteNavigation=(RelativeLayout)findViewById(R.id.rl_website_navigation);
         mWebsiteNavigation.setVisibility(View.VISIBLE);
+        animFadeOut=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
+        animFadeIn=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
+        animFadeOut.setAnimationListener(new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mWebsiteNavigation.setVisibility(View.GONE);
+            }
+        });
+        animFadeIn.setAnimationListener(new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mWebsiteNavigation.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+        });
+        // animFadeOut.setFillAfter(true);
+        // animFadeOut.setFillBefore(false);
+        // animFadeIn.setFillAfter(true);
+        // animFadeIn.setFillBefore(false);
 
         /** EditText输入框的配置 **/
         mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
@@ -242,7 +285,7 @@ public class MainActivity extends Activity {
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
         mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
-        mWebSettings.setSaveFormData(true); // O
+        mWebSettings.setSaveFormData(true); // 保存表单数据
         mWebSettings.setSavePassword(true); // 保存密码
 
         /** WebView配置 **/
@@ -268,17 +311,15 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onScrollChange(int l, int t, int oldl, int oldt) {
-                    if((t - oldt) > 20) {
-                        if(mWebsiteNavigation.isShown()) {
-                            mWebsiteNavigation.setVisibility(View.GONE);
-                            Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
-                            mWebsiteNavigation.startAnimation(animation);
+                    if((t - oldt) > 10) {
+                        if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                            mWebsiteNavigation.startAnimation(animFadeOut);
+                            mLastScrollTimeMillis=System.currentTimeMillis();
                         }
-                    } else if((oldt - t) > 20) {
-                        if(!mWebsiteNavigation.isShown()) {
-                            mWebsiteNavigation.setVisibility(View.VISIBLE);
-                            Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
-                            mWebsiteNavigation.startAnimation(animation);
+                    } else if((oldt - t) > 10) {
+                        if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                            mWebsiteNavigation.startAnimation(animFadeIn);
+                            mLastScrollTimeMillis=System.currentTimeMillis();
                         }
                     }
                 }
