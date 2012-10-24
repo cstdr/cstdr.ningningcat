@@ -264,21 +264,21 @@ public class MainActivity extends Activity {
                 return false;
             }
         });
-        mWebView.setOnScrollChangedListener(new ScrollInterface() {
+        mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
 
             @Override
             public void onScrollChange(int l, int t, int oldl, int oldt) {
                 if((t - oldt) > 20) {
                     if(mWebsiteNavigation.isShown()) {
+                        mWebsiteNavigation.setVisibility(View.GONE);
                         Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
                         mWebsiteNavigation.startAnimation(animation);
-                        // mWebsiteNavigation.setVisibility(View.GONE);
                     }
                 } else if((oldt - t) > 20) {
                     if(!mWebsiteNavigation.isShown()) {
+                        mWebsiteNavigation.setVisibility(View.VISIBLE);
                         Animation animation=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
                         mWebsiteNavigation.startAnimation(animation);
-                        // mWebsiteNavigation.setVisibility(View.VISIBLE);
                     }
                 }
             }
