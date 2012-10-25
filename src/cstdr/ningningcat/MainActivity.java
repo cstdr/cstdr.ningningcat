@@ -38,6 +38,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
+import android.webkit.WebStorage.QuotaUpdater;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
@@ -48,6 +49,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -275,10 +277,10 @@ public class MainActivity extends Activity {
         mWebSettings.setSupportZoom(true);
         // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
         mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
-        // mWebSettings.setAppCacheEnabled(false); // 支持缓存
-        // mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
-        // mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
+        mWebSettings.setAppCacheEnabled(true); // 支持缓存
+        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
         mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
+        mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
         mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
         mWebSettings.setPluginsEnabled(true);
         mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
@@ -403,6 +405,12 @@ public class MainActivity extends Activity {
         public boolean onJsTimeout() {
             ToastUtil.shortToast(mContext, getString(R.string.msg_timeout));
             return true;
+        }
+
+        @Override
+        public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
+            ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size)); // TODO
+            super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
         }
 
     }
