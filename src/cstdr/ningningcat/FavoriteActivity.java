@@ -220,7 +220,7 @@ public class FavoriteActivity extends ListActivity {
                 holder=(ViewHolder)convertView.getTag();
             }
 
-            holder.webIcon.setBackgroundResource(R.drawable.icon);
+            holder.webIcon.setBackgroundResource(R.drawable.go); // TODO 这里写死了
             holder.webTitle.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_TITLE));
             holder.webUrl.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL));
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.R.color;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -12,6 +13,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -32,6 +34,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.webkit.CacheManager;
 import android.webkit.DownloadListener;
+import android.webkit.GeolocationPermissions.Callback;
 import android.webkit.JsResult;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
@@ -175,7 +178,6 @@ public class MainActivity extends Activity {
 
         /** RelativeLayout导航栏 **/
         mWebsiteNavigation=(RelativeLayout)findViewById(R.id.rl_website_navigation);
-        mWebsiteNavigation.setVisibility(View.VISIBLE);
         animFadeOut=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
         animFadeIn=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
         animFadeOut.setAnimationListener(new AnimationListener() {
@@ -289,6 +291,7 @@ public class MainActivity extends Activity {
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
         mWebSettings.setSaveFormData(true); // 保存表单数据
         mWebSettings.setSavePassword(true); // 保存密码
+        mWebSettings.setGeolocationEnabled(true); // 设置定位
 
         /** WebView配置 **/
         mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
@@ -411,6 +414,12 @@ public class MainActivity extends Activity {
         public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
             ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size)); // TODO
             super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
+        }
+
+        @Override
+        public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
+            callback.invoke(origin, true, false);
+            super.onGeolocationPermissionsShowPrompt(origin, callback);
         }
 
     }

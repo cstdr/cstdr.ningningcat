@@ -7,19 +7,19 @@
     <RelativeLayout
         android:id="@+id/rl_website_navigation"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:background="#00000000" >
 
         <AutoCompleteTextView
             android:id="@+id/actv_website"
             android:layout_width="fill_parent"
-            android:layout_height="50dp"
+            android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="50dp"
-            android:background="@android:color/transparent"
+            android:background="#00000000"
             android:hint="@string/website_hint"
             android:inputType="textWebEditText"
-            android:selectAllOnFocus="true"
             android:textColor="#000000"
             android:textColorHighlight="#0099CC" />
         <!-- android:background="@null" -->
@@ -31,7 +31,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/actv_website"
-            android:src="@drawable/icon" />
+            android:src="@drawable/go" />
     </RelativeLayout>
 
     <cstdr.ningningcat.widget.MyWebView
