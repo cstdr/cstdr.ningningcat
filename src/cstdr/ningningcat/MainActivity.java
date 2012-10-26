@@ -480,7 +480,9 @@ public class MainActivity extends Activity {
             }
             Intent intent=new Intent(Intent.ACTION_VIEW);
             Uri uri=Uri.parse(url);
-            if(mimetype.equals("application/vnd.android.package-archive")) { // 下载链接时调用系统浏览器下载
+            // 下载链接时调用系统浏览器下载 TODO
+            if(mimetype.equals("application/vnd.android.package-archive")) {
+                ToastUtil.longToast(mContext, getString(R.string.msg_download));
                 intent.setData(uri);
                 startActivity(intent);
             } else {
@@ -499,7 +501,7 @@ public class MainActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(LOG.DEBUG) {
-            // LOG.cstdr("itemId = " + item.getItemId());
+            LOG.cstdr("itemId = " + item.getItemId());
         }
         switch(item.getItemId()) {
             case R.id.menu_refresh: // 刷新

@@ -28,6 +28,7 @@
     <string name="msg_web_insert_same">这个已经收藏过啦！</string>
     <string name="msg_web_delete">丢掉啦！</string>
     <string name="msg_web_delete_confirm">真的要丢掉吗？</string>
+    <string name="msg_download">目前宁宁猫还没有下载功能哦～请先使用其他工具吧:)</string>
     
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>

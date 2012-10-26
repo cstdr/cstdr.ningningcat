@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,7 +22,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -43,6 +43,9 @@ public class FavoriteActivity extends ListActivity {
     private ListAdapter mAdapter=null;
 
     private SQLiteDatabase mDB=null;
+
+    /** 选自谷歌LOGO颜色 **/
+    private int[] mColorArray={Color.BLUE, Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.RED};
 
     public FavoriteActivity() {
         mContext=MainActivity.getInstance().getContext();
@@ -168,7 +171,7 @@ public class FavoriteActivity extends ListActivity {
 
         public RelativeLayout webRL;
 
-        public ImageView webIcon;
+        public TextView webIcon;
 
         public TextView webTitle;
 
@@ -210,7 +213,7 @@ public class FavoriteActivity extends ListActivity {
                 convertView=mInflater.inflate(R.layout.list_favorite, null);
                 // 这里需要convertView.findViewById()，而不能直接是findViewById()，否则会空指针
                 holder.webRL=(RelativeLayout)convertView.findViewById(R.id.rl_favorites);
-                holder.webIcon=(ImageView)convertView.findViewById(R.id.iv_web_icon);
+                holder.webIcon=(TextView)convertView.findViewById(R.id.iv_web_icon);
                 holder.webTitle=(TextView)convertView.findViewById(R.id.tv_web_title);
                 holder.webUrl=(TextView)convertView.findViewById(R.id.tv_web_url);
 
@@ -219,8 +222,9 @@ public class FavoriteActivity extends ListActivity {
             } else {
                 holder=(ViewHolder)convertView.getTag();
             }
-
-            holder.webIcon.setBackgroundResource(R.drawable.go); // TODO 这里写死了
+            // holder.webIcon.setBackgroundResource(R.drawable.go); // TODO 这里写死了
+            // holder.webIcon.setBackgroundColor(0xFF0340FF); // 若控件为ImageView则无效果
+            holder.webIcon.setBackgroundColor(mColorArray[position % 6]);
             holder.webTitle.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_TITLE));
             holder.webUrl.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL));
 

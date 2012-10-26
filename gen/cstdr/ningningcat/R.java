@@ -20,6 +20,10 @@ public final class R {
         public static final int cover=0x7f020000;
         public static final int go=0x7f020001;
         public static final int icon=0x7f020002;
+        public static final int menu_add=0x7f020003;
+        public static final int menu_exit=0x7f020004;
+        public static final int menu_favorite=0x7f020005;
+        public static final int menu_refresh=0x7f020006;
     }
     public static final class id {
         public static final int actv_website=0x7f090001;
@@ -49,8 +53,8 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f060000;
-        public static final int btn_cancel=0x7f06001a;
-        public static final int btn_ok=0x7f060019;
+        public static final int btn_cancel=0x7f06001b;
+        public static final int btn_ok=0x7f06001a;
         public static final int http=0x7f060002;
         public static final int index=0x7f060003;
         public static final int menu_add=0x7f060005;
@@ -59,6 +63,7 @@ public final class R {
         public static final int menu_more=0x7f060008;
         public static final int menu_refresh=0x7f060004;
         public static final int msg_cache_max_size=0x7f06000f;
+        public static final int msg_download=0x7f060019;
         public static final int msg_exit=0x7f06000d;
         public static final int msg_first_launch=0x7f060012;
         public static final int msg_no_connect=0x7f060013;
@@ -70,10 +75,10 @@ public final class R {
         public static final int msg_web_insert=0x7f060014;
         public static final int msg_web_insert_error=0x7f060015;
         public static final int msg_web_insert_same=0x7f060016;
-        public static final int sp_main=0x7f06001b;
-        public static final int spkey_first_launch_time=0x7f06001c;
-        public static final int spkey_index=0x7f06001e;
-        public static final int spkey_last_launch_time=0x7f06001d;
+        public static final int sp_main=0x7f06001c;
+        public static final int spkey_first_launch_time=0x7f06001d;
+        public static final int spkey_index=0x7f06001f;
+        public static final int spkey_last_launch_time=0x7f06001e;
         public static final int title_alert=0x7f060009;
         public static final int title_confirm=0x7f06000a;
         public static final int title_favorite=0x7f06000c;

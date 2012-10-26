@@ -2,18 +2,22 @@
 
     <item
         android:id="@+id/menu_refresh"
-        android:orderInCategory="1"
+        android:icon="@drawable/menu_refresh"
+        android:orderInCategory="2"
         android:title="@string/menu_refresh"/>
     <item
         android:id="@+id/menu_add"
-        android:orderInCategory="2"
+        android:icon="@drawable/menu_add"
+        android:orderInCategory="1"
         android:title="@string/menu_add"/>
     <item
         android:id="@+id/menu_favorite"
+        android:icon="@drawable/menu_favorite"
         android:orderInCategory="3"
         android:title="@string/menu_favorite"/>
     <item
         android:id="@+id/menu_exit"
+        android:icon="@drawable/menu_exit"
         android:orderInCategory="4"
         android:title="@string/menu_exit"/>
     <!--
