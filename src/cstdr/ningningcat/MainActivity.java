@@ -16,6 +16,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Process;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -76,6 +78,8 @@ public class MainActivity extends Activity {
     private FavoriteActivity mFavorite;
 
     private RelativeLayout mWebsiteNavigation;
+
+    private ImageView mAddFavorite=null;
 
     private AutoCompleteTextView mWebsite=null;
 
@@ -213,6 +217,25 @@ public class MainActivity extends Activity {
         // animFadeIn.setFillAfter(true);
         // animFadeIn.setFillBefore(false);
 
+        /** 添加收藏按鈕配置 **/
+        mAddFavorite=(ImageView)findViewById(R.id.iv_add);
+        mAddFavorite.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        Looper.prepare(); // 或使用Handler回调
+                        android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                        mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
+                        Looper.loop();
+                    }
+                }).start();
+            }
+        });
+
         /** EditText输入框的配置 **/
         mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
@@ -314,17 +337,25 @@ public class MainActivity extends Activity {
 
                 @Override
                 public void onScrollChange(int l, int t, int oldl, int oldt) {
-                    if((t - oldt) > 10) {
-                        if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                            mWebsiteNavigation.startAnimation(animFadeOut);
-                            mLastScrollTimeMillis=System.currentTimeMillis();
+                    if(t > 100) { // 从这个位置开始才进行消失判断，防止某些高度低的网页隐藏后无法显示
+                        if((t - oldt) > 5) {
+                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animFadeOut);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        } else if((oldt - t) > 5) {
+                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animFadeIn);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
                         }
-                    } else if((oldt - t) > 10) {
+                    } else {
                         if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
                             mWebsiteNavigation.startAnimation(animFadeIn);
                             mLastScrollTimeMillis=System.currentTimeMillis();
                         }
                     }
+
                 }
             });
         mWebView.setWebChromeClient(new MyWebChromeClient());
@@ -335,11 +366,6 @@ public class MainActivity extends Activity {
         mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
         mNotifyWebView.setVisibility(View.GONE);
     }
-
-    /**
-     * 自定义WebView类
-     * @author ran.ding@downjoy.com
-     */
 
     /**
      * 跳转到在EditText中输入的网址
@@ -410,7 +436,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
-            ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size)); // TODO
+            ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size));
             super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
         }
 
@@ -504,24 +530,39 @@ public class MainActivity extends Activity {
             LOG.cstdr("itemId = " + item.getItemId());
         }
         switch(item.getItemId()) {
-            case R.id.menu_refresh: // 刷新
-                loadUrl(mCurrentUrl);
-                break;
-            case R.id.menu_add: // 添加收藏
-                mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
-                break;
             case R.id.menu_favorite: // 查看已收藏页面
                 Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);
                 startActivity(intent);
                 break;
+            case R.id.menu_share: // 分享
+                share();
+                break;
             case R.id.menu_exit: // 退出
                 exit();
                 break;
-        // case R.id.menu_more: // 更多设置 TODO
-        //
-        // break;
+            case R.id.menu_more: // 更多设置 TODO
+                break;
+            case R.id.menu_report: // 反馈 TODO
+                break;
+            case R.id.menu_update: // 更新
+                break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * 分享 TODO
+     */
+    private void share() {
+        Intent baseIntent=new Intent(Intent.ACTION_SEND);
+        baseIntent.setType("text/plain");
+        baseIntent.putExtra(Intent.EXTRA_SUBJECT, "分享");
+        String content="我通过@宁宁猫浏览器  分享了网页#" + mCurrentTitle + "# " + mCurrentUrl + " ";
+        baseIntent.putExtra(Intent.EXTRA_TEXT, content);
+        
+        Intent shareIntent=Intent.createChooser(baseIntent, "选择你想分享的方式");
+        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(shareIntent);
     }
 
     @Override
@@ -543,14 +584,20 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 退出前处理数据
+     * 退出前处理数据 TODO
      */
     private void exit() {
         hideInputWindow(mWebView);
-        saveIndexToSP(mCurrentUrl);
-        clearCache();
         finish();
-        android.os.Process.killProcess(android.os.Process.myPid());
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                saveIndexToSP(mCurrentUrl);
+                clearCache();
+                android.os.Process.killProcess(android.os.Process.myPid());
+            }
+        }).start();
     }
 
     /**

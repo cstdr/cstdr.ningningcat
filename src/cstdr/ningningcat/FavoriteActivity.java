@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,8 +43,10 @@ public class FavoriteActivity extends ListActivity {
 
     private SQLiteDatabase mDB=null;
 
-    /** 选自谷歌LOGO颜色 **/
-    private int[] mColorArray={Color.BLUE, Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.RED};
+    // /** 选自谷歌LOGO颜色 **/
+    // private int[] mColorArray={Color.BLUE, Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.RED};
+
+    private int[] mColorArray={0xFFa7c7c6, 0xFFe4d9bb, 0xFFfcc4b7, 0xFFdd9598, 0xFFba928a};
 
     public FavoriteActivity() {
         mContext=MainActivity.getInstance().getContext();
@@ -224,7 +225,7 @@ public class FavoriteActivity extends ListActivity {
             }
             // holder.webIcon.setBackgroundResource(R.drawable.go); // TODO 这里写死了
             // holder.webIcon.setBackgroundColor(0xFF0340FF); // 若控件为ImageView则无效果
-            holder.webIcon.setBackgroundColor(mColorArray[position % 6]);
+            holder.webIcon.setBackgroundColor(mColorArray[position % 5]);
             holder.webTitle.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_TITLE));
             holder.webUrl.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL));
 

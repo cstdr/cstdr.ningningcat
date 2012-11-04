@@ -5,11 +5,12 @@
     <string name="http">http://</string>
     <string name="index">http://m.hao123.com/</string>
     
-    <string name="menu_refresh">刷新</string>
-    <string name="menu_add">添加收藏</string>
     <string name="menu_favorite">我的收藏</string>
+    <string name="menu_share">分享</string>
     <string name="menu_exit">拜拜</string>
     <string name="menu_more">More</string>
+    <string name="menu_report">反馈</string>
+    <string name="menu_update">更新宁宁猫</string>
     
     <string name="title_alert">这是页面的提示信息:)</string>
     <string name="title_confirm">这是页面的确认信息:)</string>
