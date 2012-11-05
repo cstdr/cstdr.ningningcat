@@ -18,6 +18,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Process;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -272,11 +274,40 @@ public class MainActivity extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
-                String url=(String)adapter.getItemAtPosition(position);
-                if(LOG.DEBUG) {
-                    LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2url(url));
+                if(position == 0) { // 第一个位置用来百度搜索输入字段
+                    String str=(String)adapter.getItemAtPosition(0);
+                    if(LOG.DEBUG) {
+                        LOG.cstdr("mWebsite.setOnItemClickListener-str=" + str);
+                    }
+                    String searchStr=str.substring(5);
+                    String searchUrl="http://wap.baidu.com/s?word=" + searchStr;
+                    loadUrl(searchUrl);
+                } else {
+                    String url=(String)adapter.getItemAtPosition(position);
+                    if(LOG.DEBUG) {
+                        LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2url(url));
+                    }
+                    loadUrl(UrlUtil.url2HttpUrl(url));
                 }
-                loadUrl(UrlUtil.url2HttpUrl(url));
+            }
+        });
+        mWebsite.addTextChangedListener(new TextWatcher() {
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) { // TODO
+                // mAutoCompleteAdapter.clear();
+                // mAutoCompleteAdapter.add("百度搜索:" + s);
+                mAutoCompleteAdapter.insert("百度搜索:" + s.toString(), 0);
+                setAutoComplete();
             }
         });
 
@@ -487,7 +518,7 @@ public class MainActivity extends Activity {
                     mWebView.setVisibility(View.VISIBLE);
                 }
             }
-            setAutoComplete(); // TODO 这个位置需要考虑
+            // setAutoComplete(); // 这个位置需要考虑
             setWebError(false);
             super.onPageFinished(view, url);
         }
@@ -544,7 +575,7 @@ public class MainActivity extends Activity {
                 break;
             case R.id.menu_report: // 反馈 TODO
                 break;
-            case R.id.menu_update: // 更新
+            case R.id.menu_update: // 更新 TODO
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -559,7 +590,7 @@ public class MainActivity extends Activity {
         baseIntent.putExtra(Intent.EXTRA_SUBJECT, "分享");
         String content="我通过@宁宁猫浏览器  分享了网页#" + mCurrentTitle + "# " + mCurrentUrl + " ";
         baseIntent.putExtra(Intent.EXTRA_TEXT, content);
-        
+
         Intent shareIntent=Intent.createChooser(baseIntent, "选择你想分享的方式");
         shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(shareIntent);
