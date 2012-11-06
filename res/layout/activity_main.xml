@@ -24,7 +24,7 @@
             android:layout_height="45dp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="3dp"
-            android:layout_marginRight="40dp"
+            android:layout_marginRight="50dp"
             android:layout_toRightOf="@id/iv_add"
             android:background="#00000000"
             android:hint="@string/website_hint"

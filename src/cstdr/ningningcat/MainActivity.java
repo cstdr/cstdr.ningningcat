@@ -83,6 +83,8 @@ public class MainActivity extends Activity {
 
     private ImageView mAddFavorite=null;
 
+    private TextView mDropdown=null;
+
     private AutoCompleteTextView mWebsite=null;
 
     private ImageView mGoto=null;
@@ -225,7 +227,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
+                new Thread() {
 
                     @Override
                     public void run() {
@@ -234,7 +236,7 @@ public class MainActivity extends Activity {
                         mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
                         Looper.loop();
                     }
-                }).start();
+                }.start();
             }
         });
 
@@ -291,6 +293,8 @@ public class MainActivity extends Activity {
                 }
             }
         });
+        mDropdown=(TextView)findViewById(R.id.tv_dropdown);
+        mWebsite.setDropDownAnchor(R.id.tv_dropdown);
         mWebsite.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -306,7 +310,8 @@ public class MainActivity extends Activity {
             public void afterTextChanged(Editable s) { // TODO
                 // mAutoCompleteAdapter.clear();
                 // mAutoCompleteAdapter.add("百度搜索:" + s);
-                mAutoCompleteAdapter.insert("百度搜索:" + s.toString(), 0);
+                // mAutoCompleteAdapter.insert("百度搜索:" + s.toString(), 0);
+                // mDropdown.setText("百度搜索:" + s.toString());
                 setAutoComplete();
             }
         });
@@ -620,7 +625,7 @@ public class MainActivity extends Activity {
     private void exit() {
         hideInputWindow(mWebView);
         finish();
-        new Thread(new Runnable() {
+        new Thread() {
 
             @Override
             public void run() {
@@ -628,7 +633,7 @@ public class MainActivity extends Activity {
                 clearCache();
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
-        }).start();
+        }.start();
     }
 
     /**
