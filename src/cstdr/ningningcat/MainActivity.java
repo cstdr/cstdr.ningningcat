@@ -49,7 +49,6 @@ import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -63,6 +62,7 @@ import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UrlUtil;
+import cstdr.ningningcat.widget.MyAutoCompleteTextView;
 import cstdr.ningningcat.widget.MyWebView;
 import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
 
@@ -83,9 +83,7 @@ public class MainActivity extends Activity {
 
     private ImageView mAddFavorite=null;
 
-    private TextView mDropdown=null;
-
-    private AutoCompleteTextView mWebsite=null;
+    private MyAutoCompleteTextView mWebsite=null;
 
     private ImageView mGoto=null;
 
@@ -119,7 +117,7 @@ public class MainActivity extends Activity {
 
     private static ArrayAdapter<String> mAutoCompleteAdapter;
 
-    private static List<String> mHistoryUrlList;
+    private static List<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
 
     private Animation animFadeOut;
 
@@ -241,7 +239,7 @@ public class MainActivity extends Activity {
         });
 
         /** EditText输入框的配置 **/
-        mWebsite=(AutoCompleteTextView)findViewById(R.id.actv_website);
+        mWebsite=(MyAutoCompleteTextView)findViewById(R.id.actv_website);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -267,7 +265,7 @@ public class MainActivity extends Activity {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 // 设置点击后全选
-                if(hasFocus) {
+                if(hasFocus && !mWebsite.isSelected()) {
                     mWebsite.setSelection(0, mWebsite.getText().length());
                 }
             }
@@ -276,25 +274,26 @@ public class MainActivity extends Activity {
 
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
-                if(position == 0) { // 第一个位置用来百度搜索输入字段
-                    String str=(String)adapter.getItemAtPosition(0);
-                    if(LOG.DEBUG) {
-                        LOG.cstdr("mWebsite.setOnItemClickListener-str=" + str);
-                    }
-                    String searchStr=str.substring(5);
-                    String searchUrl="http://wap.baidu.com/s?word=" + searchStr;
-                    loadUrl(searchUrl);
-                } else {
-                    String url=(String)adapter.getItemAtPosition(position);
-                    if(LOG.DEBUG) {
-                        LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2url(url));
-                    }
-                    loadUrl(UrlUtil.url2HttpUrl(url));
+                // if(position == 0) { // 第一个位置用来百度搜索输入字段
+                // String str=(String)adapter.getItemAtPosition(0);
+                // if(LOG.DEBUG) {
+                // LOG.cstdr("mWebsite.setOnItemClickListener-str=" + str);
+                // }
+                // String searchStr=str.substring(5);
+                // String searchUrl="http://wap.baidu.com/s?word=" + searchStr;
+                // loadUrl(searchUrl);
+                // } else {
+                String titleAndUrl=(String)adapter.getItemAtPosition(position);
+                String url=titleAndUrl.substring(titleAndUrl.indexOf("\n") + 1);
+                if(LOG.DEBUG) {
+                    LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2url(url));
                 }
+                loadUrl(UrlUtil.url2HttpUrl(url));
+                mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http:// TODO
+                // }
             }
         });
-        mDropdown=(TextView)findViewById(R.id.tv_dropdown);
-        mWebsite.setDropDownAnchor(R.id.tv_dropdown);
+        // mWebsite.setDropDownAnchor(R.id.tv_dropdown);
         mWebsite.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -312,7 +311,7 @@ public class MainActivity extends Activity {
                 // mAutoCompleteAdapter.add("百度搜索:" + s);
                 // mAutoCompleteAdapter.insert("百度搜索:" + s.toString(), 0);
                 // mDropdown.setText("百度搜索:" + s.toString());
-                setAutoComplete();
+                // setAutoComplete();
             }
         });
 
@@ -523,7 +522,7 @@ public class MainActivity extends Activity {
                     mWebView.setVisibility(View.VISIBLE);
                 }
             }
-            // setAutoComplete(); // 这个位置需要考虑
+            setAutoComplete(); // 这个位置需要考虑
             setWebError(false);
             super.onPageFinished(view, url);
         }
@@ -729,17 +728,21 @@ public class MainActivity extends Activity {
      * 得到浏览历史记录
      */
     private void setAutoComplete() {
+        mAutoCompleteAdapter.clear();
         mWebBackForwardList=mWebView.copyBackForwardList();
         String url;
-        for(int i=0; i < mWebBackForwardList.getSize(); i++) {
+        String title="...";
+        int size=mWebBackForwardList.getSize();
+        for(int i=size - 1; i >= 0; i--) {
+            title=mWebBackForwardList.getItemAtIndex(i).getTitle();
             url=mWebBackForwardList.getItemAtIndex(i).getUrl();
             if(!mHistoryUrlList.contains(url)) {
                 mHistoryUrlList.add(url);
                 if(LOG.DEBUG) {
                     LOG.cstdr("setAutoComplete -> " + UrlUtil.httpUrl2url(url));
                 }
-                mAutoCompleteAdapter.add(UrlUtil.httpUrl2url(url));
             }
+            mAutoCompleteAdapter.add(title + "\n" + UrlUtil.httpUrl2url(url));
         }
         mWebsite.setAdapter(mAutoCompleteAdapter);
     }

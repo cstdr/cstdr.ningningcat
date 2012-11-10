@@ -18,7 +18,7 @@
             android:layout_centerVertical="true"
             android:src="@drawable/add" />
 
-        <AutoCompleteTextView
+        <cstdr.ningningcat.widget.MyAutoCompleteTextView
             android:id="@+id/actv_website"
             android:layout_width="fill_parent"
             android:layout_height="45dp"
@@ -26,7 +26,7 @@
             android:layout_marginLeft="3dp"
             android:layout_marginRight="50dp"
             android:layout_toRightOf="@id/iv_add"
-            android:background="#00000000"
+            android:background="#FFFFFF"
             android:hint="@string/website_hint"
             android:inputType="textWebEditText"
             android:textColor="#000000"

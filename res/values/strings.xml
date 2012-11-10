@@ -38,5 +38,5 @@
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>
     <string name="spkey_last_launch_time">LAST_LAUNCH_TIME</string>
     <string name="spkey_index">INDEX</string>
-        
+    
 </resources>

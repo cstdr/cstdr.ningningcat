@@ -40,7 +40,7 @@ public final class R {
         public static final int menu_update=0x7f090012;
         public static final int rl_favorites=0x7f090009;
         public static final int rl_website_navigation=0x7f090000;
-        public static final int tv_dropdown=0x7f090007;
+        public static final int tv_dropdown_url=0x7f090007;
         public static final int tv_web_title=0x7f09000b;
         public static final int tv_web_url=0x7f09000c;
         public static final int wv_notify=0x7f090005;
