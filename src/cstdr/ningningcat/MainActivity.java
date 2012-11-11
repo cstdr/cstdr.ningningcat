@@ -175,7 +175,7 @@ public class MainActivity extends Activity {
                 new String[]{String.valueOf(System.currentTimeMillis())});
         }
 
-        mCurrentUrl=mSp.getString(getString(R.string.spkey_index), getString(R.string.index)); // 最后一次浏览的页面保存为首页
+        mCurrentUrl=mSp.getString(getString(R.string.spkey_index), getString(R.string.index)); // 获取首页
     }
 
     private void initView() {
@@ -628,7 +628,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void run() {
-                saveIndexToSP(mCurrentUrl);
+                // saveIndexToSP(mCurrentUrl); // 保存最后浏览页为首页，现在设置为每次启动均打开同一个首页
                 clearCache();
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
@@ -670,7 +670,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 设置首页
+     * 设置首页 TODO
      * @param url
      */
     private void saveIndexToSP(String url) {
@@ -783,7 +783,7 @@ public class MainActivity extends Activity {
                 }
             }
         } else {
-            loadUrl(mCurrentUrl); // 加载首页
+            loadUrl(mCurrentUrl); // 加载在initSharedPreferences方法中获取到的首页
         }
 
     }
