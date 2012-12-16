@@ -38,7 +38,7 @@ public class UrlUtil {
      * @param httpUrl
      * @return
      */
-    public static String httpUrl2url(String httpUrl) {
+    public static String httpUrl2Url(String httpUrl) {
         if(httpUrl.startsWith(Constants.HTTP)) {
             return httpUrl.substring(Constants.HTTP.length());
         } else if(httpUrl.startsWith(Constants.HTTPS)) {

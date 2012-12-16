@@ -214,10 +214,6 @@ public class MainActivity extends Activity {
             public void onAnimationEnd(Animation animation) {
             }
         });
-        // animFadeOut.setFillAfter(true);
-        // animFadeOut.setFillBefore(false);
-        // animFadeIn.setFillAfter(true);
-        // animFadeIn.setFillBefore(false);
 
         /** 添加收藏按鈕配置 **/
         mAddFavorite=(ImageView)findViewById(R.id.iv_add);
@@ -286,10 +282,10 @@ public class MainActivity extends Activity {
                 String titleAndUrl=(String)adapter.getItemAtPosition(position);
                 String url=titleAndUrl.substring(titleAndUrl.indexOf("\n") + 1);
                 if(LOG.DEBUG) {
-                    LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2url(url));
+                    LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2Url(url));
                 }
                 loadUrl(UrlUtil.url2HttpUrl(url));
-                mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http:// TODO
+                mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http:// TODO
                 // }
             }
         });
@@ -429,11 +425,6 @@ public class MainActivity extends Activity {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
             setProgress(newProgress * 100);
-            // setTitle(R.string.msg_progress);
-            // setProgressBarVisibility(true);
-            // if(newProgress >= 100) {
-            // setProgressBarVisibility(false);
-            // }
             super.onProgressChanged(view, newProgress);
         }
 
@@ -496,14 +487,14 @@ public class MainActivity extends Activity {
             if(LOG.DEBUG) {
                 LOG.cstdr("onPageStarted -> url = " + url);
             }
-            mWebsite.setText(UrlUtil.httpUrl2url(url)); // url除去协议http://
+            mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
             mCurrentUrl=url;
             super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            // TODO 不显示默认出错信息，采用自己的出错页面
+            // 不显示默认出错信息，采用自己的出错页面
             setWebError(true);
             mNotifyWebView.loadUrl("file:///android_asset/html/error.html");
             super.onReceivedError(view, errorCode, description, failingUrl);
@@ -516,6 +507,7 @@ public class MainActivity extends Activity {
                     mWebView.setVisibility(View.GONE);
                     mNotifyWebView.setVisibility(View.VISIBLE);
                 }
+                setWebError(false);
             } else {
                 if(mWebView.getVisibility() == View.GONE) {
                     mNotifyWebView.setVisibility(View.GONE);
@@ -523,7 +515,6 @@ public class MainActivity extends Activity {
                 }
             }
             setAutoComplete(); // 这个位置需要考虑
-            setWebError(false);
             super.onPageFinished(view, url);
         }
     }
@@ -728,7 +719,9 @@ public class MainActivity extends Activity {
      * 得到浏览历史记录
      */
     private void setAutoComplete() {
-        mAutoCompleteAdapter.clear();
+        if(!mAutoCompleteAdapter.isEmpty()) {
+            mAutoCompleteAdapter.clear();
+        }
         mWebBackForwardList=mWebView.copyBackForwardList();
         String url;
         String title="...";
@@ -739,10 +732,10 @@ public class MainActivity extends Activity {
             if(!mHistoryUrlList.contains(url)) {
                 mHistoryUrlList.add(url);
                 if(LOG.DEBUG) {
-                    LOG.cstdr("setAutoComplete -> " + UrlUtil.httpUrl2url(url));
+                    LOG.cstdr("setAutoComplete -> " + UrlUtil.httpUrl2Url(url));
                 }
             }
-            mAutoCompleteAdapter.add(title + "\n" + UrlUtil.httpUrl2url(url));
+            mAutoCompleteAdapter.add(title + "\n" + UrlUtil.httpUrl2Url(url));
         }
         mWebsite.setAdapter(mAutoCompleteAdapter);
     }
@@ -768,10 +761,10 @@ public class MainActivity extends Activity {
             LOG.cstdr("processData : action =  " + action);
         }
         if(action != null) {
-            if(action.equals(GotoReceiver.ACTION_GOTO)) {
+            if(action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
                 String url=intent.getStringExtra(DatabaseUtil.COLUMN_URL);
                 loadUrl(url);
-            } else if(action.equals(GotoReceiver.ACTION_VIEW)) { // TODO
+            } else if(action.equals(GotoReceiver.ACTION_VIEW)) { // TODO 处理外部请求
                 Uri uri=intent.getData();
                 if(LOG.DEBUG) {
                     LOG.cstdr("processData : uri =  " + uri);
