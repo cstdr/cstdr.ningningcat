@@ -223,7 +223,7 @@ public class FavoriteActivity extends ListActivity {
             } else {
                 holder=(ViewHolder)convertView.getTag();
             }
-            // holder.webIcon.setBackgroundResource(R.drawable.go); // TODO 这里写死了
+            // holder.webIcon.setBackgroundResource(R.drawable.go); // 这里写死了
             // holder.webIcon.setBackgroundColor(0xFF0340FF); // 若控件为ImageView则无效果
             holder.webIcon.setBackgroundColor(mColorArray[position % 5]);
             holder.webTitle.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_TITLE));

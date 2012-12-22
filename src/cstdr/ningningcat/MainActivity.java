@@ -16,7 +16,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Looper;
+import android.os.Handler;
 import android.os.Process;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -77,6 +77,8 @@ public class MainActivity extends Activity {
 
     private static MainActivity mInstance;
 
+    private Handler handler;
+
     private FavoriteActivity mFavorite;
 
     private RelativeLayout mWebsiteNavigation;
@@ -119,9 +121,13 @@ public class MainActivity extends Activity {
 
     private static List<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
 
-    private Animation animFadeOut;
+    private Animation animNavigationFadeOut;
 
-    private Animation animFadeIn;
+    private Animation animNavigationFadeIn;
+
+    private Animation animWebViewSlideUp;
+
+    private Animation animWebViewSlideDown;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -133,6 +139,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         mInstance=this;
+        handler=new Handler();
         mFavorite=new FavoriteActivity();
 
         initView();
@@ -178,63 +185,133 @@ public class MainActivity extends Activity {
         mCurrentUrl=mSp.getString(getString(R.string.spkey_index), getString(R.string.index)); // 获取首页
     }
 
+    /**
+     * 初始化各种View
+     */
     private void initView() {
 
-        /** RelativeLayout导航栏 **/
-        mWebsiteNavigation=(RelativeLayout)findViewById(R.id.rl_website_navigation);
-        animFadeOut=AnimationUtils.loadAnimation(mContext, R.anim.fade_out);
-        animFadeIn=AnimationUtils.loadAnimation(mContext, R.anim.fade_in);
-        animFadeOut.setAnimationListener(new AnimationListener() {
+        initNavigation();
+
+        initAddFavorite();
+
+        initWebsite();
+
+        initGoto();
+
+        initWebView();
+
+        initNotifyWebView();
+    }
+
+    /**
+     * 初始化提示页面（出错页面等）
+     */
+    private void initNotifyWebView() {
+        mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
+        mNotifyWebView.setVisibility(View.GONE);
+    }
+
+    /**
+     * 初始化WebView
+     */
+    private void initWebView() {
+        mWebView=(MyWebView)findViewById(R.id.wv_web);
+        animWebViewSlideDown=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_down);
+        animWebViewSlideUp=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_up);
+
+        /** WebSettings配置 **/
+        mWebSettings=mWebView.getSettings();
+        mWebSettings.setJavaScriptEnabled(true); // 支持JavaScript
+        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true); // JS打开新窗口
+        mWebSettings.setBuiltInZoomControls(true); // 支持页面放大缩小按钮
+        mWebSettings.setSupportZoom(true);
+        // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
+        mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
+        mWebSettings.setAppCacheEnabled(true); // 支持缓存
+        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
+        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
+        mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
+        mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
+        mWebSettings.setPluginsEnabled(true);
+        mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
+        mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
+        mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
+        // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
+        mWebSettings.setSaveFormData(true); // 保存表单数据
+        mWebSettings.setSavePassword(true); // 保存密码
+        mWebSettings.setGeolocationEnabled(true); // 设置定位
+
+        /** WebView配置 **/
+        mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
+        mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView右侧无空隙
+        mWebView.setVisibility(View.VISIBLE);
+        // mWebView.setInitialScale(100); // 初始缩放比例
+
+        // mWebView.requestFocusFromTouch(); // 接收触摸焦点
+
+        mWebView.setOnTouchListener(new OnTouchListener() {
 
             @Override
-            public void onAnimationStart(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
-
-            @Override
-            public void onAnimationEnd(Animation animation) {
-                mWebsiteNavigation.setVisibility(View.GONE);
+            public boolean onTouch(View v, MotionEvent event) {
+                if(!mWebView.hasFocus() || mWebsite.hasFocus()) {
+                    mWebsite.clearFocus();
+                    mWebView.requestFocusFromTouch(); // 不能用requestFocus()，焦点会乱跑
+                }
+                return false;
             }
         });
-        animFadeIn.setAnimationListener(new AnimationListener() {
+        mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
 
-            @Override
-            public void onAnimationStart(Animation animation) {
-                mWebsiteNavigation.setVisibility(View.VISIBLE);
-            }
+                @Override
+                public void onScrollChange(int l, int t, int oldl, int oldt) {
+                    if(t > 100) { // 从这个位置开始才进行消失判断，防止某些高度低的网页隐藏后无法显示
+                        if((t - oldt) > 5) {
+                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
+                                mWebView.startAnimation(animWebViewSlideUp);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        } else if((oldt - t) > 5) {
+                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+                                mWebView.startAnimation(animWebViewSlideDown);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        }
+                    } else {
+                        if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                            mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+                            mWebView.startAnimation(animWebViewSlideDown);
+                            mLastScrollTimeMillis=System.currentTimeMillis();
+                        }
+                    }
 
-            @Override
-            public void onAnimationRepeat(Animation animation) {
-            }
+                }
+            });
 
-            @Override
-            public void onAnimationEnd(Animation animation) {
-            }
-        });
+        mWebView.setWebChromeClient(new MyWebChromeClient());
+        mWebView.setWebViewClient(new MyWebViewClient());
+        mWebView.setDownloadListener(new MyDownloadListener());
+    }
 
-        /** 添加收藏按鈕配置 **/
-        mAddFavorite=(ImageView)findViewById(R.id.iv_add);
-        mAddFavorite.setOnClickListener(new OnClickListener() {
+    /**
+     * 初始化导航栏中跳转按钮的配置
+     */
+    private void initGoto() {
+        mGoto=(ImageView)findViewById(R.id.iv_goto);
+        mGoto.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                new Thread() {
-
-                    @Override
-                    public void run() {
-                        Looper.prepare(); // 或使用Handler回调
-                        android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                        mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
-                        Looper.loop();
-                    }
-                }.start();
+                gotoByEditText();
             }
         });
+    }
 
-        /** EditText输入框的配置 **/
+    /**
+     * 初始化导航栏中EditText输入框的配置
+     */
+    private void initWebsite() {
         mWebsite=(MyAutoCompleteTextView)findViewById(R.id.actv_website);
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
@@ -310,92 +387,66 @@ public class MainActivity extends Activity {
                 // setAutoComplete();
             }
         });
+    }
 
-        /** 跳转按钮的配置 **/
-        mGoto=(ImageView)findViewById(R.id.iv_goto);
-        mGoto.setOnClickListener(new OnClickListener() {
+    /**
+     * 添加导航栏中收藏按鈕配置
+     */
+    private void initAddFavorite() {
+        mAddFavorite=(ImageView)findViewById(R.id.iv_add);
+        mAddFavorite.setOnClickListener(new OnClickListener() {
 
             @Override
             public void onClick(View v) {
-                gotoByEditText();
+                MainActivity.getInstance().getHandler().post(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+                        mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
+                    }
+                });
             }
         });
+    }
 
-        mWebView=(MyWebView)findViewById(R.id.wv_web);
-
-        /** WebSettings配置 **/
-        mWebSettings=mWebView.getSettings();
-        mWebSettings.setJavaScriptEnabled(true); // 支持JavaScript
-        mWebSettings.setJavaScriptCanOpenWindowsAutomatically(true); // JS打开新窗口
-        mWebSettings.setBuiltInZoomControls(true); // 支持页面放大缩小按钮
-        mWebSettings.setSupportZoom(true);
-        // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
-        mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
-        mWebSettings.setAppCacheEnabled(true); // 支持缓存
-        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
-        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
-        mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
-        mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
-        mWebSettings.setPluginsEnabled(true);
-        mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
-        mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
-        mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
-        // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
-        mWebSettings.setSaveFormData(true); // 保存表单数据
-        mWebSettings.setSavePassword(true); // 保存密码
-        mWebSettings.setGeolocationEnabled(true); // 设置定位
-
-        /** WebView配置 **/
-        mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
-        mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView右侧无空隙
-        mWebView.setVisibility(View.VISIBLE);
-        // mWebView.setInitialScale(100); // 初始缩放比例
-
-        // mWebView.requestFocusFromTouch(); // 接收触摸焦点
-
-        mWebView.setOnTouchListener(new OnTouchListener() {
+    /**
+     * 初始化RelativeLayout导航栏
+     */
+    private void initNavigation() {
+        mWebsiteNavigation=(RelativeLayout)findViewById(R.id.rl_website_navigation);
+        animNavigationFadeOut=AnimationUtils.loadAnimation(mContext, R.anim.navigation_fade_out);
+        animNavigationFadeIn=AnimationUtils.loadAnimation(mContext, R.anim.navigation_fade_in);
+        animNavigationFadeOut.setAnimationListener(new AnimationListener() {
 
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(!mWebView.hasFocus() || mWebsite.hasFocus()) {
-                    mWebsite.clearFocus();
-                    mWebView.requestFocusFromTouch(); // 不能用requestFocus()，焦点会乱跑
-                }
-                return false;
+            public void onAnimationStart(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mWebsiteNavigation.setVisibility(View.GONE);
             }
         });
-        mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
+        animNavigationFadeIn.setAnimationListener(new AnimationListener() {
 
-                @Override
-                public void onScrollChange(int l, int t, int oldl, int oldt) {
-                    if(t > 100) { // 从这个位置开始才进行消失判断，防止某些高度低的网页隐藏后无法显示
-                        if((t - oldt) > 5) {
-                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animFadeOut);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        } else if((oldt - t) > 5) {
-                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animFadeIn);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        }
-                    } else {
-                        if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                            mWebsiteNavigation.startAnimation(animFadeIn);
-                            mLastScrollTimeMillis=System.currentTimeMillis();
-                        }
-                    }
+            @Override
+            public void onAnimationStart(Animation animation) {
+                mWebsiteNavigation.setVisibility(View.VISIBLE);
+            }
 
-                }
-            });
-        mWebView.setWebChromeClient(new MyWebChromeClient());
-        mWebView.setWebViewClient(new MyWebViewClient());
-        mWebView.setDownloadListener(new MyDownloadListener());
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
 
-        /** 提示页面 **/
-        mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
-        mNotifyWebView.setVisibility(View.GONE);
+            @Override
+            public void onAnimationEnd(Animation animation) {
+            }
+        });
     }
 
     /**
@@ -420,6 +471,10 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * WebView的WebChromeClient
+     * @author cstdingran@gmail.com
+     */
     class MyWebChromeClient extends WebChromeClient {
 
         @Override
@@ -474,6 +529,10 @@ public class MainActivity extends Activity {
 
     }
 
+    /**
+     * 主WebView的WebViewClient
+     * @author cstdingran@gmail.com
+     */
     class MyWebViewClient extends WebViewClient {
 
         @Override
@@ -521,7 +580,7 @@ public class MainActivity extends Activity {
 
     /**
      * 监听下载链接
-     * @author Administrator
+     * @author cstdingran@gmail.com
      */
     class MyDownloadListener implements DownloadListener {
 
@@ -544,12 +603,18 @@ public class MainActivity extends Activity {
         }
     }
 
+    /**
+     * 初始化菜单
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_main, menu);
         return true;
     }
 
+    /**
+     * 菜单选项
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(LOG.DEBUG) {
@@ -613,17 +678,17 @@ public class MainActivity extends Activity {
      * 退出前处理数据 TODO
      */
     private void exit() {
-        hideInputWindow(mWebView);
-        finish();
         new Thread() {
 
             @Override
             public void run() {
                 // saveIndexToSP(mCurrentUrl); // 保存最后浏览页为首页，现在设置为每次启动均打开同一个首页
                 clearCache();
-                android.os.Process.killProcess(android.os.Process.myPid());
             }
         }.start();
+        hideInputWindow(mWebView);
+        finish();
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     /**
@@ -676,34 +741,6 @@ public class MainActivity extends Activity {
         initReceiver();
         super.onResume();
 
-    }
-
-    /**
-     * 是否网络模式
-     * @return
-     */
-    public boolean isNetworkMode() {
-        return isNetworkMode;
-    }
-
-    public void setNetworkMode(boolean isNetworkMode) {
-        this.isNetworkMode=isNetworkMode;
-    }
-
-    /**
-     * 是否处于出错页面
-     * @return
-     */
-    public boolean isWebError() {
-        return isWebError;
-    }
-
-    public void setWebError(boolean isWebError) {
-        this.isWebError=isWebError;
-    }
-
-    public WebView getWebView() {
-        return mWebView;
     }
 
     /**
@@ -780,4 +817,44 @@ public class MainActivity extends Activity {
         }
 
     }
+
+    // //////////////////////////////////////////////////////////////////////////////////
+    // get and set
+    // //////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * 是否网络模式
+     * @return
+     */
+    public boolean isNetworkMode() {
+        return isNetworkMode;
+    }
+
+    public void setNetworkMode(boolean isNetworkMode) {
+        this.isNetworkMode=isNetworkMode;
+    }
+
+    /**
+     * 是否处于出错页面
+     * @return
+     */
+    public boolean isWebError() {
+        return isWebError;
+    }
+
+    public void setWebError(boolean isWebError) {
+        this.isWebError=isWebError;
+    }
+
+    public WebView getWebView() {
+        return mWebView;
+    }
+
+    public Handler getHandler() {
+        if(handler == null) {
+            handler=new Handler();
+        }
+        return handler;
+    }
+
 }
