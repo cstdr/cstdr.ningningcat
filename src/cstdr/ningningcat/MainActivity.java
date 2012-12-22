@@ -771,8 +771,8 @@ public class MainActivity extends Activity {
                 if(LOG.DEBUG) {
                     LOG.cstdr("setAutoComplete -> " + UrlUtil.httpUrl2Url(url));
                 }
+                mAutoCompleteAdapter.add(title + "\n" + UrlUtil.httpUrl2Url(url));
             }
-            mAutoCompleteAdapter.add(title + "\n" + UrlUtil.httpUrl2Url(url));
         }
         mWebsite.setAdapter(mAutoCompleteAdapter);
     }
