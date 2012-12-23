@@ -1,6 +1,5 @@
 package cstdr.ningningcat;
 
-import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -33,8 +32,6 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.webkit.CacheManager;
 import android.webkit.DownloadListener;
 import android.webkit.GeolocationPermissions.Callback;
 import android.webkit.JsResult;
@@ -60,7 +57,9 @@ import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
+import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
+import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
 import cstdr.ningningcat.widget.MyAutoCompleteTextView;
 import cstdr.ningningcat.widget.MyWebView;
@@ -227,7 +226,7 @@ public class MainActivity extends Activity {
         mWebSettings.setSupportZoom(true);
         // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
         mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
-        mWebSettings.setAppCacheEnabled(true); // 支持缓存
+        mWebSettings.setAppCacheEnabled(false); // 支持缓存，不使用缓存
         mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
         mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
         mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
@@ -463,7 +462,7 @@ public class MainActivity extends Activity {
      * @param url
      */
     private void loadUrl(String url) {
-        hideInputWindow(mWebView);
+        UIUtil.hideInputWindow(mWebView);
         if(url != null) {
             mWebView.loadUrl(url);
         } else {
@@ -626,7 +625,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 break;
             case R.id.menu_share: // 分享
-                share();
+                ShareUtil.share(mContext, mCurrentTitle, mCurrentUrl);
                 break;
             case R.id.menu_exit: // 退出
                 exit();
@@ -639,21 +638,6 @@ public class MainActivity extends Activity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * 分享 TODO
-     */
-    private void share() {
-        Intent baseIntent=new Intent(Intent.ACTION_SEND);
-        baseIntent.setType("text/plain");
-        baseIntent.putExtra(Intent.EXTRA_SUBJECT, "分享");
-        String content="我通过@宁宁猫浏览器  分享了网页#" + mCurrentTitle + "# " + mCurrentUrl + " ";
-        baseIntent.putExtra(Intent.EXTRA_TEXT, content);
-
-        Intent shareIntent=Intent.createChooser(baseIntent, "选择你想分享的方式");
-        shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(shareIntent);
     }
 
     @Override
@@ -678,29 +662,17 @@ public class MainActivity extends Activity {
      * 退出前处理数据 TODO
      */
     private void exit() {
-        new Thread() {
-
-            @Override
-            public void run() {
-                // saveIndexToSP(mCurrentUrl); // 保存最后浏览页为首页，现在设置为每次启动均打开同一个首页
-                clearCache();
-            }
-        }.start();
-        hideInputWindow(mWebView);
+        // new Thread() {
+        //
+        // @Override
+        // public void run() {
+        // // saveIndexToSP(mCurrentUrl); // 保存最后浏览页为首页，现在设置为每次启动均打开同一个首页
+        // CacheUtil.clearCache(mContext);
+        // }
+        // }.start();
+        UIUtil.hideInputWindow(mWebView);
         finish();
         android.os.Process.killProcess(android.os.Process.myPid());
-    }
-
-    /**
-     * 清楚网页缓存 deprecated TODO
-     */
-    private void clearCache() {
-        File file=CacheManager.getCacheFileBaseDir();
-        for(File item: file.listFiles()) {
-            item.delete();
-        }
-        deleteDatabase("webview.db");
-        deleteDatabase("webviewCache.db");
     }
 
     public Context getContext() {
@@ -741,15 +713,6 @@ public class MainActivity extends Activity {
         initReceiver();
         super.onResume();
 
-    }
-
-    /**
-     * 隐藏键盘
-     * @param v
-     */
-    private void hideInputWindow(final View v) {
-        InputMethodManager imm=(InputMethodManager)v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
     }
 
     /**
