@@ -1,9 +1,7 @@
 package cstdr.ningningcat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -16,6 +14,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -25,8 +25,10 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
+import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
 
 /**
@@ -35,7 +37,7 @@ import cstdr.ningningcat.util.ToastUtil;
  */
 public class FavoriteActivity extends ListActivity {
 
-    public static List<Map<String, Object>> mFavoriteList=null;
+    public static List<Favorite> mFavoriteList=null;
 
     private Context mContext=null;
 
@@ -58,13 +60,13 @@ public class FavoriteActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setTitle(getString(R.string.title_favorite));
+        this.setTitle(R.string.title_favorite);
 
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                deleteFavorite(FavoriteActivity.this, position);
+                deleteFavorite(position);
                 return true;
             }
         });
@@ -72,6 +74,25 @@ public class FavoriteActivity extends ListActivity {
             mAdapter=new FavoriteAdapter(mContext);
         }
         setListAdapter(mAdapter);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_favorite, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.menu_share_favorite_list: // 分享收藏夹
+                ShareUtil.shareFavoriteList(mContext, mFavoriteList);
+                break;
+            case R.id.menu_delete_favorite_list: // 清空收藏夹
+                deleteFavoriteList();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     /**
@@ -94,39 +115,75 @@ public class FavoriteActivity extends ListActivity {
 
     /**
      * 删除收藏完后列表刷新
-     * @param mContext
      * @param position
      */
-    private void deleteFavorite(Context context, final int position) {
+    private void deleteFavorite(final int position) {
         AlertDialog.Builder builder=new AlertDialog.Builder(this);
-        builder.setMessage(getString(R.string.msg_web_delete_confirm))
-            .setPositiveButton(context.getString(R.string.btn_ok), new OnClickListener() {
+        builder.setMessage(R.string.msg_web_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    mDB.delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?",
-                        new String[]{(String)(mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL))});
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int id=
+                    mDB.delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?", new String[]{mFavoriteList.get(position)
+                        .getUrl()});
+                if(id > 0) {
                     if(mFavoriteList.get(position) != null) {
                         mFavoriteList.remove(position);
                     }
-                    ((BaseAdapter)mAdapter).notifyDataSetChanged();
+                    ((BaseAdapter)mAdapter).notifyDataSetChanged(); // TODO
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
+                } else {
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
                 }
-            }).setNegativeButton(context.getString(R.string.btn_cancel), new OnClickListener() {
+            }
+        }).create().show();
+    }
 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
+    /**
+     * 清空收藏夹
+     */
+    private void deleteFavoriteList() {
+        if(mFavoriteList.isEmpty()) {
+            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_no_favorite));
+            return;
+        }
+        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        builder.setMessage(R.string.msg_list_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int id=mDB.delete(DatabaseUtil.mTableName, null, null);
+                if(id > 0) {
+                    if(!mFavoriteList.isEmpty()) {
+                        mFavoriteList.clear();
+                    }
+                    ((BaseAdapter)mAdapter).notifyDataSetChanged();
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_list_delete));
+                } else {
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
                 }
-            }).create().show();
+            }
+        }).create().show();
     }
 
     /**
      * 从数据库取得收藏夹数据
      * @return
      */
-    private List<Map<String, Object>> getFavoriteList() {
-        mFavoriteList=new ArrayList<Map<String, Object>>();
+    private List<Favorite> getFavoriteList() {
+        mFavoriteList=new ArrayList<Favorite>();
         Cursor cursor=null;
         try {
             cursor=
@@ -134,12 +191,10 @@ public class FavoriteActivity extends ListActivity {
                     null, null, null);
 
             for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                Map<String, Object> map=new HashMap<String, Object>();
                 String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
                 String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
-                map.put(DatabaseUtil.COLUMN_TITLE, webTitle);
-                map.put(DatabaseUtil.COLUMN_URL, webUrl);
-                mFavoriteList.add(map);
+                Favorite favorite=new Favorite(webTitle, webUrl);
+                mFavoriteList.add(favorite);
             }
         } finally {
             DatabaseUtil.closeCursor(cursor);
@@ -226,8 +281,8 @@ public class FavoriteActivity extends ListActivity {
             // holder.webIcon.setBackgroundResource(R.drawable.go); // 这里写死了
             // holder.webIcon.setBackgroundColor(0xFF0340FF); // 若控件为ImageView则无效果
             holder.webIcon.setBackgroundColor(mColorArray[position % 5]);
-            holder.webTitle.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_TITLE));
-            holder.webUrl.setText((String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL));
+            holder.webTitle.setText(mFavoriteList.get(position).getTitle());
+            holder.webUrl.setText(mFavoriteList.get(position).getUrl());
 
             return convertView;
         }
@@ -236,7 +291,7 @@ public class FavoriteActivity extends ListActivity {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent=new Intent(GotoReceiver.ACTION_GOTO);
-        intent.putExtra(DatabaseUtil.COLUMN_URL, (String)mFavoriteList.get(position).get(DatabaseUtil.COLUMN_URL));
+        intent.putExtra(DatabaseUtil.COLUMN_URL, mFavoriteList.get(position).getUrl());
         sendBroadcast(intent);
     }
 

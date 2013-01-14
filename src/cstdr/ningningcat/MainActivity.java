@@ -625,7 +625,7 @@ public class MainActivity extends Activity {
                 startActivity(intent);
                 break;
             case R.id.menu_share: // 分享
-                ShareUtil.share(mContext, mCurrentTitle, mCurrentUrl);
+                ShareUtil.shareFavorite(mContext, mCurrentTitle, mCurrentUrl);
                 break;
             case R.id.menu_exit: // 退出
                 exit();
@@ -635,6 +635,8 @@ public class MainActivity extends Activity {
             case R.id.menu_report: // 反馈 TODO
                 break;
             case R.id.menu_update: // 更新 TODO
+                break;
+            case R.id.menu_about: // 更新 TODO
                 break;
         }
         return super.onOptionsItemSelected(item);

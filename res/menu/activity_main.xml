@@ -27,6 +27,9 @@
             <item
                 android:id="@+id/menu_update"
                 android:title="@string/menu_update"/>
+            <item
+                android:id="@+id/menu_about"
+                android:title="@string/menu_about"/>
         </menu>
     </item>
 
