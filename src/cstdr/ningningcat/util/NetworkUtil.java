@@ -10,6 +10,11 @@ import android.net.NetworkInfo;
  */
 public class NetworkUtil {
 
+    /**
+     * 检查网络状态
+     * @param context
+     * @return
+     */
     public static boolean checkNetwork(Context context) {
         ConnectivityManager cm=(ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo info=cm.getActiveNetworkInfo();

@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.webkit.JsResult;
+import cstdr.ningningcat.FavoriteActivity.DialogItemClickListener;
 import cstdr.ningningcat.MainActivity;
 import cstdr.ningningcat.R;
 
@@ -15,8 +16,15 @@ import cstdr.ningningcat.R;
  */
 public class DialogUtil {
 
+    /** 网络设置ACTION **/
     private static final String ACTION_WIRELESS_SETTINGS="android.settings.WIRELESS_SETTINGS";
 
+    /**
+     * 显示JS警告框
+     * @param context
+     * @param message
+     * @param result
+     */
     public static void showJsAlertDialog(Context context, String message, final JsResult result) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
         builder.setTitle(R.string.title_alert).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -29,6 +37,12 @@ public class DialogUtil {
 
     }
 
+    /**
+     * 显示JS确认框
+     * @param context
+     * @param message
+     * @param result
+     */
     public static void showJsConfirmDialog(Context context, String message, final JsResult result) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
         builder.setTitle(R.string.title_confirm).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -47,6 +61,11 @@ public class DialogUtil {
 
     }
 
+    /**
+     * 显示普通提示窗 TODO
+     * @param context
+     * @param message
+     */
     public static void showAlertDialog(Context context, String message) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
         builder.setTitle(R.string.title_alert).setMessage(message).setPositiveButton(android.R.string.ok, new OnClickListener() {
@@ -57,6 +76,10 @@ public class DialogUtil {
         }).create().show();
     }
 
+    /**
+     * 显示无网状态框
+     * @param context
+     */
     public static void showNoConnectDialog(final Context context) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
         builder.setTitle(R.string.title_no_connect).setMessage(R.string.msg_no_connect)
@@ -74,5 +97,23 @@ public class DialogUtil {
                 public void onClick(DialogInterface dialog, int which) {
                 }
             }).create().show();
+    }
+
+    /**
+     * 长按收藏夹Item弹出框
+     * @param context
+     * @param title
+     * @param position
+     * @param listener
+     */
+    public static void showFavoriteDialog(Context context, String title, final int position, final DialogItemClickListener listener) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        builder.setTitle(title).setItems(new String[]{"设为首页", "重命名", "分享", "删除"}, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                listener.onClick(position, which);
+            }
+        }).create().show();
     }
 }

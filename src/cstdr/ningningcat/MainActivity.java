@@ -50,7 +50,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -227,8 +226,9 @@ public class MainActivity extends Activity {
         // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
         mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
         mWebSettings.setAppCacheEnabled(false); // 支持缓存，不使用缓存
-        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
-        mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
+        // mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
+        // mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
+        mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不使用缓存
         mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
         mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
         mWebSettings.setPluginsEnabled(true);
@@ -697,17 +697,6 @@ public class MainActivity extends Activity {
         unregisterReceiver(mConnectitvityReceiver);
         unregisterReceiver(mGotoReceiver);
         super.onDestroy();
-    }
-
-    /**
-     * 设置首页 TODO
-     * @param url
-     */
-    private void saveIndexToSP(String url) {
-        if(mSp == null) {
-            mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
-        }
-        SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_index)}, new String[]{url});
     }
 
     @Override

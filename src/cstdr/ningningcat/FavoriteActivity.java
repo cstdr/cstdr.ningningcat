@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -28,6 +29,8 @@ import android.widget.TextView;
 import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
+import cstdr.ningningcat.util.DialogUtil;
+import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
 
@@ -37,9 +40,11 @@ import cstdr.ningningcat.util.ToastUtil;
  */
 public class FavoriteActivity extends ListActivity {
 
-    public static List<Favorite> mFavoriteList=null;
+    private static List<Favorite> mFavoriteList=null;
 
     private Context mContext=null;
+
+    private FavoriteActivity activity=this;
 
     private ListAdapter mAdapter=null;
 
@@ -65,8 +70,29 @@ public class FavoriteActivity extends ListActivity {
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
             @Override
-            public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                deleteFavorite(position);
+            public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
+                Favorite favorite=mFavoriteList.get(position);
+                final String title=favorite.getTitle();
+                final String url=favorite.getUrl();
+                DialogUtil.showFavoriteDialog(activity, title, position, new DialogItemClickListener() {
+
+                    @Override
+                    public void onClick(int position, int which) {
+                        switch(which) {
+                            case 0: // 设为首页
+                                saveIndexToSP(url);
+                                break;
+                            case 1: // 重命名 TODO
+                                break;
+                            case 2: // 分享
+                                ShareUtil.shareFavorite(mContext, title, url);
+                                break;
+                            case 3: // 删除
+                                deleteFavorite(position);
+                                break;
+                        }
+                    }
+                });
                 return true;
             }
         });
@@ -118,7 +144,7 @@ public class FavoriteActivity extends ListActivity {
      * @param position
      */
     private void deleteFavorite(final int position) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
         builder.setMessage(R.string.msg_web_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
             @Override
@@ -153,7 +179,7 @@ public class FavoriteActivity extends ListActivity {
             ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_no_favorite));
             return;
         }
-        AlertDialog.Builder builder=new AlertDialog.Builder(this);
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
         builder.setMessage(R.string.msg_list_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
             @Override
@@ -299,6 +325,21 @@ public class FavoriteActivity extends ListActivity {
     protected void onDestroy() {
         mDB.close();
         super.onDestroy();
+    }
+
+    /**
+     * 设置首页
+     * @param url
+     */
+    private void saveIndexToSP(String url) {
+        SharedPreferences mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
+        SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_index)}, new String[]{url});
+        ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_save_index));
+    }
+
+    public interface DialogItemClickListener {
+
+        void onClick(int position, int which);
     }
 
 }
