@@ -5,8 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.text.TextUtils;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 import android.webkit.JsResult;
+import android.widget.EditText;
+import android.widget.RelativeLayout.LayoutParams;
 import cstdr.ningningcat.FavoriteActivity.DialogItemClickListener;
+import cstdr.ningningcat.FavoriteActivity.DialogRenameListener;
 import cstdr.ningningcat.MainActivity;
 import cstdr.ningningcat.R;
 
@@ -113,6 +120,50 @@ public class DialogUtil {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 listener.onClick(position, which);
+            }
+        }).create().show();
+    }
+
+    /**
+     * 显示重命名收藏页面的弹出框
+     * @param context
+     * @param title
+     * @param url
+     * @param listener
+     */
+    public static void showRenameDialog(Context context, String title, final String url, final DialogRenameListener listener) {
+        final EditText editText=new EditText(context);
+        LayoutParams params=new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        editText.setLayoutParams(params);
+        editText.setText(title);
+        editText.setSelectAllOnFocus(true);
+        editText.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                editText.setSelection(0, editText.getText().length());
+                return false;
+            }
+        });
+
+        AlertDialog.Builder builder=new AlertDialog.Builder(context);
+        builder.setTitle(title).setView(editText).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String titleStr=editText.getText().toString();
+                if(TextUtils.isEmpty(titleStr)) {
+                    titleStr="宁宁猫的未知网页";
+                } else if(titleStr.length() > 20) { // 数据库中定义title长度为20
+                    titleStr=titleStr.substring(0, 20);
+                }
+                listener.onClick(titleStr, url);
+
             }
         }).create().show();
     }

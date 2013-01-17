@@ -30,40 +30,12 @@ public class DatabaseUtil extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table favorite(title varchar(20), url varchar(40))");
+        db.execSQL("create table favorite(title varchar(20), url varchar(100))");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // TODO Auto-generated method stub
-
-    }
-
-    public static void insert(DatabaseUtil dbHelper, String sql) {
-        if(LOG.DEBUG) {
-            LOG.cstdr("insert sql = " + sql);
-        }
-        dbHelper.getWritableDatabase().execSQL(sql);
-
-        dbHelper.close();
-    }
-
-    public static void query(DatabaseUtil dbHelper, String sql) {
-        if(LOG.DEBUG) {
-            LOG.cstdr("query sql = " + sql);
-        }
-        dbHelper.getWritableDatabase().execSQL(sql);
-
-        dbHelper.close();
-    }
-
-    public static void delete(DatabaseUtil dbHelper, String sql) {
-        if(LOG.DEBUG) {
-            LOG.cstdr("delete sql = " + sql);
-        }
-        dbHelper.getWritableDatabase().execSQL(sql);
-
-        dbHelper.close();
     }
 
     /**

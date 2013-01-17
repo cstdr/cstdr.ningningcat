@@ -39,6 +39,8 @@
     <string name="msg_list_delete_confirm">确定要全部丢掉吗？</string>
     <string name="msg_database_fail">数据库操作出现了百年难得一见的问题，再来一遍吧~</string>
     <string name="msg_save_index">已经设置好啦！~</string>
+    <string name="msg_rename">已经重命名啦！~</string>
+    <string name="msg_rename_error">重命名操作出现了百年难得一见的问题，再来一遍吧~</string>
     <!-- btn -->
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>

@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -59,6 +60,7 @@ public class FavoriteActivity extends ListActivity {
         mContext=MainActivity.getInstance().getContext();
         SQLiteOpenHelper mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
         mDB=mDBHelper.getWritableDatabase();
+        mFavoriteList=new ArrayList<Favorite>();
         mFavoriteList=getFavoriteList();
     }
 
@@ -82,7 +84,14 @@ public class FavoriteActivity extends ListActivity {
                             case 0: // 设为首页
                                 saveIndexToSP(url);
                                 break;
-                            case 1: // 重命名 TODO
+                            case 1: // 重命名
+                                DialogUtil.showRenameDialog(activity, title, url, new DialogRenameListener() {
+
+                                    @Override
+                                    public void onClick(String title, String url) {
+                                        renameFavorite(title, url);
+                                    }
+                                });
                                 break;
                             case 2: // 分享
                                 ShareUtil.shareFavorite(mContext, title, url);
@@ -103,6 +112,12 @@ public class FavoriteActivity extends ListActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        mDB.close();
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_favorite, menu);
         return true;
@@ -119,134 +134,6 @@ public class FavoriteActivity extends ListActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    /**
-     * 添加收藏
-     * @param title
-     * @param url
-     */
-    public void insertFavorite(String title, String url) {
-        if(hasUrlInDB(url)) {
-            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert_same));
-        } else {
-            DatabaseUtil mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-            String sql=
-                "insert into " + DatabaseUtil.mTableName + "(" + DatabaseUtil.COLUMN_TITLE + "," + DatabaseUtil.COLUMN_URL
-                    + ") values(\"" + title + "\",\"" + url + "\")";
-            DatabaseUtil.insert(mDBHelper, sql);
-            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert));
-        }
-    }
-
-    /**
-     * 删除收藏完后列表刷新
-     * @param position
-     */
-    private void deleteFavorite(final int position) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
-        builder.setMessage(R.string.msg_web_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int id=
-                    mDB.delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?", new String[]{mFavoriteList.get(position)
-                        .getUrl()});
-                if(id > 0) {
-                    if(mFavoriteList.get(position) != null) {
-                        mFavoriteList.remove(position);
-                    }
-                    ((BaseAdapter)mAdapter).notifyDataSetChanged(); // TODO
-                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
-                } else {
-                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
-                }
-            }
-        }).create().show();
-    }
-
-    /**
-     * 清空收藏夹
-     */
-    private void deleteFavoriteList() {
-        if(mFavoriteList.isEmpty()) {
-            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_no_favorite));
-            return;
-        }
-        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
-        builder.setMessage(R.string.msg_list_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
-            }
-        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                int id=mDB.delete(DatabaseUtil.mTableName, null, null);
-                if(id > 0) {
-                    if(!mFavoriteList.isEmpty()) {
-                        mFavoriteList.clear();
-                    }
-                    ((BaseAdapter)mAdapter).notifyDataSetChanged();
-                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_list_delete));
-                } else {
-                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
-                }
-            }
-        }).create().show();
-    }
-
-    /**
-     * 从数据库取得收藏夹数据
-     * @return
-     */
-    private List<Favorite> getFavoriteList() {
-        mFavoriteList=new ArrayList<Favorite>();
-        Cursor cursor=null;
-        try {
-            cursor=
-                mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null,
-                    null, null, null);
-
-            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
-                String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
-                Favorite favorite=new Favorite(webTitle, webUrl);
-                mFavoriteList.add(favorite);
-            }
-        } finally {
-            DatabaseUtil.closeCursor(cursor);
-        }
-        return mFavoriteList;
-
-    }
-
-    /**
-     * 查询数据库中是否有相同URL的数据
-     * @param url
-     * @return
-     */
-    private boolean hasUrlInDB(String url) {
-        Cursor cursor=null;
-        try {
-            cursor=mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
-            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
-                if(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL)).equals(url)) {
-                    return true;
-                }
-            }
-        } finally {
-            DatabaseUtil.closeCursor(cursor);
-        }
-        return false;
     }
 
     public static class ViewHolder {
@@ -321,12 +208,6 @@ public class FavoriteActivity extends ListActivity {
         sendBroadcast(intent);
     }
 
-    @Override
-    protected void onDestroy() {
-        mDB.close();
-        super.onDestroy();
-    }
-
     /**
      * 设置首页
      * @param url
@@ -337,9 +218,178 @@ public class FavoriteActivity extends ListActivity {
         ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_save_index));
     }
 
+    // ///////////////////////////////////////监听器/////////////////////////////
+    /**
+     * 长按Item后弹出框选项监听器
+     * @author cstdingran@gmail.com
+     */
     public interface DialogItemClickListener {
 
         void onClick(int position, int which);
+    }
+
+    /**
+     * 重命名监听器
+     * @author cstdingran@gmail.com
+     */
+    public interface DialogRenameListener {
+
+        void onClick(String title, String url);
+    }
+
+    // //////////////////////////数据库操作//////////////////////////////////////
+    /**
+     * 添加收藏
+     * @param title
+     * @param url
+     */
+    public void insertFavorite(String title, String url) {
+        if(hasUrlInDB(url)) {
+            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert_same));
+            return;
+        } else {
+            ContentValues values=new ContentValues();
+            values.put(DatabaseUtil.COLUMN_TITLE, title);
+            values.put(DatabaseUtil.COLUMN_URL, url);
+            int id=(int)mDB.insert(DatabaseUtil.mTableName, null, values);
+            if(id > 0) {
+                ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert));
+            } else {
+                ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert_error));
+            }
+        }
+    }
+
+    /**
+     * 删除收藏完后列表刷新
+     * @param position
+     */
+    private void deleteFavorite(final int position) {
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        builder.setMessage(R.string.msg_web_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int id=
+                    mDB.delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?", new String[]{mFavoriteList.get(position)
+                        .getUrl()});
+                if(id > 0) {
+                    if(mFavoriteList.get(position) != null) {
+                        mFavoriteList.remove(position);
+                    }
+                    ((BaseAdapter)mAdapter).notifyDataSetChanged(); // TODO
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
+                } else {
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
+                }
+            }
+        }).create().show();
+    }
+
+    /**
+     * 清空收藏夹
+     */
+    private void deleteFavoriteList() {
+        if(mFavoriteList.isEmpty()) {
+            ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_no_favorite));
+            return;
+        }
+        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        builder.setMessage(R.string.msg_list_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+            }
+        }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                int id=mDB.delete(DatabaseUtil.mTableName, null, null);
+                if(id > 0) {
+                    if(!mFavoriteList.isEmpty()) {
+                        mFavoriteList.clear();
+                    }
+                    ((BaseAdapter)mAdapter).notifyDataSetChanged();
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_list_delete));
+                } else {
+                    ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
+                }
+            }
+        }).create().show();
+    }
+
+    /**
+     * 从数据库取得收藏夹数据
+     * @return
+     */
+    private List<Favorite> getFavoriteList() {
+        if(!mFavoriteList.isEmpty()) {
+            mFavoriteList.clear();
+        }
+        Cursor cursor=null;
+        try {
+            cursor=
+                mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null,
+                    null, null, null);
+
+            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
+                String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
+                Favorite favorite=new Favorite(webTitle, webUrl);
+                mFavoriteList.add(favorite);
+            }
+        } finally {
+            DatabaseUtil.closeCursor(cursor);
+        }
+        return mFavoriteList;
+
+    }
+
+    /**
+     * 查询数据库中是否有相同URL的数据
+     * @param url
+     * @return
+     */
+    private boolean hasUrlInDB(String url) {
+        Cursor cursor=null;
+        try {
+            cursor=mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
+            for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
+                if(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL)).equals(url)) {
+                    return true;
+                }
+            }
+        } finally {
+            DatabaseUtil.closeCursor(cursor);
+        }
+        return false;
+    }
+
+    /**
+     * 重命名收藏的网页
+     * @param title
+     * @param url
+     */
+    private void renameFavorite(String title, String url) {
+        ContentValues values=new ContentValues();
+        values.put(DatabaseUtil.COLUMN_TITLE, title);
+        String whereClause=DatabaseUtil.COLUMN_URL + "=?";
+        String[] whereArgs=new String[]{url};
+        int id=mDB.update(DatabaseUtil.mTableName, values, whereClause, whereArgs);
+        if(id > 0) {
+            mFavoriteList=getFavoriteList(); // TODO
+            ((BaseAdapter)mAdapter).notifyDataSetChanged();
+            ToastUtil.shortToast(activity, getString(R.string.msg_rename));
+        } else {
+            ToastUtil.shortToast(activity, getString(R.string.msg_rename_error));
+        }
     }
 
 }
