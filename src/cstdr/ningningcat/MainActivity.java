@@ -3,7 +3,6 @@ package cstdr.ningningcat;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -68,7 +67,6 @@ import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
  * 宁宁猫主界面
  * @author cstdingran@gmail.com
  */
-@SuppressLint("SetJavaScriptEnabled")
 public class MainActivity extends Activity {
 
     private final Context mContext=this;
@@ -118,6 +116,8 @@ public class MainActivity extends Activity {
     private static ArrayAdapter<String> mAutoCompleteAdapter;
 
     private static List<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
+
+    private static int mMode=0; // 模式，白天和夜间
 
     private Animation animNavigationFadeOut;
 
@@ -630,7 +630,11 @@ public class MainActivity extends Activity {
             case R.id.menu_exit: // 退出
                 exit();
                 break;
-            case R.id.menu_more: // 更多设置 TODO
+            case R.id.menu_more: // 更多设置
+                break;
+            case R.id.menu_nightmode: // 切换夜间模式
+                mMode=mMode == 0 ? 1 : 0;
+                UIUtil.changeNightMode(mContext, mMode);
                 break;
             case R.id.menu_report: // 反馈 TODO
                 break;

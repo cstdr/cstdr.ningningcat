@@ -15,6 +15,7 @@
     <string name="menu_about">关于</string>
     <string name="menu_share_favorite_list">分享收藏夹给好友</string>
     <string name="menu_delete_favorite_list">清空收藏夹</string>
+    <string name="menu_nightmode">切换夜间模式</string>
     <!-- title -->
     <string name="title_alert">这是页面的提示信息:)</string>
     <string name="title_confirm">这是页面的确认信息:)</string>
