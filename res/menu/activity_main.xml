@@ -3,12 +3,12 @@
     <group android:menuCategory="container" >
         <item
             android:id="@+id/menu_favorite"
-            android:icon="@drawable/menu_favorite"
+            android:icon="@drawable/menu_favorites"
             android:orderInCategory="1"
             android:title="@string/menu_favorite"/>
         <item
             android:id="@+id/menu_share"
-            android:icon="@drawable/add"
+            android:icon="@drawable/menu_share"
             android:orderInCategory="2"
             android:title="@string/menu_share"/>
         <item
@@ -18,11 +18,13 @@
             android:title="@string/menu_exit"/>
         <item
             android:id="@+id/menu_more"
-            android:icon="@drawable/menu_refresh"
+            android:icon="@drawable/menu_more"
             android:orderInCategory="4"
             android:title="@string/menu_more">
             <menu>
-                <group
+
+                <!--
+                     <group
                     android:menuCategory="secondary"
                     android:orderInCategory="1" >
                     <item
@@ -30,6 +32,7 @@
                         android:title="@string/menu_nightmode">
                     </item>
                 </group>
+                -->
                 <group
                     android:menuCategory="secondary"
                     android:orderInCategory="2" >

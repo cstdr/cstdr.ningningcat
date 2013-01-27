@@ -23,7 +23,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -47,7 +46,7 @@ public class FavoriteActivity extends ListActivity {
 
     private FavoriteActivity activity=this;
 
-    private ListAdapter mAdapter=null;
+    private BaseAdapter mAdapter=null;
 
     private SQLiteDatabase mDB=null;
 
@@ -283,7 +282,7 @@ public class FavoriteActivity extends ListActivity {
                     if(mFavoriteList.get(position) != null) {
                         mFavoriteList.remove(position);
                     }
-                    ((BaseAdapter)mAdapter).notifyDataSetChanged(); // TODO
+                    mAdapter.notifyDataSetChanged();
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
                 } else {
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
@@ -316,7 +315,7 @@ public class FavoriteActivity extends ListActivity {
                     if(!mFavoriteList.isEmpty()) {
                         mFavoriteList.clear();
                     }
-                    ((BaseAdapter)mAdapter).notifyDataSetChanged();
+                    mAdapter.notifyDataSetChanged();
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_list_delete));
                 } else {
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_database_fail));
@@ -384,8 +383,8 @@ public class FavoriteActivity extends ListActivity {
         String[] whereArgs=new String[]{url};
         int id=mDB.update(DatabaseUtil.mTableName, values, whereClause, whereArgs);
         if(id > 0) {
-            mFavoriteList=getFavoriteList(); // TODO
-            ((BaseAdapter)mAdapter).notifyDataSetChanged();
+            mFavoriteList=getFavoriteList();
+            mAdapter.notifyDataSetChanged();
             ToastUtil.shortToast(activity, getString(R.string.msg_rename));
         } else {
             ToastUtil.shortToast(activity, getString(R.string.msg_rename_error));

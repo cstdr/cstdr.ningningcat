@@ -19,13 +19,16 @@ public final class R {
     public static final class attr {
     }
     public static final class drawable {
-        public static final int add=0x7f020000;
-        public static final int cover=0x7f020001;
-        public static final int go=0x7f020002;
-        public static final int icon=0x7f020003;
-        public static final int menu_exit=0x7f020004;
-        public static final int menu_favorite=0x7f020005;
-        public static final int menu_refresh=0x7f020006;
+        public static final int cover=0x7f020000;
+        public static final int icon=0x7f020001;
+        public static final int menu_delete=0x7f020002;
+        public static final int menu_exit=0x7f020003;
+        public static final int menu_favorites=0x7f020004;
+        public static final int menu_more=0x7f020005;
+        public static final int menu_share=0x7f020006;
+        public static final int menu_share_favorites=0x7f020007;
+        public static final int navigation_add=0x7f020008;
+        public static final int navigation_goto=0x7f020009;
     }
     public static final class id {
         public static final int actv_website=0x7f090002;
@@ -34,16 +37,15 @@ public final class R {
         public static final int iv_web_icon=0x7f09000a;
         public static final int ll_cover=0x7f090006;
         public static final int ll_favorites=0x7f090008;
-        public static final int menu_about=0x7f090016;
+        public static final int menu_about=0x7f090015;
         public static final int menu_delete_favorite_list=0x7f09000e;
         public static final int menu_exit=0x7f090011;
         public static final int menu_favorite=0x7f09000f;
         public static final int menu_more=0x7f090012;
-        public static final int menu_nightmode=0x7f090013;
-        public static final int menu_report=0x7f090014;
+        public static final int menu_report=0x7f090013;
         public static final int menu_share=0x7f090010;
         public static final int menu_share_favorite_list=0x7f09000d;
-        public static final int menu_update=0x7f090015;
+        public static final int menu_update=0x7f090014;
         public static final int rl_favorites=0x7f090009;
         public static final int rl_website_navigation=0x7f090000;
         public static final int tv_dropdown_url=0x7f090007;
@@ -109,8 +111,11 @@ public final class R {
         /**  sp 
          */
         public static final int sp_main=0x7f060028;
+        public static final int spkey_bright_mode_last=0x7f06002d;
+        public static final int spkey_bright_mode_now=0x7f06002c;
         public static final int spkey_first_launch_time=0x7f060029;
         public static final int spkey_index=0x7f06002b;
+        public static final int spkey_last_brightness=0x7f06002e;
         public static final int spkey_last_launch_time=0x7f06002a;
         /**  title 
          */
@@ -121,9 +126,8 @@ public final class R {
         public static final int website_hint=0x7f060001;
     }
     public static final class style {
-        public static final int AppTheme=0x7f070000;
-        public static final int MainTheme=0x7f070001;
-        public static final int NightMode=0x7f070002;
+        public static final int DayTheme=0x7f070000;
+        public static final int NightMode=0x7f070001;
     }
     public static final class xml {
         public static final int more=0x7f050000;

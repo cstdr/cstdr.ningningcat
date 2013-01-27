@@ -13,4 +13,8 @@ public class LOG {
     public static void cstdr(Object msg) {
         Log.d("cstdr", "-" + msg);
     }
+
+    public static void exception(Exception e) {
+        Log.d("exception", "-" + e.getMessage());
+    }
 }

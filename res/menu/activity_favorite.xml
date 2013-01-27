@@ -3,12 +3,12 @@
 
     <item
         android:id="@+id/menu_share_favorite_list"
-        android:icon="@drawable/menu_favorite"
+        android:icon="@drawable/menu_share_favorites"
         android:orderInCategory="1"
         android:title="@string/menu_share_favorite_list"/>
     <item
         android:id="@+id/menu_delete_favorite_list"
-        android:icon="@drawable/menu_favorite"
+        android:icon="@drawable/menu_delete"
         android:orderInCategory="2"
         android:title="@string/menu_delete_favorite_list"/>
 

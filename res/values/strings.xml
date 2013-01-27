@@ -50,5 +50,8 @@
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>
     <string name="spkey_last_launch_time">LAST_LAUNCH_TIME</string>
     <string name="spkey_index">INDEX</string>
+    <string name="spkey_bright_mode_now">BRIGHT_MODE_NOW</string>
+    <string name="spkey_bright_mode_last">BRIGHT_MODE_LAST</string>
+    <string name="spkey_last_brightness">LAST_BRIGHTNESS</string>
 
 </resources>

@@ -1,12 +1,10 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="AppTheme" parent="android:Theme.Light" />
-
-    <style name="MainTheme" parent="@android:style/Theme.Light">
+    <style name="DayTheme" parent="@android:style/Theme.Light">
         <item name="android:windowTitleSize">30dp</item>
     </style>
 
-    <style name="NightMode" parent="@android:style/Theme.Black">
+    <style name="NightMode" parent="@android:style/Theme.Light">
         <item name="android:windowTitleSize">30dp</item>
     </style>
 

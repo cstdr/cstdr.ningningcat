@@ -71,6 +71,8 @@ public class MainActivity extends Activity {
 
     private final Context mContext=this;
 
+    private final Activity mActivity=this;
+
     private static MainActivity mInstance;
 
     private Handler handler;
@@ -117,8 +119,6 @@ public class MainActivity extends Activity {
 
     private static List<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
 
-    private static int mMode=0; // 模式，白天和夜间
-
     private Animation animNavigationFadeOut;
 
     private Animation animNavigationFadeIn;
@@ -130,6 +130,9 @@ public class MainActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if(LOG.DEBUG) {
+            LOG.cstdr("onCreate============");
+        }
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
@@ -150,7 +153,7 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 初始化BroadcastReceiver
+     * 初始化广播接收
      */
     private void initReceiver() {
         if(mConnectitvityReceiver == null) {
@@ -164,6 +167,14 @@ public class MainActivity extends Activity {
         }
         filter=new IntentFilter(GotoReceiver.ACTION_GOTO);
         registerReceiver(mGotoReceiver, filter);
+    }
+
+    /**
+     * 取消广播接收
+     */
+    private void unregisterReceiver() {
+        unregisterReceiver(mConnectitvityReceiver);
+        unregisterReceiver(mGotoReceiver);
     }
 
     /**
@@ -361,7 +372,6 @@ public class MainActivity extends Activity {
                     LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2Url(url));
                 }
                 loadUrl(UrlUtil.url2HttpUrl(url));
-                mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http:// TODO
                 // }
             }
         });
@@ -632,15 +642,14 @@ public class MainActivity extends Activity {
                 break;
             case R.id.menu_more: // 更多设置
                 break;
-            case R.id.menu_nightmode: // 切换夜间模式
-                mMode=mMode == 0 ? 1 : 0;
-                UIUtil.changeNightMode(mContext, mMode);
-                break;
+            // case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
+            // UIUtil.changeBrightMode(mContext, mActivity);
+            // break;
             case R.id.menu_report: // 反馈 TODO
                 break;
             case R.id.menu_update: // 更新 TODO
                 break;
-            case R.id.menu_about: // 更新 TODO
+            case R.id.menu_about: // 关于 TODO
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -665,49 +674,56 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * 退出前处理数据 TODO
+     * 退出前处理数据
      */
     private void exit() {
-        // new Thread() {
-        //
-        // @Override
-        // public void run() {
-        // // saveIndexToSP(mCurrentUrl); // 保存最后浏览页为首页，现在设置为每次启动均打开同一个首页
-        // CacheUtil.clearCache(mContext);
-        // }
-        // }.start();
         UIUtil.hideInputWindow(mWebView);
         finish();
-        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
-    public Context getContext() {
-        return mContext;
-    }
-
-    /**
-     * 获取实例
-     * @return
-     */
-    public static MainActivity getInstance() {
-        if(mInstance == null) {
-            mInstance=new MainActivity();
+    @Override
+    protected void onPause() {
+        if(LOG.DEBUG) {
+            LOG.cstdr("onPause============");
         }
-        return mInstance;
+        super.onPause();
     }
 
     @Override
     protected void onDestroy() {
-        unregisterReceiver(mConnectitvityReceiver);
-        unregisterReceiver(mGotoReceiver);
+        LOG.cstdr("onDestroy============");
+        android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
 
     @Override
-    protected void onResume() {
-        initReceiver();
-        super.onResume();
+    protected void onStop() {
+        if(LOG.DEBUG) {
+            LOG.cstdr("onStop============");
+        }
+        unregisterReceiver();
+        // if(mSp == null) {
+        // mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
+        // }
+        // if(mSp.getInt(getString(R.string.spkey_bright_mode_now), -2) == -1) {
+        // UIUtil.changeBrightMode(mContext, mActivity); // 若退出时为夜间模式，再进来也要保持此模式
+        // }
+        super.onStop();
+    }
 
+    @Override
+    protected void onResume() {
+        if(LOG.DEBUG) {
+            LOG.cstdr("onResume============");
+        }
+        initReceiver();
+        // if(mSp == null) {
+        // mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
+        // }
+        // if(mSp.getInt(getString(R.string.spkey_bright_mode_last), -2) == -1) {
+        // UIUtil.changeBrightMode(mContext, mActivity); // 若退出时为夜间模式，再进来也要保持此模式
+        // }
+        super.onResume();
     }
 
     /**
@@ -780,6 +796,21 @@ public class MainActivity extends Activity {
     // get and set
     // //////////////////////////////////////////////////////////////////////////////////
 
+    public Context getContext() {
+        return mContext;
+    }
+
+    /**
+     * 获取实例
+     * @return
+     */
+    public static MainActivity getInstance() {
+        if(mInstance == null) {
+            mInstance=new MainActivity();
+        }
+        return mInstance;
+    }
+
     /**
      * 是否网络模式
      * @return
@@ -813,6 +844,13 @@ public class MainActivity extends Activity {
             handler=new Handler();
         }
         return handler;
+    }
+
+    public SharedPreferences getSp() {
+        if(mSp == null) {
+            mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
+        }
+        return mSp;
     }
 
 }
