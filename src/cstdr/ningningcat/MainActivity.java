@@ -678,6 +678,7 @@ public class MainActivity extends Activity {
      */
     private void exit() {
         UIUtil.hideInputWindow(mWebView);
+        unregisterReceiver();
         finish();
     }
 
@@ -692,6 +693,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         LOG.cstdr("onDestroy============");
+
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
@@ -701,7 +703,6 @@ public class MainActivity extends Activity {
         if(LOG.DEBUG) {
             LOG.cstdr("onStop============");
         }
-        unregisterReceiver();
         // if(mSp == null) {
         // mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
         // }
