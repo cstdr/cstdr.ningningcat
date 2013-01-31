@@ -56,6 +56,7 @@ import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShareUtil;
+import cstdr.ningningcat.util.ShortcutUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
@@ -71,7 +72,7 @@ public class MainActivity extends Activity {
 
     private final Context mContext=this;
 
-    private final Activity mActivity=this;
+    // private final Activity mActivity=this;
 
     private static MainActivity mInstance;
 
@@ -186,6 +187,9 @@ public class MainActivity extends Activity {
             SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_last_launch_time)},
                 new String[]{String.valueOf(System.currentTimeMillis())});
         } else {
+            if(!ShortcutUtil.hasShortcut(mContext)) {
+                ShortcutUtil.addShortcut(mContext);
+            }
             ToastUtil.longToast(mContext, getString(R.string.msg_first_launch));
             SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_first_launch_time)},
                 new String[]{String.valueOf(System.currentTimeMillis())});
@@ -852,6 +856,10 @@ public class MainActivity extends Activity {
             mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
         }
         return mSp;
+    }
+
+    public String getCurrentUrl() {
+        return mCurrentUrl;
     }
 
 }
