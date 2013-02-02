@@ -566,7 +566,7 @@ public class MainActivity extends Activity {
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            // 不显示默认出错信息，采用自己的出错页面
+            // 不显示默认出错信息，采用自己的出错页面，但是4.0系统貌似只能显示默认出错页面
             setWebError(true);
             mNotifyWebView.loadUrl("file:///android_asset/html/error.html");
             super.onReceivedError(view, errorCode, description, failingUrl);
@@ -780,7 +780,7 @@ public class MainActivity extends Activity {
             if(action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
                 String url=intent.getStringExtra(DatabaseUtil.COLUMN_URL);
                 loadUrl(url);
-            } else if(action.equals(GotoReceiver.ACTION_VIEW)) { // TODO 处理外部请求
+            } else if(action.equals(GotoReceiver.ACTION_VIEW) || action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
                 Uri uri=intent.getData();
                 if(LOG.DEBUG) {
                     LOG.cstdr("processData : uri =  " + uri);

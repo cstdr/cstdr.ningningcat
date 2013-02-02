@@ -32,6 +32,7 @@ import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShareUtil;
+import cstdr.ningningcat.util.ShortcutUtil;
 import cstdr.ningningcat.util.ToastUtil;
 
 /**
@@ -80,10 +81,13 @@ public class FavoriteActivity extends ListActivity {
                     @Override
                     public void onClick(int position, int which) {
                         switch(which) {
-                            case 0: // 设为首页
+                            case 0: // 添加快捷方式到桌面
+                                ShortcutUtil.addShortcutToDesktop(mContext, title, url);
+                                break;
+                            case 1: // 设为首页
                                 saveIndexToSP(url);
                                 break;
-                            case 1: // 重命名
+                            case 2: // 重命名
                                 DialogUtil.showRenameDialog(activity, title, url, new DialogRenameListener() {
 
                                     @Override
@@ -92,10 +96,10 @@ public class FavoriteActivity extends ListActivity {
                                     }
                                 });
                                 break;
-                            case 2: // 分享
+                            case 3: // 分享
                                 ShareUtil.shareFavorite(mContext, title, url);
                                 break;
-                            case 3: // 删除
+                            case 4: // 删除
                                 deleteFavorite(position);
                                 break;
                         }

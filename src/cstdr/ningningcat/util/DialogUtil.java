@@ -23,8 +23,8 @@ import cstdr.ningningcat.R;
  */
 public class DialogUtil {
 
-    /** 网络设置ACTION **/
-    private static final String ACTION_WIRELESS_SETTINGS="android.settings.WIRELESS_SETTINGS";
+    /** 手机设置页面ACTION **/
+    private static final String ACTION_SETTINGS="android.settings.SETTINGS";
 
     /**
      * 显示JS警告框
@@ -90,18 +90,19 @@ public class DialogUtil {
     public static void showNoConnectDialog(final Context context) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
         builder.setTitle(R.string.title_no_connect).setMessage(R.string.msg_no_connect)
-            .setPositiveButton(R.string.btn_ok, new OnClickListener() {
+            .setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            }).setNegativeButton(R.string.btn_ok, new OnClickListener() {
 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     MainActivity.getInstance().setNetworkMode(true); // 避免了设置完返回界面时二次提示
-                    Intent intent=new Intent(ACTION_WIRELESS_SETTINGS);
+                    Intent intent=new Intent(ACTION_SETTINGS);
                     context.startActivity(intent);
-                }
-            }).setNegativeButton(R.string.btn_cancel, new OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
                 }
             }).create().show();
     }
@@ -115,7 +116,7 @@ public class DialogUtil {
      */
     public static void showFavoriteDialog(Context context, String title, final int position, final DialogItemClickListener listener) {
         AlertDialog.Builder builder=new AlertDialog.Builder(context);
-        builder.setTitle(title).setItems(new String[]{"设为首页", "重命名", "分享", "删除"}, new OnClickListener() {
+        builder.setTitle(title).setItems(new String[]{"添加快捷方式到桌面", "设为首页", "重命名", "分享", "删除"}, new OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {

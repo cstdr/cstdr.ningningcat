@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import cstdr.ningningcat.CoverActivity;
+import cstdr.ningningcat.MainActivity;
 import cstdr.ningningcat.R;
 
 /**
@@ -49,6 +50,27 @@ public class ShortcutUtil {
         Intent shortcutIntent=new Intent(Intent.ACTION_MAIN); // 这样卸载APP的时候，快捷方式也会删除
         shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER); // 如果堆栈中已经此Activity，则不再new一个新的
         shortcutIntent.setClass(context, CoverActivity.class);
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
+
+        context.sendBroadcast(shortcut);
+    }
+
+    /**
+     * 添加网页的快捷方式到桌面
+     * @param context
+     * @param title
+     * @param url
+     */
+    public static void addShortcutToDesktop(Context context, String title, String url) {
+        Intent shortcut=new Intent(ACTION_INSTALL_SHORTCUT);
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
+        shortcut.putExtra("duplicate", false);
+        shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE, Intent.ShortcutIconResource.fromContext(context, R.drawable.icon));
+
+        Intent shortcutIntent=new Intent(Intent.ACTION_MAIN);
+        shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
+        shortcutIntent.setClass(context, MainActivity.class);
+        shortcutIntent.setData(Uri.parse(url));
         shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
         context.sendBroadcast(shortcut);

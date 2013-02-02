@@ -18,29 +18,39 @@
             android:layout_marginLeft="3dp"
             android:src="@drawable/navigation_add" />
 
-        <cstdr.ningningcat.widget.MyAutoCompleteTextView
-            android:id="@+id/actv_website"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="3dp"
-            android:layout_marginRight="42dp"
-            android:layout_marginTop="5dp"
-            android:layout_toRightOf="@id/iv_add"
-            android:hint="@string/website_hint"
-            android:inputType="textWebEditText"
-            android:textColorHighlight="#0099CC" />
-
-        <!-- android:background="@null" -->
-
-        <ImageView
-            android:id="@+id/iv_goto"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="3dp"
-            android:layout_marginTop="6dp"
-            android:background="@android:color/darker_gray"
-            android:src="@drawable/navigation_goto" />
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@id/iv_add"
+            android:background="@drawable/navigation_background" >
+
+            <ImageView
+                android:id="@+id/iv_goto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/darker_gray"
+                android:src="@drawable/navigation_goto" />
+
+            <cstdr.ningningcat.widget.MyAutoCompleteTextView
+                android:id="@+id/actv_website"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="2dp"
+                android:layout_marginRight="2dp"
+                android:layout_toLeftOf="@+id/iv_goto"
+                android:background="@android:color/transparent"
+                android:hint="@string/website_hint"
+                android:inputType="textWebEditText"
+                android:textColorHighlight="#0099CC" />
+
+            <!-- android:background="@null" -->
+
+        </RelativeLayout>
     </RelativeLayout>
 
     <cstdr.ningningcat.widget.MyWebView

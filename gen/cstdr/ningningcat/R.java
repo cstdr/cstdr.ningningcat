@@ -28,12 +28,13 @@ public final class R {
         public static final int menu_share=0x7f020006;
         public static final int menu_share_favorites=0x7f020007;
         public static final int navigation_add=0x7f020008;
-        public static final int navigation_goto=0x7f020009;
+        public static final int navigation_background=0x7f020009;
+        public static final int navigation_goto=0x7f02000a;
     }
     public static final class id {
-        public static final int actv_website=0x7f090002;
+        public static final int actv_website=0x7f090003;
         public static final int iv_add=0x7f090001;
-        public static final int iv_goto=0x7f090003;
+        public static final int iv_goto=0x7f090002;
         public static final int iv_web_icon=0x7f09000a;
         public static final int ll_cover=0x7f090006;
         public static final int ll_favorites=0x7f090008;
