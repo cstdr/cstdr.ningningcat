@@ -144,6 +144,7 @@ public class MainActivity extends Activity {
         handler=new Handler();
         mFavorite=new FavoriteActivity();
 
+        initReceiver();
         initView();
         initSharedPreferences();
 
@@ -187,9 +188,9 @@ public class MainActivity extends Activity {
             SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_last_launch_time)},
                 new String[]{String.valueOf(System.currentTimeMillis())});
         } else {
-            if(!ShortcutUtil.hasShortcut(mContext)) {
-                ShortcutUtil.addShortcut(mContext);
-            }
+            // if(!ShortcutUtil.hasShortcut(mContext)) { // 测试发现某些机型报错
+            ShortcutUtil.addShortcut(mContext);
+            // }
             ToastUtil.longToast(mContext, getString(R.string.msg_first_launch));
             SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_first_launch_time)},
                 new String[]{String.valueOf(System.currentTimeMillis())});
@@ -721,7 +722,6 @@ public class MainActivity extends Activity {
         if(LOG.DEBUG) {
             LOG.cstdr("onResume============");
         }
-        initReceiver();
         // if(mSp == null) {
         // mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
         // }

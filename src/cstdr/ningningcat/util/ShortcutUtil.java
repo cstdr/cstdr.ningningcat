@@ -21,7 +21,7 @@ public class ShortcutUtil {
     private static final String ACTION_INSTALL_SHORTCUT="com.android.launcher.action.INSTALL_SHORTCUT";
 
     /**
-     * 是否已经有快捷方式
+     * 是否已经有快捷方式，某些机型会出现权限问题而报错
      * @param context
      * @return
      */
