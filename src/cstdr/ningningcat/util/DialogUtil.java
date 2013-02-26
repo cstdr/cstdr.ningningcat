@@ -17,6 +17,7 @@ import cstdr.ningningcat.FavoriteActivity.DialogItemClickListener;
 import cstdr.ningningcat.FavoriteActivity.DialogRenameListener;
 import cstdr.ningningcat.MainActivity;
 import cstdr.ningningcat.R;
+import cstdr.ningningcat.constants.Constants;
 
 /**
  * 弹窗工具类
@@ -199,7 +200,7 @@ public class DialogUtil {
                     public void onClick(DialogInterface dialog, int which) {
                         String titleStr=editText.getText().toString();
                         if(TextUtils.isEmpty(titleStr)) {
-                            titleStr="宁宁猫的未知网页";
+                            titleStr=Constants.TITLE_NULL;
                         } else if(titleStr.length() > 20) { // 数据库中定义title长度为20
                             titleStr=titleStr.substring(0, 20);
                         }

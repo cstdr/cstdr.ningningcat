@@ -1,6 +1,5 @@
 package cstdr.ningningcat.constants;
 
-
 /**
  * 常量类
  * @author cstdingran@gmail.com
@@ -16,5 +15,7 @@ public interface Constants {
     int MODE_LIGHT=0; // 白天模式，R.style.Theme_Light
 
     int MODE_BLACK=1; // 夜间模式，R.style.Theme_Black
+
+    String TITLE_NULL="宁宁猫的未知网页";
 
 }

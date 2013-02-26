@@ -49,6 +49,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -740,10 +741,13 @@ public class MainActivity extends Activity {
         }
         mWebBackForwardList=mWebView.copyBackForwardList();
         String url;
-        String title="...";
+        String title;
         int size=mWebBackForwardList.getSize();
         for(int i=size - 1; i >= 0; i--) {
             title=mWebBackForwardList.getItemAtIndex(i).getTitle();
+            if(title == null) {
+                title=Constants.TITLE_NULL;
+            }
             url=mWebBackForwardList.getItemAtIndex(i).getUrl();
             if(!mHistoryUrlList.contains(url)) {
                 mHistoryUrlList.add(url);
