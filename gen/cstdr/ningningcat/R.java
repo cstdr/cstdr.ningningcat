@@ -30,30 +30,32 @@ public final class R {
         public static final int navigation_add=0x7f020008;
         public static final int navigation_background=0x7f020009;
         public static final int navigation_goto=0x7f02000a;
+        public static final int navigation_rewrite=0x7f02000b;
     }
     public static final class id {
-        public static final int actv_website=0x7f090003;
+        public static final int actv_website=0x7f090004;
         public static final int iv_add=0x7f090001;
         public static final int iv_goto=0x7f090002;
-        public static final int iv_web_icon=0x7f09000a;
-        public static final int ll_cover=0x7f090006;
-        public static final int ll_favorites=0x7f090008;
-        public static final int menu_about=0x7f090015;
-        public static final int menu_delete_favorite_list=0x7f09000e;
-        public static final int menu_exit=0x7f090011;
-        public static final int menu_favorite=0x7f09000f;
-        public static final int menu_more=0x7f090012;
-        public static final int menu_report=0x7f090013;
-        public static final int menu_share=0x7f090010;
-        public static final int menu_share_favorite_list=0x7f09000d;
-        public static final int menu_update=0x7f090014;
-        public static final int rl_favorites=0x7f090009;
+        public static final int iv_rewrite=0x7f090003;
+        public static final int iv_web_icon=0x7f09000b;
+        public static final int ll_cover=0x7f090007;
+        public static final int ll_favorites=0x7f090009;
+        public static final int menu_about=0x7f090016;
+        public static final int menu_delete_favorite_list=0x7f09000f;
+        public static final int menu_exit=0x7f090012;
+        public static final int menu_favorite=0x7f090010;
+        public static final int menu_more=0x7f090013;
+        public static final int menu_report=0x7f090014;
+        public static final int menu_share=0x7f090011;
+        public static final int menu_share_favorite_list=0x7f09000e;
+        public static final int menu_update=0x7f090015;
+        public static final int rl_favorites=0x7f09000a;
         public static final int rl_website_navigation=0x7f090000;
-        public static final int tv_dropdown_url=0x7f090007;
-        public static final int tv_web_title=0x7f09000b;
-        public static final int tv_web_url=0x7f09000c;
-        public static final int wv_notify=0x7f090005;
-        public static final int wv_web=0x7f090004;
+        public static final int tv_dropdown_url=0x7f090008;
+        public static final int tv_web_title=0x7f09000c;
+        public static final int tv_web_url=0x7f09000d;
+        public static final int wv_notify=0x7f090006;
+        public static final int wv_web=0x7f090005;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

@@ -87,6 +87,8 @@ public class MainActivity extends Activity {
 
     private MyAutoCompleteTextView mWebsite=null;
 
+    private ImageView mRewrite=null;
+
     private ImageView mGoto=null;
 
     private MyWebView mWebView=null;
@@ -211,11 +213,27 @@ public class MainActivity extends Activity {
 
         initWebsite();
 
+        initRewrite();
+
         initGoto();
 
         initWebView();
 
         initNotifyWebView();
+    }
+
+    /**
+     * 初始化重写按钮
+     */
+    private void initRewrite() {
+        mRewrite=(ImageView)findViewById(R.id.iv_rewrite);
+        mRewrite.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                mWebsite.setText("");
+            }
+        });
     }
 
     /**
