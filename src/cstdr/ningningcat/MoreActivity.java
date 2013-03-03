@@ -15,4 +15,16 @@ public class MoreActivity extends PreferenceActivity {
 
         addPreferencesFromResource(R.xml.more);
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // MobclickAgent.onResume(this);
+    }
 }

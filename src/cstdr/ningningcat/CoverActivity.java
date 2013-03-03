@@ -2,7 +2,6 @@ package cstdr.ningningcat;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.KeyEvent;
@@ -47,8 +46,14 @@ public class CoverActivity extends Activity {
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        // TODO Auto-generated method stub
-        super.onConfigurationChanged(newConfig);
+    protected void onPause() {
+        super.onPause();
+        // MobclickAgent.onPause(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // MobclickAgent.onResume(this);
     }
 }

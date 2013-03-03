@@ -49,6 +49,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.umeng.analytics.MobclickAgent;
+
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
@@ -137,6 +140,8 @@ public class MainActivity extends Activity {
         if(LOG.DEBUG) {
             LOG.cstdr("onCreate============");
         }
+        MobclickAgent.updateOnlineConfig(this);
+
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
@@ -227,6 +232,7 @@ public class MainActivity extends Activity {
      */
     private void initRewrite() {
         mRewrite=(ImageView)findViewById(R.id.iv_rewrite);
+        mRewrite.setVisibility(View.GONE);
         mRewrite.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -373,7 +379,10 @@ public class MainActivity extends Activity {
             public void onFocusChange(View v, boolean hasFocus) {
                 // 设置点击后全选
                 if(hasFocus && !mWebsite.isSelected()) {
+                    mRewrite.setVisibility(View.VISIBLE);
                     mWebsite.setSelection(0, mWebsite.getText().length());
+                } else {
+                    mRewrite.setVisibility(View.GONE);
                 }
             }
         });
@@ -404,7 +413,6 @@ public class MainActivity extends Activity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-
             }
 
             @Override
@@ -712,12 +720,12 @@ public class MainActivity extends Activity {
             LOG.cstdr("onPause============");
         }
         super.onPause();
+        // MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         LOG.cstdr("onDestroy============");
-
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
@@ -748,6 +756,7 @@ public class MainActivity extends Activity {
         // UIUtil.changeBrightMode(mContext, mActivity); // 若退出时为夜间模式，再进来也要保持此模式
         // }
         super.onResume();
+        // MobclickAgent.onResume(this);
     }
 
     /**

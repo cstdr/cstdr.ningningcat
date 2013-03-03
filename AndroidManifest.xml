@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -48,6 +50,16 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
+
+        <!--
+             <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="512e0a5d527015574e000054" />
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="cstdr" />
+        -->
+
     </application>
 
 </manifest>

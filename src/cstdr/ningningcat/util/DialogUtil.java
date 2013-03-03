@@ -7,9 +7,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.text.TextUtils;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.View.OnTouchListener;
 import android.webkit.JsResult;
 import android.widget.EditText;
 import android.widget.RelativeLayout.LayoutParams;
@@ -178,15 +175,17 @@ public class DialogUtil {
         LayoutParams params=new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         editText.setLayoutParams(params);
         editText.setText(title);
-        editText.setSelectAllOnFocus(true);
-        editText.setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                editText.setSelection(0, editText.getText().length());
-                return false;
-            }
-        });
+        editText.setMaxHeight(2); // TODO
+        editText.setSelection(0, editText.getText().length());
+        // editText.setSelectAllOnFocus(true);
+        // editText.setOnTouchListener(new OnTouchListener() {
+        //
+        // @Override
+        // public boolean onTouch(View v, MotionEvent event) {
+        // editText.setSelection(0, editText.getText().length());
+        // return false;
+        // }
+        // });
         renameDialog=
             new AlertDialog.Builder(context).setTitle(title).setView(editText)
                 .setPositiveButton(R.string.btn_cancel, new OnClickListener() {
