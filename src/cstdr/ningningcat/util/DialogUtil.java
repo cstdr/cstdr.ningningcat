@@ -175,17 +175,7 @@ public class DialogUtil {
         LayoutParams params=new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
         editText.setLayoutParams(params);
         editText.setText(title);
-        editText.setMaxHeight(2); // TODO
-        editText.setSelection(0, editText.getText().length());
-        // editText.setSelectAllOnFocus(true);
-        // editText.setOnTouchListener(new OnTouchListener() {
-        //
-        // @Override
-        // public boolean onTouch(View v, MotionEvent event) {
-        // editText.setSelection(0, editText.getText().length());
-        // return false;
-        // }
-        // });
+        editText.setMaxHeight(1);
         renameDialog=
             new AlertDialog.Builder(context).setTitle(title).setView(editText)
                 .setPositiveButton(R.string.btn_cancel, new OnClickListener() {

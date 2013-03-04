@@ -49,9 +49,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.umeng.analytics.MobclickAgent;
-
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
@@ -140,7 +137,8 @@ public class MainActivity extends Activity {
         if(LOG.DEBUG) {
             LOG.cstdr("onCreate============");
         }
-        MobclickAgent.updateOnlineConfig(this);
+        // TODO
+        // MobclickAgent.updateOnlineConfig(this);
 
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
@@ -273,7 +271,7 @@ public class MainActivity extends Activity {
         mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
         mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
         mWebSettings.setPluginsEnabled(true);
-        mWebSettings.setLoadsImagesAutomatically(true); // TODO 当GPRS下提示是否加载图片
+        mWebSettings.setLoadsImagesAutomatically(true); // 当GPRS下提示是否加载图片
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
         mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
@@ -726,6 +724,8 @@ public class MainActivity extends Activity {
     @Override
     protected void onDestroy() {
         LOG.cstdr("onDestroy============");
+        // TODO
+        // MobclickAgent.onKillProcess(mContext);
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
