@@ -3,6 +3,8 @@ package cstdr.ningningcat;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 
+import com.umeng.analytics.MobclickAgent;
+
 /**
  * TODO settings next version
  * @author cstdingran@gmail.com
@@ -19,12 +21,12 @@ public class MoreActivity extends PreferenceActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // MobclickAgent.onPause(this);
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // MobclickAgent.onResume(this);
+        MobclickAgent.onResume(this);
     }
 }

@@ -49,6 +49,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.NotificationType;
+import com.umeng.fb.UMFeedbackService;
+import com.umeng.update.UmengUpdateAgent;
+import com.umeng.update.UmengUpdateListener;
+import com.umeng.update.UpdateResponse;
+
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
@@ -137,8 +145,8 @@ public class MainActivity extends Activity {
         if(LOG.DEBUG) {
             LOG.cstdr("onCreate============");
         }
-        // TODO
-        // MobclickAgent.updateOnlineConfig(this);
+        // 友盟在线更新配置
+        MobclickAgent.updateOnlineConfig(this);
 
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
@@ -675,9 +683,12 @@ public class MainActivity extends Activity {
             // case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
             // UIUtil.changeBrightMode(mContext, mActivity);
             // break;
-            case R.id.menu_report: // 反馈 TODO
+            case R.id.menu_report: // 反馈
+                UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
+                UMFeedbackService.openUmengFeedbackSDK(mContext);
                 break;
-            case R.id.menu_update: // 更新 TODO
+            case R.id.menu_update: // 更新
+                update();
                 break;
             case R.id.menu_about: // 关于 TODO
                 break;
@@ -704,6 +715,34 @@ public class MainActivity extends Activity {
     }
 
     /**
+     * 更新宁宁猫
+     */
+    private void update() {
+        UmengUpdateAgent.update(mContext);
+        UmengUpdateAgent.setUpdateAutoPopup(false);
+        UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+
+            @Override
+            public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
+                switch(updateStatus) {
+                    case 0: // 有更新
+                        UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
+                        break;
+                    case 1: // 没有更新
+                        ToastUtil.shortToast(mContext, "宁宁猫正在努力开发中，暂时没有更新哦~");
+                        break;
+                    case 2: // 非Wifi下
+                        ToastUtil.shortToast(mContext, "没有连接Wifi，还是省点流量吧~");
+                        break;
+                    case 3: // 连接超时
+                        ToastUtil.shortToast(mContext, "联网出现超时，等会再试吧~");
+                        break;
+                }
+            }
+        });
+    }
+
+    /**
      * 退出前处理数据
      */
     private void exit() {
@@ -718,14 +757,13 @@ public class MainActivity extends Activity {
             LOG.cstdr("onPause============");
         }
         super.onPause();
-        // MobclickAgent.onPause(this);
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onDestroy() {
         LOG.cstdr("onDestroy============");
-        // TODO
-        // MobclickAgent.onKillProcess(mContext);
+        MobclickAgent.onKillProcess(mContext);
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
@@ -755,8 +793,9 @@ public class MainActivity extends Activity {
         // if(mSp.getInt(getString(R.string.spkey_bright_mode_last), -2) == -1) {
         // UIUtil.changeBrightMode(mContext, mActivity); // 若退出时为夜间模式，再进来也要保持此模式
         // }
+        UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
         super.onResume();
-        // MobclickAgent.onResume(this);
+        MobclickAgent.onResume(this);
     }
 
     /**

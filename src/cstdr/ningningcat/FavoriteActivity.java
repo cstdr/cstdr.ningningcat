@@ -26,6 +26,9 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.umeng.analytics.MobclickAgent;
+
 import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -398,13 +401,13 @@ public class FavoriteActivity extends ListActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        // MobclickAgent.onPause(this);
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // MobclickAgent.onResume(this);
+        MobclickAgent.onResume(this);
     }
 
 }

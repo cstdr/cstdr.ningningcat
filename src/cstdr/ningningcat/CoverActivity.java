@@ -9,6 +9,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.LinearLayout;
 
+import com.umeng.analytics.MobclickAgent;
+
 /**
  * 封面页
  * @author cstdingran@gmail.com
@@ -48,12 +50,12 @@ public class CoverActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        // MobclickAgent.onPause(this);
+        MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        // MobclickAgent.onResume(this);
+        MobclickAgent.onResume(this);
     }
 }
