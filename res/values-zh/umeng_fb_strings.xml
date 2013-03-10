@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-	<string name="UMEmptyFbNotAllowed">请输入你的反馈内容</string>
-	<string name="UMContentTooLong">超过140字了，再简短一些吧</string>
+	<string name="UMEmptyFbNotAllowed">反馈内容忘记填写啦~</string>
+	<string name="UMContentTooLong">字数太多喽，一次只能发送140个字哦~</string>
 	<string name="UMFbList_ListItem_State_ReSend">失败,轻触以重发</string>
 	<string name="UMFbList_ListItem_State_Sending">发送中…</string>
 	<string name="UMFbList_ListItem_State_Resending">重发</string>
@@ -11,10 +11,10 @@
 	<string name="UMFb_Atom_State_Resending">发送失败,轻触以重发</string>
 	<string name="UMFeedbackUmengTitle">反馈意见</string>
 	<string name="UMFeedbackListTitle">我的反馈</string>
-	<string name="UMFeedbackConversationTitle">反馈问题</string>
+	<string name="UMFeedbackConversationTitle">反馈</string>
 	<string name="UMFeedbackTitle">每条建议都将帮助我们做得更好。</string>
-	<string name="UMFeedbackContent">请输入您的反馈意见</string>
-	<string name="UMFeedbackSummit">提交</string>
+	<string name="UMFeedbackContent">请输入对宁宁猫的意见和看法吧:)</string>
+	<string name="UMFeedbackSummit">发出去</string>
 	<string name="UMFeedbackGoBack">返回</string>
 	
 	<string name="UMFeedbackGotIt">知道了</string>
@@ -37,10 +37,10 @@
 		<item>女</item>
 	</string-array>
 	<string name="UMViewThread">查看反馈</string>
-	<string name="UMNewReplyAlertTitle">您的反馈收到了回复</string>
-	<string name="UMDeleteThread">删除反馈</string>
-	<string name="UMViewFeedback">查看反馈</string>
-	<string name="UMDeleteFeedback">删除反馈</string>
+	<string name="UMNewReplyAlertTitle">发出的反馈有了回复</string>
+	<string name="UMDeleteThread">删除消息</string>
+	<string name="UMViewFeedback">查看消息</string>
+	<string name="UMDeleteFeedback">删除消息</string>
 	<string name="UMResendFeedback">重发反馈</string>
 	<string name="UMDeleteMsg">删除信息</string>
 	<string name="UMNewReplyFlick">有新的回复</string>

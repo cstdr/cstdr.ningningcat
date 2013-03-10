@@ -1,7 +1,9 @@
 package cstdr.ningningcat;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -53,11 +55,13 @@ import android.widget.TextView;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
+import com.umeng.fb.util.FeedBackListener;
 import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
 
 import cstdr.ningningcat.constants.Constants;
+import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -77,7 +81,7 @@ import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
  * 宁宁猫主界面
  * @author cstdingran@gmail.com
  */
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements EventConstant {
 
     private final Context mContext=this;
 
@@ -158,6 +162,7 @@ public class MainActivity extends Activity {
         handler=new Handler();
         mFavorite=new FavoriteActivity();
 
+        initUMeng();
         initReceiver();
         initView();
         initSharedPreferences();
@@ -166,6 +171,47 @@ public class MainActivity extends Activity {
 
         processData();
 
+    }
+
+    /**
+     * 初始化友盟组件
+     */
+    private void initUMeng() {
+        FeedBackListener listener=new FeedBackListener() {
+
+            @Override
+            public void onSubmitFB(Activity activity) {
+                EditText phoneText=(EditText)activity.findViewById(R.id.feedback_phone);
+                EditText qqText=(EditText)activity.findViewById(R.id.feedback_qq);
+                EditText nameText=(EditText)activity.findViewById(R.id.feedback_name);
+                EditText emailText=(EditText)activity.findViewById(R.id.feedback_email);
+                Map<String, String> contactMap=new HashMap<String, String>();
+                contactMap.put("phone", phoneText.getText().toString());
+                contactMap.put("qq", qqText.getText().toString());
+                UMFeedbackService.setContactMap(contactMap);
+                Map<String, String> remarkMap=new HashMap<String, String>();
+                remarkMap.put("name", nameText.getText().toString());
+                remarkMap.put("email", emailText.getText().toString());
+                UMFeedbackService.setRemarkMap(remarkMap);
+            }
+
+            @Override
+            public void onResetFB(Activity activity, Map<String, String> contactMap, Map<String, String> remarkMap) {
+                EditText phoneText=(EditText)activity.findViewById(R.id.feedback_phone);
+                EditText qqText=(EditText)activity.findViewById(R.id.feedback_qq);
+                EditText nameText=(EditText)activity.findViewById(R.id.feedback_name);
+                EditText emailText=(EditText)activity.findViewById(R.id.feedback_email);
+                if(remarkMap != null) {
+                    nameText.setText(remarkMap.get("name"));
+                    emailText.setText(remarkMap.get("email"));
+                }
+                if(contactMap != null) {
+                    phoneText.setText(contactMap.get("phone"));
+                    qqText.setText(contactMap.get("qq"));
+                }
+            }
+        };
+        UMFeedbackService.setFeedBackListener(listener);
     }
 
     /**
@@ -243,7 +289,9 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                MobclickAgent.onEvent(mContext, NAVIGATION_REWRITE);
                 mWebsite.setText("");
+                mRewrite.setVisibility(View.GONE);
             }
         });
     }
@@ -292,7 +340,6 @@ public class MainActivity extends Activity {
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView右侧无空隙
         mWebView.setVisibility(View.VISIBLE);
         // mWebView.setInitialScale(100); // 初始缩放比例
-
         // mWebView.requestFocusFromTouch(); // 接收触摸焦点
 
         mWebView.setOnTouchListener(new OnTouchListener() {
@@ -349,6 +396,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                MobclickAgent.onEvent(mContext, NAVIGATION_GOTO);
                 gotoByEditText();
             }
         });
@@ -368,6 +416,7 @@ public class MainActivity extends Activity {
                     LOG.cstdr("actionId=" + actionId);
                 }
                 if(actionId == EditorInfo.IME_ACTION_GO) {
+                    MobclickAgent.onEvent(mContext, NAVIGATION_GOTO);
                     gotoByEditText();
                     return true;
                 }
@@ -445,6 +494,7 @@ public class MainActivity extends Activity {
 
             @Override
             public void onClick(View v) {
+                MobclickAgent.onEvent(mContext, NAVIGATION_ADD_FAVORITE);
                 MainActivity.getInstance().getHandler().post(new Runnable() {
 
                     @Override
@@ -669,28 +719,35 @@ public class MainActivity extends Activity {
         }
         switch(item.getItemId()) {
             case R.id.menu_favorite: // 查看已收藏页面
+                MobclickAgent.onEvent(mContext, MENU_GOTO_FAVORITE_LIST);
                 Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);
                 startActivity(intent);
                 break;
             case R.id.menu_share: // 分享
+                MobclickAgent.onEvent(mContext, MENU_SHARE);
                 ShareUtil.shareFavorite(mContext, mCurrentTitle, mCurrentUrl);
                 break;
             case R.id.menu_exit: // 退出
+                MobclickAgent.onEvent(mContext, MENU_EXIT);
                 exit();
                 break;
             case R.id.menu_more: // 更多设置
+                MobclickAgent.onEvent(mContext, MENU_MORE);
                 break;
             // case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
             // UIUtil.changeBrightMode(mContext, mActivity);
             // break;
             case R.id.menu_report: // 反馈
+                MobclickAgent.onEvent(mContext, MENU_REPORT);
                 UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
                 UMFeedbackService.openUmengFeedbackSDK(mContext);
                 break;
             case R.id.menu_update: // 更新
+                MobclickAgent.onEvent(mContext, MENU_UPDATE);
                 update();
                 break;
             case R.id.menu_about: // 关于 TODO
+                MobclickAgent.onEvent(mContext, MENU_ABOUT);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -746,6 +803,7 @@ public class MainActivity extends Activity {
      * 退出前处理数据
      */
     private void exit() {
+        MobclickAgent.onEvent(this, EXIT_BACK);
         UIUtil.hideInputWindow(mWebView);
         unregisterReceiver();
         finish();

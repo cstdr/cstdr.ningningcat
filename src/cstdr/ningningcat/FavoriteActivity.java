@@ -29,6 +29,7 @@ import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
 
+import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
@@ -42,7 +43,7 @@ import cstdr.ningningcat.util.ToastUtil;
  * “我的收藏”界面
  * @author cstdingran@gmail.com
  */
-public class FavoriteActivity extends ListActivity {
+public class FavoriteActivity extends ListActivity implements EventConstant {
 
     private static List<Favorite> mFavoriteList=null;
 
@@ -85,12 +86,15 @@ public class FavoriteActivity extends ListActivity {
                     public void onClick(int position, int which) {
                         switch(which) {
                             case 0: // 添加快捷方式到桌面
+                                MobclickAgent.onEvent(mContext, FAVORITE_MENU_ADD_SHORTCUT);
                                 ShortcutUtil.addShortcutToDesktop(mContext, title, url);
                                 break;
                             case 1: // 设为首页
+                                MobclickAgent.onEvent(mContext, FAVORITE_MENU_SAVE_INDEX);
                                 saveIndexToSP(url);
                                 break;
                             case 2: // 重命名
+                                MobclickAgent.onEvent(mContext, FAVORITE_MENU_RENAME);
                                 DialogUtil.showRenameDialog(activity, title, url, new DialogRenameListener() {
 
                                     @Override
@@ -100,9 +104,11 @@ public class FavoriteActivity extends ListActivity {
                                 });
                                 break;
                             case 3: // 分享
+                                MobclickAgent.onEvent(mContext, FAVORITE_MENU_SHARE);
                                 ShareUtil.shareFavorite(mContext, title, url);
                                 break;
                             case 4: // 删除
+                                MobclickAgent.onEvent(mContext, FAVORITE_MENU_DELETE);
                                 deleteFavorite(position);
                                 break;
                         }
@@ -133,9 +139,11 @@ public class FavoriteActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.menu_share_favorite_list: // 分享收藏夹
+                MobclickAgent.onEvent(mContext, MENU_SHARE_FAVORITE_LIST);
                 ShareUtil.shareFavoriteList(mContext, mFavoriteList);
                 break;
             case R.id.menu_delete_favorite_list: // 清空收藏夹
+                MobclickAgent.onEvent(mContext, MENU_DELETE_FAVORITE_LIST);
                 deleteFavoriteList();
                 break;
         }
