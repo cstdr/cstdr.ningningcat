@@ -1,13 +1,41 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <ScrollView
+        android:id="@+id/sv_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <LinearLayout
+                android:id="@+id/ll_none"
+                android:layout_width="match_parent"
+                android:layout_height="68dp" >
+            </LinearLayout>
+
+            <cstdr.ningningcat.widget.MyWebView
+                android:id="@+id/wv_web"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <WebView
+                android:id="@+id/wv_notify"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/rl_website_navigation"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true" >
 
         <ImageView
             android:id="@+id/iv_add"
@@ -61,14 +89,4 @@
         </RelativeLayout>
     </RelativeLayout>
 
-    <cstdr.ningningcat.widget.MyWebView
-        android:id="@+id/wv_web"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
-    <WebView
-        android:id="@+id/wv_notify"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" />
-
-</LinearLayout>
+</RelativeLayout>

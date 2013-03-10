@@ -50,6 +50,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
@@ -75,7 +76,6 @@ import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
 import cstdr.ningningcat.widget.MyAutoCompleteTextView;
 import cstdr.ningningcat.widget.MyWebView;
-import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
 
 /**
  * 宁宁猫主界面
@@ -102,6 +102,8 @@ public class MainActivity extends Activity implements EventConstant {
     private ImageView mRewrite=null;
 
     private ImageView mGoto=null;
+
+    private ScrollView mScrollWebView=null;
 
     private MyWebView mWebView=null;
 
@@ -139,9 +141,10 @@ public class MainActivity extends Activity implements EventConstant {
 
     private Animation animNavigationFadeIn;
 
-    private Animation animWebViewSlideUp;
+    // private Animation animWebViewSlideUp;
+    // private Animation animWebViewSlideDown;
 
-    private Animation animWebViewSlideDown;
+    private float downY;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -274,6 +277,8 @@ public class MainActivity extends Activity implements EventConstant {
 
         initGoto();
 
+        initScrollView();
+
         initWebView();
 
         initNotifyWebView();
@@ -305,12 +310,49 @@ public class MainActivity extends Activity implements EventConstant {
     }
 
     /**
+     * 初始化ScrollView
+     */
+    private void initScrollView() {
+        mScrollWebView=(ScrollView)findViewById(R.id.sv_webview);
+        mScrollWebView.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                LOG.cstdr("MotionEvent.ACTION_DOWN" + downY);
+                LOG.cstdr("MotionEvent.ACTION_MOVE" + event.getY());
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        downY=event.getY();
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        float moveY=event.getY();
+                        if((downY - moveY) > 100) {
+                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
+                                // mWebView.startAnimation(animWebViewSlideUp);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        } else if((moveY - downY) > 100) {
+                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+                                // mWebView.startAnimation(animWebViewSlideDown);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        }
+                        break;
+                }
+                return false;
+            }
+        });
+    }
+
+    /**
      * 初始化WebView
      */
     private void initWebView() {
         mWebView=(MyWebView)findViewById(R.id.wv_web);
-        animWebViewSlideDown=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_down);
-        animWebViewSlideUp=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_up);
+        // animWebViewSlideDown=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_down);
+        // animWebViewSlideUp=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_up);
 
         /** WebSettings配置 **/
         mWebSettings=mWebView.getSettings();
@@ -353,35 +395,6 @@ public class MainActivity extends Activity implements EventConstant {
                 return false;
             }
         });
-        mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
-
-                @Override
-                public void onScrollChange(int l, int t, int oldl, int oldt) {
-                    if(t > 100) { // 从这个位置开始才进行消失判断，防止某些高度低的网页隐藏后无法显示
-                        if((t - oldt) > 5) {
-                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
-                                mWebView.startAnimation(animWebViewSlideUp);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        } else if((oldt - t) > 5) {
-                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animNavigationFadeIn);
-                                mWebView.startAnimation(animWebViewSlideDown);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        }
-                    } else {
-                        if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                            mWebsiteNavigation.startAnimation(animNavigationFadeIn);
-                            mWebView.startAnimation(animWebViewSlideDown);
-                            mLastScrollTimeMillis=System.currentTimeMillis();
-                        }
-                    }
-
-                }
-            });
-
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setDownloadListener(new MyDownloadListener());
