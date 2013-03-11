@@ -59,5 +59,11 @@ public interface EventConstant {
 
     /** 导航栏-重写按钮 **/
     String NAVIGATION_REWRITE="NAVIGATION_REWRITE";
+    
+    /** Intent-收藏夹item点击跳转 **/
+    String ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK="ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK";
+    
+    /** Intent-外部链接跳转 **/
+    String ACTION_GOTO_INTENT="ACTION_GOTO_INTENT";
 
 }
