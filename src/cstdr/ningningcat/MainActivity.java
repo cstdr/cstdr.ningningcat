@@ -761,6 +761,8 @@ public class MainActivity extends Activity implements EventConstant {
                 break;
             case R.id.menu_about: // 关于 TODO
                 MobclickAgent.onEvent(mContext, MENU_ABOUT);
+                ToastUtil.shortToast(mContext, "正在跳转至我的微博:)");
+                loadUrl(Constants.WEIBO_URL);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -920,7 +922,7 @@ public class MainActivity extends Activity implements EventConstant {
         if(action != null) {
             if(action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
                 String url=intent.getStringExtra(DatabaseUtil.COLUMN_URL);
-                MobclickAgent.onEvent(this, ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK);
+                MobclickAgent.onEvent(mContext, ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK, url);
                 loadUrl(url);
             } else if(action.equals(GotoReceiver.ACTION_VIEW) || action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
                 Uri uri=intent.getData();
@@ -928,7 +930,7 @@ public class MainActivity extends Activity implements EventConstant {
                     LOG.cstdr("processData : uri =  " + uri);
                 }
                 if(uri != null) {
-                    MobclickAgent.onEvent(this, ACTION_GOTO_INTENT, uri.toString());
+                    MobclickAgent.onEvent(mContext, ACTION_GOTO_INTENT, uri.toString());
                     loadUrl(UrlUtil.url2HttpUrl(uri.toString()));
                 } else {
                     loadUrl(getString(R.string.index)); // 加载首页

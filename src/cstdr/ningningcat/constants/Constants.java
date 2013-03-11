@@ -17,5 +17,7 @@ public interface Constants {
     int MODE_BLACK=1; // 夜间模式，R.style.Theme_Black
 
     String TITLE_NULL="宁宁猫的未知网页";
+    
+    String WEIBO_URL="http://weibo.com/danniesapphire";
 
 }
