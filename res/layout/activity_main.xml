@@ -3,33 +3,21 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <ScrollView
-        android:id="@+id/sv_webview"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-        <LinearLayout
+        <cstdr.ningningcat.widget.MyWebView
+            android:id="@+id/wv_web"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical" >
+            android:layout_height="match_parent" />
 
-            <LinearLayout
-                android:id="@+id/ll_none"
-                android:layout_width="match_parent"
-                android:layout_height="68dp" >
-            </LinearLayout>
-
-            <cstdr.ningningcat.widget.MyWebView
-                android:id="@+id/wv_web"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <WebView
-                android:id="@+id/wv_notify"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </ScrollView>
+        <WebView
+            android:id="@+id/wv_notify"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </LinearLayout>
 
     <RelativeLayout
         android:id="@+id/rl_website_navigation"

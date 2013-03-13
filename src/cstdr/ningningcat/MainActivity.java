@@ -17,6 +17,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Message;
 import android.os.Process;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -50,7 +51,6 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.umeng.analytics.MobclickAgent;
@@ -76,6 +76,7 @@ import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
 import cstdr.ningningcat.widget.MyAutoCompleteTextView;
 import cstdr.ningningcat.widget.MyWebView;
+import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
 
 /**
  * 宁宁猫主界面
@@ -85,11 +86,7 @@ public class MainActivity extends Activity implements EventConstant {
 
     private final Context mContext=this;
 
-    // private final Activity mActivity=this;
-
     private static MainActivity mInstance;
-
-    private Handler handler;
 
     private FavoriteActivity mFavorite;
 
@@ -102,8 +99,6 @@ public class MainActivity extends Activity implements EventConstant {
     private ImageView mRewrite=null;
 
     private ImageView mGoto=null;
-
-    private ScrollView mScrollWebView=null;
 
     private MyWebView mWebView=null;
 
@@ -141,10 +136,18 @@ public class MainActivity extends Activity implements EventConstant {
 
     private Animation animNavigationFadeIn;
 
-    // private Animation animWebViewSlideUp;
-    // private Animation animWebViewSlideDown;
+    private Handler handler;
 
-    private float downY;
+    private Handler navigationHandler=new Handler() {
+
+        @Override
+        public void handleMessage(Message msg) {
+            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
+                mLastScrollTimeMillis=System.currentTimeMillis();
+            }
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -277,8 +280,6 @@ public class MainActivity extends Activity implements EventConstant {
 
         initGoto();
 
-        initScrollView();
-
         initWebView();
 
         initNotifyWebView();
@@ -296,7 +297,6 @@ public class MainActivity extends Activity implements EventConstant {
             public void onClick(View v) {
                 MobclickAgent.onEvent(mContext, NAVIGATION_REWRITE);
                 mWebsite.setText("");
-                mRewrite.setVisibility(View.GONE);
             }
         });
     }
@@ -307,43 +307,6 @@ public class MainActivity extends Activity implements EventConstant {
     private void initNotifyWebView() {
         mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
         mNotifyWebView.setVisibility(View.GONE);
-    }
-
-    /**
-     * 初始化ScrollView
-     */
-    private void initScrollView() {
-        mScrollWebView=(ScrollView)findViewById(R.id.sv_webview);
-        mScrollWebView.setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                LOG.cstdr("MotionEvent.ACTION_DOWN" + downY);
-                LOG.cstdr("MotionEvent.ACTION_MOVE" + event.getY());
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        downY=event.getY();
-                        break;
-                    case MotionEvent.ACTION_MOVE:
-                        float moveY=event.getY();
-                        if((downY - moveY) > 100) {
-                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
-                                // mWebView.startAnimation(animWebViewSlideUp);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        } else if((moveY - downY) > 100) {
-                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animNavigationFadeIn);
-                                // mWebView.startAnimation(animWebViewSlideDown);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        }
-                        break;
-                }
-                return false;
-            }
-        });
     }
 
     /**
@@ -383,7 +346,6 @@ public class MainActivity extends Activity implements EventConstant {
         mWebView.setVisibility(View.VISIBLE);
         // mWebView.setInitialScale(100); // 初始缩放比例
         // mWebView.requestFocusFromTouch(); // 接收触摸焦点
-
         mWebView.setOnTouchListener(new OnTouchListener() {
 
             @Override
@@ -395,6 +357,35 @@ public class MainActivity extends Activity implements EventConstant {
                 return false;
             }
         });
+        mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
+
+                @Override
+                public void onScrollChange(int l, int t, int oldl, int oldt) {
+                    if(t > 100) { // 从这个位置开始才进行消失判断，防止某些高度低的网页隐藏后无法显示
+                        if((t - oldt) > 5) {
+                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        } else if((oldt - t) > 5) {
+                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                                mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+                                mLastScrollTimeMillis=System.currentTimeMillis();
+                            }
+                        }
+                    } else if(t < 5 && oldt > 5) { // 快滑到顶部时
+                        if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                            mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+                            mLastScrollTimeMillis=System.currentTimeMillis();
+                        }
+                    }
+                    // 2秒后导航栏自动消失 TODO
+                    if(mWebsiteNavigation.isShown()) {
+                        navigationHandler.removeMessages(1);
+                        navigationHandler.sendEmptyMessageDelayed(1, 2000);
+                    }
+                }
+            });
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setDownloadListener(new MyDownloadListener());
@@ -446,11 +437,8 @@ public class MainActivity extends Activity implements EventConstant {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 // 设置点击后全选
-                if(hasFocus && !mWebsite.isSelected()) {
-                    mRewrite.setVisibility(View.VISIBLE);
-                    mWebsite.setSelection(0, mWebsite.getText().length());
-                } else {
-                    mRewrite.setVisibility(View.GONE);
+                if(hasFocus) {
+                    navigationHandler.removeMessages(1);
                 }
             }
         });
@@ -494,6 +482,11 @@ public class MainActivity extends Activity implements EventConstant {
                 // mAutoCompleteAdapter.insert("百度搜索:" + s.toString(), 0);
                 // mDropdown.setText("百度搜索:" + s.toString());
                 // setAutoComplete();
+                if(s.length() == 0) {
+                    mRewrite.setVisibility(View.GONE);
+                } else {
+                    mRewrite.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
