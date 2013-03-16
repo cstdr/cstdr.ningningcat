@@ -10,8 +10,8 @@ public class LOG {
 
     public static final boolean DEBUG=true;
 
-    public static void cstdr(Object msg) {
-        Log.d("cstdr", "-" + msg);
+    public static void cstdr(String tag, Object msg) {
+        Log.d(tag, msg + "");
     }
 
     public static void exception(Exception e) {

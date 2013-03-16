@@ -84,6 +84,8 @@ import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
  */
 public class MainActivity extends Activity implements EventConstant {
 
+    private static final String TAG="MainActivity";
+
     private final Context mContext=this;
 
     private static MainActivity mInstance;
@@ -153,7 +155,7 @@ public class MainActivity extends Activity implements EventConstant {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(LOG.DEBUG) {
-            LOG.cstdr("onCreate============");
+            LOG.cstdr(TAG, "============onCreate============");
         }
         // 友盟在线更新配置
         MobclickAgent.updateOnlineConfig(this);
@@ -417,7 +419,7 @@ public class MainActivity extends Activity implements EventConstant {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if(LOG.DEBUG) {
-                    LOG.cstdr("actionId=" + actionId);
+                    LOG.cstdr(TAG, "onEditorAction : actionId=" + actionId);
                 }
                 if(actionId == EditorInfo.IME_ACTION_GO) {
                     MobclickAgent.onEvent(mContext, NAVIGATION_GOTO);
@@ -458,7 +460,7 @@ public class MainActivity extends Activity implements EventConstant {
                 String titleAndUrl=(String)adapter.getItemAtPosition(position);
                 String url=titleAndUrl.substring(titleAndUrl.indexOf("\n") + 1);
                 if(LOG.DEBUG) {
-                    LOG.cstdr("onItemClick -> " + UrlUtil.httpUrl2Url(url));
+                    LOG.cstdr(TAG, "mWebsite.setOnItemClickListener : onItemClick -> " + UrlUtil.httpUrl2Url(url));
                 }
                 loadUrl(UrlUtil.url2HttpUrl(url));
                 // }
@@ -647,7 +649,7 @@ public class MainActivity extends Activity implements EventConstant {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
             if(LOG.DEBUG) {
-                LOG.cstdr("onPageStarted -> url = " + url);
+                LOG.cstdr(TAG, "onPageStarted -> url = " + url);
             }
             mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
             mCurrentUrl=url;
@@ -690,7 +692,7 @@ public class MainActivity extends Activity implements EventConstant {
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
             if(LOG.DEBUG) {
-                LOG.cstdr("MyDownloadListener : mimetype -> " + mimetype);
+                LOG.cstdr(TAG, "MyDownloadListener : mimetype -> " + mimetype);
             }
             Intent intent=new Intent(Intent.ACTION_VIEW);
             Uri uri=Uri.parse(url);
@@ -721,7 +723,7 @@ public class MainActivity extends Activity implements EventConstant {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(LOG.DEBUG) {
-            LOG.cstdr("itemId = " + item.getItemId());
+            LOG.cstdr(TAG, "onOptionsItemSelected : itemId = " + item.getItemId());
         }
         switch(item.getItemId()) {
             case R.id.menu_favorite: // 查看已收藏页面
@@ -820,7 +822,7 @@ public class MainActivity extends Activity implements EventConstant {
     @Override
     protected void onPause() {
         if(LOG.DEBUG) {
-            LOG.cstdr("onPause============");
+            LOG.cstdr(TAG, "============onPause============");
         }
         super.onPause();
         MobclickAgent.onPause(this);
@@ -828,7 +830,7 @@ public class MainActivity extends Activity implements EventConstant {
 
     @Override
     protected void onDestroy() {
-        LOG.cstdr("onDestroy============");
+        LOG.cstdr(TAG, "============onDestroy============");
         MobclickAgent.onKillProcess(mContext);
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
@@ -837,7 +839,7 @@ public class MainActivity extends Activity implements EventConstant {
     @Override
     protected void onStop() {
         if(LOG.DEBUG) {
-            LOG.cstdr("onStop============");
+            LOG.cstdr(TAG, "============onStop============");
         }
         // if(mSp == null) {
         // mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
@@ -851,7 +853,7 @@ public class MainActivity extends Activity implements EventConstant {
     @Override
     protected void onResume() {
         if(LOG.DEBUG) {
-            LOG.cstdr("onResume============");
+            LOG.cstdr(TAG, "============onResume============");
         }
         // if(mSp == null) {
         // mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
@@ -884,7 +886,7 @@ public class MainActivity extends Activity implements EventConstant {
             if(!mHistoryUrlList.contains(url)) {
                 mHistoryUrlList.add(url);
                 if(LOG.DEBUG) {
-                    LOG.cstdr("setAutoComplete -> " + UrlUtil.httpUrl2Url(url));
+                    LOG.cstdr(TAG, "setAutoComplete -> " + UrlUtil.httpUrl2Url(url));
                 }
                 mAutoCompleteAdapter.add(title + "\n" + UrlUtil.httpUrl2Url(url));
             }
@@ -910,7 +912,7 @@ public class MainActivity extends Activity implements EventConstant {
         Intent intent=getIntent();
         String action=intent.getAction();
         if(LOG.DEBUG) {
-            LOG.cstdr("processData : action =  " + action);
+            LOG.cstdr(TAG, "processData : action =  " + action);
         }
         if(action != null) {
             if(action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
@@ -920,7 +922,7 @@ public class MainActivity extends Activity implements EventConstant {
             } else if(action.equals(GotoReceiver.ACTION_VIEW) || action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
                 Uri uri=intent.getData();
                 if(LOG.DEBUG) {
-                    LOG.cstdr("processData : uri =  " + uri);
+                    LOG.cstdr(TAG, "processData : uri =  " + uri);
                 }
                 if(uri != null) {
                     MobclickAgent.onEvent(mContext, ACTION_GOTO_INTENT, uri.toString());

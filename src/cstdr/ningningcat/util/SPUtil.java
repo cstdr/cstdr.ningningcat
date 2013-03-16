@@ -10,6 +10,8 @@ import android.content.SharedPreferences.Editor;
  */
 public class SPUtil {
 
+    private static final String TAG="SPUtil";
+
     /**
      * 得到SharedPreferences
      * @param context
@@ -32,7 +34,7 @@ public class SPUtil {
     public static void commitStrArrayToSP(SharedPreferences sp, String[] keys, String[] values) {
         if(LOG.DEBUG) {
             if(keys.length == values.length) {
-                LOG.cstdr("keys.length and values.length is same:" + keys.length);
+                LOG.cstdr(TAG, "keys.length and values.length is same:" + keys.length);
             } else {
                 return;
             }
