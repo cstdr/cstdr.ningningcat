@@ -319,8 +319,6 @@ public class MainActivity extends Activity implements EventConstant {
      */
     private void initWebView() {
         mWebView=(MyWebView)findViewById(R.id.wv_web);
-        // animWebViewSlideDown=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_down);
-        // animWebViewSlideUp=AnimationUtils.loadAnimation(mContext, R.anim.webview_slide_up);
 
         /** WebSettings配置 **/
         mWebSettings=mWebView.getSettings();
@@ -343,7 +341,6 @@ public class MainActivity extends Activity implements EventConstant {
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
         mWebSettings.setSaveFormData(true); // 保存表单数据
         mWebSettings.setSavePassword(true); // 保存密码
-        mWebSettings.setGeolocationEnabled(true); // 设置定位
 
         /** WebView配置 **/
         mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
