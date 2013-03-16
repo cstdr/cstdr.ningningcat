@@ -104,8 +104,6 @@ public class MainActivity extends Activity implements EventConstant {
 
     private MyWebView mWebView=null;
 
-    private WebView mNotifyWebView=null;
-
     private WebSettings mWebSettings=null;
 
     private String mEditUrl=null;
@@ -118,6 +116,10 @@ public class MainActivity extends Activity implements EventConstant {
 
     private long mLastScrollTimeMillis=0L;
 
+    private static final int NAVIGATION_HIDE=1;
+
+    private static final int NAVIGATION_SHOW=2;
+
     private SharedPreferences mSp=null;
 
     private BroadcastReceiver mConnectitvityReceiver=null;
@@ -125,8 +127,6 @@ public class MainActivity extends Activity implements EventConstant {
     private BroadcastReceiver mGotoReceiver=null;
 
     private boolean isNetworkMode=false;
-
-    private boolean isWebError=false;
 
     private static WebBackForwardList mWebBackForwardList;
 
@@ -140,13 +140,25 @@ public class MainActivity extends Activity implements EventConstant {
 
     private Handler handler;
 
+    /** 导航栏显示与隐藏的handler **/
     private Handler navigationHandler=new Handler() {
 
         @Override
         public void handleMessage(Message msg) {
-            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
-                mLastScrollTimeMillis=System.currentTimeMillis();
+            LOG.cstdr(TAG, "msg.what = " + msg.what);
+            switch(msg.what) {
+                case NAVIGATION_HIDE:
+                    if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                        mWebsiteNavigation.startAnimation(animNavigationFadeOut);
+                        mLastScrollTimeMillis=System.currentTimeMillis();
+                    }
+                    break;
+                case NAVIGATION_SHOW:
+                    if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+                        mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+                        mLastScrollTimeMillis=System.currentTimeMillis();
+                    }
+                    break;
             }
         }
     };
@@ -284,7 +296,6 @@ public class MainActivity extends Activity implements EventConstant {
 
         initWebView();
 
-        initNotifyWebView();
     }
 
     /**
@@ -301,14 +312,6 @@ public class MainActivity extends Activity implements EventConstant {
                 mWebsite.setText("");
             }
         });
-    }
-
-    /**
-     * 初始化提示页面（出错页面等）
-     */
-    private void initNotifyWebView() {
-        mNotifyWebView=(WebView)findViewById(R.id.wv_notify);
-        mNotifyWebView.setVisibility(View.GONE);
     }
 
     /**
@@ -335,8 +338,8 @@ public class MainActivity extends Activity implements EventConstant {
         mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
         mWebSettings.setPluginsEnabled(true);
         mWebSettings.setLoadsImagesAutomatically(true); // 当GPRS下提示是否加载图片
-        mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
-        mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
+        // mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
+        // mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
         mWebSettings.setSaveFormData(true); // 保存表单数据
         mWebSettings.setSavePassword(true); // 保存密码
@@ -356,35 +359,38 @@ public class MainActivity extends Activity implements EventConstant {
                     mWebsite.clearFocus();
                     mWebView.requestFocusFromTouch(); // 不能用requestFocus()，焦点会乱跑
                 }
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if(event.getY() < 48) { // TODO 使用户在顶部点击使可以显示导航栏，这样处理其实不恰当
+                            navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+                            navigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
+                        }
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        LOG.cstdr(TAG, "event.getY() = " + event.getY());
+                        break;
+                }
                 return false;
+            }
+        });
+        mWebView.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(!hasFocus) {
+                    navigationHandler.removeMessages(1); // 点击输入框后焦点才发生变化
+                }
             }
         });
         mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
 
                 @Override
                 public void onScrollChange(int l, int t, int oldl, int oldt) {
-                    if(t > 100) { // 从这个位置开始才进行消失判断，防止某些高度低的网页隐藏后无法显示
-                        if((t - oldt) > 5) {
-                            if(mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animNavigationFadeOut);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        } else if((oldt - t) > 5) {
-                            if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                                mWebsiteNavigation.startAnimation(animNavigationFadeIn);
-                                mLastScrollTimeMillis=System.currentTimeMillis();
-                            }
-                        }
-                    } else if(t < 5 && oldt > 5) { // 快滑到顶部时
-                        if(!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-                            mWebsiteNavigation.startAnimation(animNavigationFadeIn);
-                            mLastScrollTimeMillis=System.currentTimeMillis();
-                        }
-                    }
-                    // 2秒后导航栏自动消失 TODO
-                    if(mWebsiteNavigation.isShown()) {
-                        navigationHandler.removeMessages(1);
-                        navigationHandler.sendEmptyMessageDelayed(1, 2000);
+                    if((t - oldt) > 5) {
+                        navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+                    } else if((oldt - t) > 5) {
+                        navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+                        hideNavigation();
                     }
                 }
             });
@@ -434,16 +440,6 @@ public class MainActivity extends Activity implements EventConstant {
         mWebsite.setThreshold(1); // 最小匹配字符为1个字符
         // mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer()); //
         // 用户必须提供一个MultiAutoCompleteTextView.Tokenizer用来区分不同的子串
-        mWebsite.setOnFocusChangeListener(new OnFocusChangeListener() {
-
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                // 设置点击后全选
-                if(hasFocus) {
-                    navigationHandler.removeMessages(1);
-                }
-            }
-        });
         mWebsite.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -651,35 +647,24 @@ public class MainActivity extends Activity implements EventConstant {
             if(LOG.DEBUG) {
                 LOG.cstdr(TAG, "onPageStarted -> url = " + url);
             }
-            mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
-            mCurrentUrl=url;
+            if(!url.equals(Constants.ERROR_URL)) { // 当显示出错页面时，输入框网址不变
+                mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
+                mCurrentUrl=url;
+            }
             super.onPageStarted(view, url, favicon);
         }
 
         @Override
         public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
-            // 不显示默认出错信息，采用自己的出错页面，但是4.0系统貌似只能显示默认出错页面
-            setWebError(true);
-            mNotifyWebView.loadUrl("file:///android_asset/html/error.html");
-            super.onReceivedError(view, errorCode, description, failingUrl);
+            // 不显示默认出错信息，采用自己的出错页面
+            view.clearView();
+            view.loadUrl(Constants.ERROR_URL);
         }
 
         @Override
         public void onPageFinished(WebView view, String url) {
-            if(isWebError()) {
-                if(mWebView.getVisibility() == View.VISIBLE) {
-                    mWebView.setVisibility(View.GONE);
-                    mNotifyWebView.setVisibility(View.VISIBLE);
-                }
-                setWebError(false);
-            } else {
-                if(mWebView.getVisibility() == View.GONE) {
-                    mNotifyWebView.setVisibility(View.GONE);
-                    mWebView.setVisibility(View.VISIBLE);
-                }
-            }
+            hideNavigation();
             setAutoComplete(); // 这个位置需要考虑
-            super.onPageFinished(view, url);
         }
     }
 
@@ -768,7 +753,6 @@ public class MainActivity extends Activity implements EventConstant {
         if(keyCode == KeyEvent.KEYCODE_BACK) {
             if(mWebView.canGoBack()) {
                 mWebView.goBack();
-                // mWebsite.setText(mWebView.getUrl()); // 不是很管用
             } else if(System.currentTimeMillis() - mLastBackPressTimeMillis > 2000) {
                 ToastUtil.shortToast(mContext, getString(R.string.msg_exit));
                 mLastBackPressTimeMillis=System.currentTimeMillis();
@@ -901,7 +885,6 @@ public class MainActivity extends Activity implements EventConstant {
     protected void onNewIntent(Intent intent) {
         setIntent(intent);
         processData();
-
     }
 
     /**
@@ -934,7 +917,24 @@ public class MainActivity extends Activity implements EventConstant {
         } else {
             loadUrl(mCurrentUrl); // 加载在initSharedPreferences方法中获取到的首页
         }
+    }
 
+    /**
+     * 隐藏导航栏
+     */
+    private void hideNavigation() {
+        // 2秒后导航栏自动消失
+        if(mWebsiteNavigation.isShown()) {
+            navigationHandler.removeMessages(NAVIGATION_HIDE);
+            navigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
+        }
+    }
+
+    /**
+     * 重新加载当前网址，用于网络重新连通后
+     */
+    public void reload() {
+        loadUrl(mCurrentUrl);
     }
 
     // //////////////////////////////////////////////////////////////////////////////////
@@ -966,18 +966,6 @@ public class MainActivity extends Activity implements EventConstant {
 
     public void setNetworkMode(boolean isNetworkMode) {
         this.isNetworkMode=isNetworkMode;
-    }
-
-    /**
-     * 是否处于出错页面
-     * @return
-     */
-    public boolean isWebError() {
-        return isWebError;
-    }
-
-    public void setWebError(boolean isWebError) {
-        this.isWebError=isWebError;
     }
 
     public WebView getWebView() {
