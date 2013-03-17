@@ -25,7 +25,7 @@ public interface Constants {
     String TITLE_NULL="宁宁猫的未知网页";
 
     /** “关于”中的微博链接地址 **/
-    String WEIBO_URL="http://weibo.com/danniesapphire";
+    String WEIBO_URL="http://weibo.com/cstdr";
 
     /** 出错页面的链接地址 **/
     String ERROR_URL="file:///android_asset/html/error.html";

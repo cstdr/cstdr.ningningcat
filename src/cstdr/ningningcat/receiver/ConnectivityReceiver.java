@@ -26,8 +26,10 @@ public class ConnectivityReceiver extends BroadcastReceiver {
                     activity.setNetworkMode(false);
                 }
             } else {
-                activity.setNetworkMode(true);
-                activity.reload();
+                if(activity.isNetworkMode()) {
+                    activity.setNetworkMode(true);
+                    activity.reload();
+                }
             }
         }
     }
