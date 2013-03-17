@@ -359,11 +359,13 @@ public class MainActivity extends Activity implements EventConstant {
                 }
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        // 使用户在点击任何地方可以显示导航栏，再点击隐藏，这样处理其实不恰当
-                        if(mWebsiteNavigation.isShown()) {
-                            navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
-                        } else {
-                            navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+                        // 使用户在点击顶部区域可以显示导航栏，再点击隐藏，这样处理其实不恰当
+                        if(event.getY() < 48) {
+                            if(mWebsiteNavigation.isShown()) {
+                                navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+                            } else {
+                                navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+                            }
                         }
                         break;
                 }
@@ -735,7 +737,7 @@ public class MainActivity extends Activity implements EventConstant {
                 MobclickAgent.onEvent(mContext, MENU_UPDATE);
                 update();
                 break;
-            case R.id.menu_about: // 关于 TODO
+            case R.id.menu_about: // 关于
                 MobclickAgent.onEvent(mContext, MENU_ABOUT);
                 ToastUtil.shortToast(mContext, "正在跳转至我的微博:)");
                 loadUrl(Constants.WEIBO_URL);
