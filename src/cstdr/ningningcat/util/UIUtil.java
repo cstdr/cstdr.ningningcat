@@ -10,7 +10,7 @@ import android.provider.Settings.SettingNotFoundException;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import cstdr.ningningcat.MainActivity;
+import cstdr.ningningcat.NncApp;
 import cstdr.ningningcat.R;
 
 /**
@@ -54,7 +54,7 @@ public class UIUtil {
      * @param context
      */
     public static void changeBrightMode(Context context, Activity activity) {
-        SharedPreferences sp=MainActivity.getInstance().getSp();
+        SharedPreferences sp=NncApp.getInstance().getSp();
         int brightModeNow=sp.getInt(context.getString(R.string.spkey_bright_mode_now), BRIGHT_MODE_UNDOWN);
         int brightModeLast=sp.getInt(context.getString(R.string.spkey_bright_mode_last), BRIGHT_MODE_UNDOWN);
         int lastBrightness=sp.getInt(context.getString(R.string.spkey_last_brightness), 0);

@@ -1,7 +1,6 @@
 package cstdr.ningningcat;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import android.app.AlertDialog;
 import android.app.ListActivity;
@@ -34,6 +33,7 @@ import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
+import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ShortcutUtil;
@@ -45,7 +45,9 @@ import cstdr.ningningcat.util.ToastUtil;
  */
 public class FavoriteActivity extends ListActivity implements EventConstant {
 
-    private static List<Favorite> mFavoriteList=null;
+    private static final String TAG="FavoriteActivity";
+
+    public static ArrayList<Favorite> mFavoriteList=null;
 
     private Context mContext=null;
 
@@ -61,15 +63,22 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
     private int[] mColorArray={0xFFa7c7c6, 0xFFe4d9bb, 0xFFfcc4b7, 0xFFdd9598, 0xFFba928a};
 
     public FavoriteActivity() {
-        mContext=MainActivity.getInstance().getContext();
-        SQLiteOpenHelper mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-        mDB=mDBHelper.getWritableDatabase();
-        mFavoriteList=new ArrayList<Favorite>();
-        mFavoriteList=getFavoriteList();
+        mContext=NncApp.getInstance();
+        if(mDB == null) {
+            SQLiteOpenHelper mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
+            mDB=mDBHelper.getWritableDatabase();
+        }
+        if(mFavoriteList == null) {
+            mFavoriteList=new ArrayList<Favorite>();
+            mFavoriteList=getFavoriteList();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============onCreate============");
+        }
         super.onCreate(savedInstanceState);
         this.setTitle(R.string.title_favorite);
 
@@ -125,6 +134,9 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
 
     @Override
     protected void onDestroy() {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============onDestroy============");
+        }
         mDB.close();
         super.onDestroy();
     }
@@ -205,8 +217,6 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
             } else {
                 holder=(ViewHolder)convertView.getTag();
             }
-            // holder.webIcon.setBackgroundResource(R.drawable.go); // 这里写死了
-            // holder.webIcon.setBackgroundColor(0xFF0340FF); // 若控件为ImageView则无效果
             holder.webIcon.setBackgroundColor(mColorArray[position % 5]);
             holder.webTitle.setText(mFavoriteList.get(position).getTitle());
             holder.webUrl.setText(mFavoriteList.get(position).getUrl());
@@ -343,7 +353,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
      * 从数据库取得收藏夹数据
      * @return
      */
-    private List<Favorite> getFavoriteList() {
+    private ArrayList<Favorite> getFavoriteList() {
         if(!mFavoriteList.isEmpty()) {
             mFavoriteList.clear();
         }
@@ -408,12 +418,18 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
 
     @Override
     protected void onPause() {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============onPause============");
+        }
         super.onPause();
         MobclickAgent.onPause(this);
     }
 
     @Override
     protected void onResume() {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============onResume============");
+        }
         super.onResume();
         MobclickAgent.onResume(this);
     }

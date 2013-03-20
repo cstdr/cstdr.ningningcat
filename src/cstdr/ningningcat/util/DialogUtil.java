@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.RelativeLayout.LayoutParams;
 import cstdr.ningningcat.FavoriteActivity.DialogItemClickListener;
 import cstdr.ningningcat.FavoriteActivity.DialogRenameListener;
-import cstdr.ningningcat.MainActivity;
+import cstdr.ningningcat.NncApp;
 import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
 
@@ -129,7 +129,7 @@ public class DialogUtil {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        MainActivity.getInstance().setNetworkMode(true); // 避免了设置完返回界面时二次提示
+                        NncApp.getInstance().setNetworkMode(true); // 避免了设置完返回界面时二次提示
                         Intent intent=new Intent(ACTION_SETTINGS);
                         context.startActivity(intent);
                     }

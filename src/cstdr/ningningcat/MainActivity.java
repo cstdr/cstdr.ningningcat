@@ -1,16 +1,12 @@
 package cstdr.ningningcat;
 
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -56,7 +52,6 @@ import android.widget.TextView;
 import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.NotificationType;
 import com.umeng.fb.UMFeedbackService;
-import com.umeng.fb.util.FeedBackListener;
 import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
@@ -68,9 +63,7 @@ import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
-import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShareUtil;
-import cstdr.ningningcat.util.ShortcutUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
@@ -88,10 +81,6 @@ public class MainActivity extends Activity implements EventConstant {
 
     private final Context mContext=this;
 
-    private static MainActivity mInstance;
-
-    private FavoriteActivity mFavorite;
-
     private RelativeLayout mWebsiteNavigation;
 
     private ImageView mAddFavorite=null;
@@ -106,12 +95,6 @@ public class MainActivity extends Activity implements EventConstant {
 
     private WebSettings mWebSettings=null;
 
-    private String mEditUrl=null;
-
-    private String mCurrentUrl=null;
-
-    private String mCurrentTitle=null;
-
     private long mLastBackPressTimeMillis=0L;
 
     private long mLastScrollTimeMillis=0L;
@@ -120,25 +103,19 @@ public class MainActivity extends Activity implements EventConstant {
 
     private static final int NAVIGATION_SHOW=2;
 
-    private SharedPreferences mSp=null;
-
     private BroadcastReceiver mConnectitvityReceiver=null;
 
     private BroadcastReceiver mGotoReceiver=null;
-
-    private boolean isNetworkMode=false;
 
     private static WebBackForwardList mWebBackForwardList;
 
     private static ArrayAdapter<String> mAutoCompleteAdapter;
 
-    private static List<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
+    private static LinkedList<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
 
     private Animation animNavigationFadeOut;
 
     private Animation animNavigationFadeIn;
-
-    private Handler handler;
 
     /** 导航栏显示与隐藏的handler **/
     private Handler navigationHandler=new Handler() {
@@ -166,73 +143,20 @@ public class MainActivity extends Activity implements EventConstant {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         if(LOG.DEBUG) {
             LOG.cstdr(TAG, "============onCreate============");
         }
-        // 友盟在线更新配置
-        MobclickAgent.updateOnlineConfig(this);
-
+        super.onCreate(savedInstanceState);
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
 
         setContentView(R.layout.activity_main);
 
-        mInstance=this;
-        handler=new Handler();
-        mFavorite=new FavoriteActivity();
-
-        initUMeng();
         initReceiver();
         initView();
-        initSharedPreferences();
-
         WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
-
         processData();
-
-    }
-
-    /**
-     * 初始化友盟组件
-     */
-    private void initUMeng() {
-        FeedBackListener listener=new FeedBackListener() {
-
-            @Override
-            public void onSubmitFB(Activity activity) {
-                EditText phoneText=(EditText)activity.findViewById(R.id.feedback_phone);
-                EditText qqText=(EditText)activity.findViewById(R.id.feedback_qq);
-                EditText nameText=(EditText)activity.findViewById(R.id.feedback_name);
-                EditText emailText=(EditText)activity.findViewById(R.id.feedback_email);
-                Map<String, String> contactMap=new HashMap<String, String>();
-                contactMap.put("phone", phoneText.getText().toString());
-                contactMap.put("qq", qqText.getText().toString());
-                UMFeedbackService.setContactMap(contactMap);
-                Map<String, String> remarkMap=new HashMap<String, String>();
-                remarkMap.put("name", nameText.getText().toString());
-                remarkMap.put("email", emailText.getText().toString());
-                UMFeedbackService.setRemarkMap(remarkMap);
-            }
-
-            @Override
-            public void onResetFB(Activity activity, Map<String, String> contactMap, Map<String, String> remarkMap) {
-                EditText phoneText=(EditText)activity.findViewById(R.id.feedback_phone);
-                EditText qqText=(EditText)activity.findViewById(R.id.feedback_qq);
-                EditText nameText=(EditText)activity.findViewById(R.id.feedback_name);
-                EditText emailText=(EditText)activity.findViewById(R.id.feedback_email);
-                if(remarkMap != null) {
-                    nameText.setText(remarkMap.get("name"));
-                    emailText.setText(remarkMap.get("email"));
-                }
-                if(contactMap != null) {
-                    phoneText.setText(contactMap.get("phone"));
-                    qqText.setText(contactMap.get("qq"));
-                }
-            }
-        };
-        UMFeedbackService.setFeedBackListener(listener);
     }
 
     /**
@@ -261,26 +185,6 @@ public class MainActivity extends Activity implements EventConstant {
     }
 
     /**
-     * 初始化SharedPreferences
-     */
-    private void initSharedPreferences() {
-        mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
-        if(mSp.getString(getString(R.string.spkey_first_launch_time), null) != null) {
-            SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_last_launch_time)},
-                new String[]{String.valueOf(System.currentTimeMillis())});
-        } else {
-            // if(!ShortcutUtil.hasShortcut(mContext)) { // 测试发现某些机型报错
-            ShortcutUtil.addShortcut(mContext);
-            // }
-            ToastUtil.longToast(mContext, getString(R.string.msg_first_launch));
-            SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_first_launch_time)},
-                new String[]{String.valueOf(System.currentTimeMillis())});
-        }
-
-        mCurrentUrl=mSp.getString(getString(R.string.spkey_index), getString(R.string.index)); // 获取首页
-    }
-
-    /**
      * 初始化各种View
      */
     private void initView() {
@@ -296,7 +200,6 @@ public class MainActivity extends Activity implements EventConstant {
         initGoto();
 
         initWebView();
-
     }
 
     /**
@@ -497,12 +400,12 @@ public class MainActivity extends Activity implements EventConstant {
             @Override
             public void onClick(View v) {
                 MobclickAgent.onEvent(mContext, NAVIGATION_ADD_FAVORITE);
-                MainActivity.getInstance().getHandler().post(new Runnable() {
+                NncApp.getInstance().getHandler().post(new Runnable() {
 
                     @Override
                     public void run() {
                         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                        mFavorite.insertFavorite(mCurrentTitle, mCurrentUrl);
+                        NncApp.getInstance().getFavoriteActivity().insertFavorite(NncApp.getCurrentTitle(), NncApp.getCurrentUrl());
                     }
                 });
             }
@@ -552,8 +455,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 跳转到在EditText中输入的网址
      */
     private void gotoByEditText() {
-        mEditUrl=mWebsite.getText().toString().trim();
-        String url=UrlUtil.checkEditUrl(mEditUrl); // 只有用户输入的URL才应该检查
+        String url=UrlUtil.checkEditUrl(mWebsite.getText().toString().trim()); // 只有用户输入的URL才应该检查
         loadUrl(url);
     }
 
@@ -591,7 +493,7 @@ public class MainActivity extends Activity implements EventConstant {
 
         @Override
         public void onReceivedTitle(WebView view, String title) {
-            mCurrentTitle=title;
+            NncApp.setCurrentTitle(title);
             setTitle(title + "-" + getString(R.string.app_name));
             super.onReceivedTitle(view, title);
         }
@@ -647,7 +549,7 @@ public class MainActivity extends Activity implements EventConstant {
             }
             if(!url.equals(Constants.ERROR_URL)) { // 当显示出错页面时，输入框网址不变
                 mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
-                mCurrentUrl=url;
+                NncApp.setCurrentUrl(url);
             }
             super.onPageStarted(view, url, favicon);
         }
@@ -716,7 +618,7 @@ public class MainActivity extends Activity implements EventConstant {
                 break;
             case R.id.menu_share: // 分享
                 MobclickAgent.onEvent(mContext, MENU_SHARE);
-                ShareUtil.shareFavorite(mContext, mCurrentTitle, mCurrentUrl);
+                ShareUtil.shareFavorite(mContext, NncApp.getCurrentTitle(), NncApp.getCurrentUrl());
                 break;
             case R.id.menu_exit: // 退出
                 MobclickAgent.onEvent(mContext, MENU_EXIT);
@@ -795,6 +697,9 @@ public class MainActivity extends Activity implements EventConstant {
      * 退出前处理数据
      */
     private void exit() {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============exit============");
+        }
         MobclickAgent.onEvent(this, EXIT_BACK);
         UIUtil.hideInputWindow(mWebView);
         unregisterReceiver();
@@ -812,7 +717,9 @@ public class MainActivity extends Activity implements EventConstant {
 
     @Override
     protected void onDestroy() {
-        LOG.cstdr(TAG, "============onDestroy============");
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============onDestroy============");
+        }
         MobclickAgent.onKillProcess(mContext);
         android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
@@ -913,7 +820,7 @@ public class MainActivity extends Activity implements EventConstant {
                 }
             }
         } else {
-            loadUrl(mCurrentUrl); // 加载在initSharedPreferences方法中获取到的首页
+            loadUrl(NncApp.getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页
         }
     }
 
@@ -924,66 +831,6 @@ public class MainActivity extends Activity implements EventConstant {
         // 2秒后导航栏自动消失
         navigationHandler.removeMessages(NAVIGATION_HIDE);
         navigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
-    }
-
-    /**
-     * 重新加载当前网址，用于网络重新连通后
-     */
-    public void reload() {
-        loadUrl(mCurrentUrl);
-    }
-
-    // //////////////////////////////////////////////////////////////////////////////////
-    // get and set
-    // //////////////////////////////////////////////////////////////////////////////////
-
-    public Context getContext() {
-        return mContext;
-    }
-
-    /**
-     * 获取实例
-     * @return
-     */
-    public static MainActivity getInstance() {
-        if(mInstance == null) {
-            mInstance=new MainActivity();
-        }
-        return mInstance;
-    }
-
-    /**
-     * 是否网络模式
-     * @return
-     */
-    public boolean isNetworkMode() {
-        return isNetworkMode;
-    }
-
-    public void setNetworkMode(boolean isNetworkMode) {
-        this.isNetworkMode=isNetworkMode;
-    }
-
-    public WebView getWebView() {
-        return mWebView;
-    }
-
-    public Handler getHandler() {
-        if(handler == null) {
-            handler=new Handler();
-        }
-        return handler;
-    }
-
-    public SharedPreferences getSp() {
-        if(mSp == null) {
-            mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
-        }
-        return mSp;
-    }
-
-    public String getCurrentUrl() {
-        return mCurrentUrl;
     }
 
 }

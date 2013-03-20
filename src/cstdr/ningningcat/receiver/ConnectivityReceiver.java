@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import cstdr.ningningcat.MainActivity;
+import cstdr.ningningcat.NncApp;
 import cstdr.ningningcat.util.DialogUtil;
 
 /**
@@ -18,17 +19,18 @@ public class ConnectivityReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if(intent.getAction().equals(ACTION_CONNECT_CHANGE)) {
-            MainActivity activity=MainActivity.getInstance();
+            NncApp nncApp=NncApp.getInstance();
             if(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-                if(!activity.isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
-                    DialogUtil.showNoConnectDialog(activity); // 这里必须传Activity，若传Context则报错
+                if(!nncApp.isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
+                    DialogUtil.showNoConnectDialog(context); // 这里必须传Activity，若传Context则报错
                 } else {
-                    activity.setNetworkMode(false);
+                    nncApp.setNetworkMode(false);
                 }
             } else {
-                if(activity.isNetworkMode()) {
-                    activity.setNetworkMode(true);
-                    activity.reload();
+                if(nncApp.isNetworkMode()) { // 重新加载当前网址，用于网络重新连通后
+                    nncApp.setNetworkMode(true);
+                    Intent reloadIntent=new Intent(context, MainActivity.class);
+                    context.startActivity(reloadIntent);
                 }
             }
         }

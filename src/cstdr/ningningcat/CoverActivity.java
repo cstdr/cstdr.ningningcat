@@ -20,7 +20,6 @@ public class CoverActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.cover);
         LinearLayout cover=(LinearLayout)findViewById(R.id.ll_cover);
         cover.setBackgroundResource(R.drawable.cover);
