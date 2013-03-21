@@ -1,5 +1,6 @@
 package cstdr.ningningcat.util;
 
+import android.webkit.URLUtil;
 import cstdr.ningningcat.constants.Constants;
 
 /**
@@ -15,7 +16,11 @@ public class UrlUtil {
      */
     public static String checkEditUrl(String editUrl) {
         if(editUrl != null && editUrl.length() > 0) {
-            return url2HttpUrl(editUrl);
+            if(isWebsite(editUrl)) {
+                return url2HttpUrl(editUrl);
+            } else { // 不是网址则默认百度搜索，因为谷歌实在不稳定
+                return "http://m.baidu.com/s?word=" + editUrl;
+            }
         }
         return null;
     }
@@ -26,9 +31,9 @@ public class UrlUtil {
      * @return
      */
     public static String url2HttpUrl(String url) {
-        if(url.startsWith(Constants.HTTP) || url.startsWith(Constants.HTTPS)) {
+        if(URLUtil.isNetworkUrl(url)) {
             return url;
-        } else {
+        } else { // 只返回http协议的url
             return Constants.HTTP + url;
         }
     }
@@ -39,12 +44,25 @@ public class UrlUtil {
      * @return
      */
     public static String httpUrl2Url(String httpUrl) {
-        if(httpUrl.startsWith(Constants.HTTP)) {
+        if(URLUtil.isHttpUrl(httpUrl)) {
             return httpUrl.substring(Constants.HTTP.length());
-        } else if(httpUrl.startsWith(Constants.HTTPS)) {
+        } else if(URLUtil.isHttpsUrl(httpUrl)) {
             return httpUrl.substring(Constants.HTTPS.length());
         } else {
             return httpUrl;
         }
     }
+
+    /**
+     * 判断是否是网址
+     * @return
+     */
+    private static boolean isWebsite(String url) {
+        if(url.contains(".com") || url.contains(".cn") || url.contains(".net") || url.contains(".org") || url.contains(".edu")
+            || url.contains(".gov")) {
+            return true;
+        }
+        return false;
+    }
+
 }

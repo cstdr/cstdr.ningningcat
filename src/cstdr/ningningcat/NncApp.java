@@ -34,7 +34,9 @@ public class NncApp extends Application {
 
     private SharedPreferences mSp=null;
 
-    private boolean isNetworkMode=false;
+    private boolean isFirstLaunch=true;
+
+    private boolean isNetworkMode=true;
 
     private static String mCurrentTitle=null;
 
@@ -64,6 +66,7 @@ public class NncApp extends Application {
             SPUtil.commitStrArrayToSP(mSp, new String[]{getString(R.string.spkey_last_launch_time)},
                 new String[]{String.valueOf(System.currentTimeMillis())});
         } else {
+            isFirstLaunch=false;
             // if(!ShortcutUtil.hasShortcut(mContext)) { // 测试发现某些机型报错
             ShortcutUtil.addShortcut(this);
             // }
@@ -147,6 +150,14 @@ public class NncApp extends Application {
             mSp=SPUtil.getSP(this, getString(R.string.sp_main));
         }
         return mSp;
+    }
+
+    /**
+     * 是否第一次启动
+     * @return
+     */
+    public boolean isFirstLaunch() {
+        return isFirstLaunch;
     }
 
     /**

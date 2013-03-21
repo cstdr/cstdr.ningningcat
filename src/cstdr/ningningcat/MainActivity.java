@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -339,31 +340,20 @@ public class MainActivity extends Activity implements EventConstant {
         mAutoCompleteAdapter=new ArrayAdapter<String>(mContext, R.layout.list_autocomplete);
         mHistoryUrlList=new LinkedList<String>();
         mWebsite.setThreshold(1); // 最小匹配字符为1个字符
-        // mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer()); //
+        // mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         // 用户必须提供一个MultiAutoCompleteTextView.Tokenizer用来区分不同的子串
         mWebsite.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
-                // if(position == 0) { // 第一个位置用来百度搜索输入字段
-                // String str=(String)adapter.getItemAtPosition(0);
-                // if(LOG.DEBUG) {
-                // LOG.cstdr("mWebsite.setOnItemClickListener-str=" + str);
-                // }
-                // String searchStr=str.substring(5);
-                // String searchUrl="http://wap.baidu.com/s?word=" + searchStr;
-                // loadUrl(searchUrl);
-                // } else {
                 String titleAndUrl=(String)adapter.getItemAtPosition(position);
                 String url=titleAndUrl.substring(titleAndUrl.indexOf("\n") + 1);
                 if(LOG.DEBUG) {
                     LOG.cstdr(TAG, "mWebsite.setOnItemClickListener : onItemClick -> " + UrlUtil.httpUrl2Url(url));
                 }
-                loadUrl(UrlUtil.url2HttpUrl(url));
-                // }
+                loadUrlStr(UrlUtil.url2HttpUrl(url));
             }
         });
-        // mWebsite.setDropDownAnchor(R.id.tv_dropdown);
         mWebsite.addTextChangedListener(new TextWatcher() {
 
             @Override
@@ -375,12 +365,7 @@ public class MainActivity extends Activity implements EventConstant {
             }
 
             @Override
-            public void afterTextChanged(Editable s) { // TODO
-                // mAutoCompleteAdapter.clear();
-                // mAutoCompleteAdapter.add("百度搜索:" + s);
-                // mAutoCompleteAdapter.insert("百度搜索:" + s.toString(), 0);
-                // mDropdown.setText("百度搜索:" + s.toString());
-                // setAutoComplete();
+            public void afterTextChanged(Editable s) {
                 if(s.length() == 0) {
                     mRewrite.setVisibility(View.GONE);
                 } else {
@@ -456,14 +441,14 @@ public class MainActivity extends Activity implements EventConstant {
      */
     private void gotoByEditText() {
         String url=UrlUtil.checkEditUrl(mWebsite.getText().toString().trim()); // 只有用户输入的URL才应该检查
-        loadUrl(url);
+        loadUrlStr(url);
     }
 
     /**
      * 在WebView中跳转到传入的URL
      * @param url
      */
-    private void loadUrl(String url) {
+    private void loadUrlStr(String url) {
         UIUtil.hideInputWindow(mWebView);
         if(url != null) {
             mWebView.loadUrl(url);
@@ -538,7 +523,7 @@ public class MainActivity extends Activity implements EventConstant {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            loadUrl(url);
+            loadUrlStr(url);
             return true;
         }
 
@@ -642,7 +627,7 @@ public class MainActivity extends Activity implements EventConstant {
             case R.id.menu_about: // 关于
                 MobclickAgent.onEvent(mContext, MENU_ABOUT);
                 ToastUtil.shortToast(mContext, "正在跳转至我的微博:)");
-                loadUrl(Constants.WEIBO_URL);
+                loadUrlStr(Constants.WEIBO_URL);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -704,6 +689,8 @@ public class MainActivity extends Activity implements EventConstant {
         UIUtil.hideInputWindow(mWebView);
         unregisterReceiver();
         finish();
+        MobclickAgent.onKillProcess(mContext);
+        android.os.Process.killProcess(android.os.Process.myPid());
     }
 
     @Override
@@ -720,8 +707,6 @@ public class MainActivity extends Activity implements EventConstant {
         if(LOG.DEBUG) {
             LOG.cstdr(TAG, "============onDestroy============");
         }
-        MobclickAgent.onKillProcess(mContext);
-        android.os.Process.killProcess(android.os.Process.myPid());
         super.onDestroy();
     }
 
@@ -753,6 +738,12 @@ public class MainActivity extends Activity implements EventConstant {
         UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
         super.onResume();
         MobclickAgent.onResume(this);
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        // TODO Auto-generated method stub
+        super.onConfigurationChanged(newConfig);
     }
 
     /**
@@ -806,7 +797,7 @@ public class MainActivity extends Activity implements EventConstant {
             if(action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
                 String url=intent.getStringExtra(DatabaseUtil.COLUMN_URL);
                 MobclickAgent.onEvent(mContext, ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK);
-                loadUrl(url);
+                loadUrlStr(url);
             } else if(action.equals(GotoReceiver.ACTION_VIEW) || action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
                 Uri uri=intent.getData();
                 if(LOG.DEBUG) {
@@ -814,13 +805,13 @@ public class MainActivity extends Activity implements EventConstant {
                 }
                 if(uri != null) {
                     MobclickAgent.onEvent(mContext, ACTION_GOTO_INTENT);
-                    loadUrl(UrlUtil.url2HttpUrl(uri.toString()));
+                    loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
                 } else {
-                    loadUrl(getString(R.string.index)); // 加载首页
+                    loadUrlStr(getString(R.string.index)); // 加载首页
                 }
             }
         } else {
-            loadUrl(NncApp.getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页
+            loadUrlStr(NncApp.getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页
         }
     }
 

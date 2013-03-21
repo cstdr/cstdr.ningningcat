@@ -21,13 +21,12 @@ public class ConnectivityReceiver extends BroadcastReceiver {
         if(intent.getAction().equals(ACTION_CONNECT_CHANGE)) {
             NncApp nncApp=NncApp.getInstance();
             if(intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
-                if(!nncApp.isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
-                    DialogUtil.showNoConnectDialog(context); // 这里必须传Activity，若传Context则报错
-                } else {
+                if(nncApp.isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
                     nncApp.setNetworkMode(false);
+                    DialogUtil.showNoConnectDialog(context); // 这里必须传Activity，若传Context则报错
                 }
             } else {
-                if(nncApp.isNetworkMode()) { // 重新加载当前网址，用于网络重新连通后
+                if(!nncApp.isNetworkMode()) { // 重新加载当前网址，用于网络重新连通后
                     nncApp.setNetworkMode(true);
                     Intent reloadIntent=new Intent(context, MainActivity.class);
                     context.startActivity(reloadIntent);
