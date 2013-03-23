@@ -32,6 +32,7 @@
             android:layout_below="@id/tv_web_title"
             android:layout_toRightOf="@id/iv_web_icon"
             android:singleLine="true"
+            android:textColor="@android:color/darker_gray"
             android:textSize="16sp" />
     </RelativeLayout>
 

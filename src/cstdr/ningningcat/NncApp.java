@@ -1,11 +1,14 @@
 package cstdr.ningningcat;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
 import android.widget.EditText;
 
@@ -13,6 +16,8 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.UMFeedbackService;
 import com.umeng.fb.util.FeedBackListener;
 
+import cstdr.ningningcat.data.Favorite;
+import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShortcutUtil;
@@ -28,11 +33,13 @@ public class NncApp extends Application {
 
     private static NncApp mInstance;
 
-    private FavoriteActivity mFavoriteActivity;
-
     private Handler handler;
 
     private SharedPreferences mSp=null;
+
+    private static SQLiteOpenHelper mDBHelper;
+
+    private static ArrayList<Favorite> mFavoriteList;
 
     private boolean isFirstLaunch=true;
 
@@ -52,7 +59,9 @@ public class NncApp extends Application {
 
         mInstance=this;
         handler=new Handler();
-        mFavoriteActivity=new FavoriteActivity();
+        mDBHelper=new DatabaseUtil(mInstance, DatabaseUtil.mDatabaseName, null, 1);
+        mFavoriteList=new ArrayList<Favorite>();
+        mFavoriteList=FavoriteActivity.getFavoriteList(mFavoriteList);
         initSharedPreferences();
         initUMeng();
     }
@@ -134,10 +143,6 @@ public class NncApp extends Application {
         return mInstance;
     }
 
-    public FavoriteActivity getFavoriteActivity() {
-        return mFavoriteActivity;
-    }
-
     public Handler getHandler() {
         if(handler == null) {
             handler=new Handler();
@@ -172,19 +177,32 @@ public class NncApp extends Application {
         this.isNetworkMode=isNetworkMode;
     }
 
-    public static String getCurrentTitle() {
+    public String getCurrentTitle() {
         return mCurrentTitle;
     }
 
-    public static void setCurrentTitle(String currentTitle) {
+    public void setCurrentTitle(String currentTitle) {
         mCurrentTitle=currentTitle;
     }
 
-    public static String getCurrentUrl() {
+    public String getCurrentUrl() {
         return mCurrentUrl;
     }
 
-    public static void setCurrentUrl(String currentUrl) {
+    public void setCurrentUrl(String currentUrl) {
         mCurrentUrl=currentUrl;
     }
+
+    public SQLiteDatabase getWritableDB() {
+        return mDBHelper.getWritableDatabase();
+    }
+
+    public SQLiteDatabase getReadableDB() {
+        return mDBHelper.getReadableDatabase();
+    }
+
+    public ArrayList<Favorite> getFavoriteList() {
+        return mFavoriteList;
+    }
+
 }

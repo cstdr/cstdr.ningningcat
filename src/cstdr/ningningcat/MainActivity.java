@@ -390,7 +390,10 @@ public class MainActivity extends Activity implements EventConstant {
                     @Override
                     public void run() {
                         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                        NncApp.getInstance().getFavoriteActivity().insertFavorite(NncApp.getCurrentTitle(), NncApp.getCurrentUrl());
+
+                        // TODO
+                        FavoriteActivity.insertFavorite(NncApp.getInstance().getCurrentTitle(), NncApp.getInstance()
+                            .getCurrentUrl());
                     }
                 });
             }
@@ -478,7 +481,7 @@ public class MainActivity extends Activity implements EventConstant {
 
         @Override
         public void onReceivedTitle(WebView view, String title) {
-            NncApp.setCurrentTitle(title);
+            NncApp.getInstance().setCurrentTitle(title);
             setTitle(title + "-" + getString(R.string.app_name));
             super.onReceivedTitle(view, title);
         }
@@ -534,7 +537,7 @@ public class MainActivity extends Activity implements EventConstant {
             }
             if(!url.equals(Constants.ERROR_URL)) { // 当显示出错页面时，输入框网址不变
                 mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
-                NncApp.setCurrentUrl(url);
+                NncApp.getInstance().setCurrentUrl(url);
             }
             super.onPageStarted(view, url, favicon);
         }
@@ -599,11 +602,12 @@ public class MainActivity extends Activity implements EventConstant {
             case R.id.menu_favorite: // 查看已收藏页面
                 MobclickAgent.onEvent(mContext, MENU_GOTO_FAVORITE_LIST);
                 Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
                 break;
             case R.id.menu_share: // 分享
                 MobclickAgent.onEvent(mContext, MENU_SHARE);
-                ShareUtil.shareFavorite(mContext, NncApp.getCurrentTitle(), NncApp.getCurrentUrl());
+                ShareUtil.shareFavorite(mContext, NncApp.getInstance().getCurrentTitle(), NncApp.getInstance().getCurrentUrl());
                 break;
             case R.id.menu_exit: // 退出
                 MobclickAgent.onEvent(mContext, MENU_EXIT);
@@ -811,7 +815,7 @@ public class MainActivity extends Activity implements EventConstant {
                 }
             }
         } else {
-            loadUrlStr(NncApp.getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页
+            loadUrlStr(NncApp.getInstance().getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页
         }
     }
 

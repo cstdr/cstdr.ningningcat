@@ -11,8 +11,6 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,32 +45,18 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
 
     private static final String TAG="FavoriteActivity";
 
-    public static ArrayList<Favorite> mFavoriteList=null;
+    private static Context mContext;
 
-    private Context mContext=null;
-
-    private FavoriteActivity activity=this;
+    private FavoriteActivity mActivity=this;
 
     private BaseAdapter mAdapter=null;
 
-    private SQLiteDatabase mDB=null;
+    private static ArrayList<Favorite> list;
 
     // /** 选自谷歌LOGO颜色 **/
     // private int[] mColorArray={Color.BLUE, Color.RED, Color.YELLOW, Color.BLUE, Color.GREEN, Color.RED};
 
     private int[] mColorArray={0xFFa7c7c6, 0xFFe4d9bb, 0xFFfcc4b7, 0xFFdd9598, 0xFFba928a};
-
-    public FavoriteActivity() {
-        mContext=NncApp.getInstance();
-        if(mDB == null) {
-            SQLiteOpenHelper mDBHelper=new DatabaseUtil(mContext, DatabaseUtil.mDatabaseName, null, 1);
-            mDB=mDBHelper.getWritableDatabase();
-        }
-        if(mFavoriteList == null) {
-            mFavoriteList=new ArrayList<Favorite>();
-            mFavoriteList=getFavoriteList();
-        }
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +65,17 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
         }
         super.onCreate(savedInstanceState);
         this.setTitle(R.string.title_favorite);
-
+        if(mContext == null) {
+            mContext=NncApp.getInstance();
+        }
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
-                Favorite favorite=mFavoriteList.get(position);
+                Favorite favorite=NncApp.getInstance().getFavoriteList().get(position);
                 final String title=favorite.getTitle();
                 final String url=favorite.getUrl();
-                DialogUtil.showFavoriteDialog(activity, title, position, new DialogItemClickListener() {
+                DialogUtil.showFavoriteDialog(mActivity, title, position, new DialogItemClickListener() {
 
                     @Override
                     public void onClick(int position, int which) {
@@ -104,7 +90,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
                                 break;
                             case 2: // 重命名
                                 MobclickAgent.onEvent(mContext, FAVORITE_MENU_RENAME);
-                                DialogUtil.showRenameDialog(activity, title, url, new DialogRenameListener() {
+                                DialogUtil.showRenameDialog(mActivity, title, url, new DialogRenameListener() {
 
                                     @Override
                                     public void onClick(String title, String url) {
@@ -127,7 +113,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
             }
         });
         if(mAdapter == null) {
-            mAdapter=new FavoriteAdapter(mContext);
+            mAdapter=new FavoriteAdapter(mActivity);
         }
         setListAdapter(mAdapter);
     }
@@ -137,7 +123,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
         if(LOG.DEBUG) {
             LOG.cstdr(TAG, "============onDestroy============");
         }
-        mDB.close();
+        NncApp.getInstance().getWritableDB().close();
         super.onDestroy();
     }
 
@@ -152,7 +138,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
         switch(item.getItemId()) {
             case R.id.menu_share_favorite_list: // 分享收藏夹
                 MobclickAgent.onEvent(mContext, MENU_SHARE_FAVORITE_LIST);
-                ShareUtil.shareFavoriteList(mContext, mFavoriteList);
+                ShareUtil.shareFavoriteList(mContext, NncApp.getInstance().getFavoriteList());
                 break;
             case R.id.menu_delete_favorite_list: // 清空收藏夹
                 MobclickAgent.onEvent(mContext, MENU_DELETE_FAVORITE_LIST);
@@ -185,12 +171,12 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
 
         @Override
         public int getCount() {
-            return mFavoriteList.size();
+            return NncApp.getInstance().getFavoriteList().size();
         }
 
         @Override
         public Object getItem(int position) {
-            return mFavoriteList.get(position);
+            return NncApp.getInstance().getFavoriteList().get(position);
         }
 
         @Override
@@ -218,8 +204,8 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
                 holder=(ViewHolder)convertView.getTag();
             }
             holder.webIcon.setBackgroundColor(mColorArray[position % 5]);
-            holder.webTitle.setText(mFavoriteList.get(position).getTitle());
-            holder.webUrl.setText(mFavoriteList.get(position).getUrl());
+            holder.webTitle.setText(NncApp.getInstance().getFavoriteList().get(position).getTitle());
+            holder.webUrl.setText(NncApp.getInstance().getFavoriteList().get(position).getUrl());
 
             return convertView;
         }
@@ -228,7 +214,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
         Intent intent=new Intent(GotoReceiver.ACTION_GOTO);
-        intent.putExtra(DatabaseUtil.COLUMN_URL, mFavoriteList.get(position).getUrl());
+        intent.putExtra(DatabaseUtil.COLUMN_URL, NncApp.getInstance().getFavoriteList().get(position).getUrl());
         sendBroadcast(intent);
     }
 
@@ -267,7 +253,10 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
      * @param title
      * @param url
      */
-    public void insertFavorite(String title, String url) {
+    public static void insertFavorite(String title, String url) {
+        if(mContext == null) {
+            mContext=NncApp.getInstance();
+        }
         if(hasUrlInDB(url)) {
             ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert_same));
             return;
@@ -275,9 +264,11 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
             ContentValues values=new ContentValues();
             values.put(DatabaseUtil.COLUMN_TITLE, title);
             values.put(DatabaseUtil.COLUMN_URL, url);
-            int id=(int)mDB.insert(DatabaseUtil.mTableName, null, values);
+            int id=(int)NncApp.getInstance().getWritableDB().insert(DatabaseUtil.mTableName, null, values);
             if(id > 0) {
                 ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert));
+                list=NncApp.getInstance().getFavoriteList();
+                list=getFavoriteList(list);
             } else {
                 ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_insert_error));
             }
@@ -289,7 +280,7 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
      * @param position
      */
     private void deleteFavorite(final int position) {
-        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
         builder.setMessage(R.string.msg_web_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
             @Override
@@ -301,12 +292,14 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 int id=
-                    mDB.delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?", new String[]{mFavoriteList.get(position)
-                        .getUrl()});
+                    NncApp
+                        .getInstance()
+                        .getWritableDB()
+                        .delete(DatabaseUtil.mTableName, DatabaseUtil.COLUMN_URL + "=?",
+                            new String[]{NncApp.getInstance().getFavoriteList().get(position).getUrl()});
                 if(id > 0) {
-                    if(mFavoriteList.get(position) != null) {
-                        mFavoriteList.remove(position);
-                    }
+                    list=NncApp.getInstance().getFavoriteList();
+                    list=getFavoriteList(list);
                     mAdapter.notifyDataSetChanged();
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_web_delete));
                 } else {
@@ -320,11 +313,11 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
      * 清空收藏夹
      */
     private void deleteFavoriteList() {
-        if(mFavoriteList.isEmpty()) {
+        if(NncApp.getInstance().getFavoriteList().isEmpty()) {
             ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_no_favorite));
             return;
         }
-        AlertDialog.Builder builder=new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder=new AlertDialog.Builder(mActivity);
         builder.setMessage(R.string.msg_list_delete_confirm).setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
             @Override
@@ -335,11 +328,10 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int id=mDB.delete(DatabaseUtil.mTableName, null, null);
+                int id=NncApp.getInstance().getWritableDB().delete(DatabaseUtil.mTableName, null, null);
                 if(id > 0) {
-                    if(!mFavoriteList.isEmpty()) {
-                        mFavoriteList.clear();
-                    }
+                    list=NncApp.getInstance().getFavoriteList();
+                    list=getFavoriteList(list);
                     mAdapter.notifyDataSetChanged();
                     ToastUtil.shortToast(mContext, mContext.getString(R.string.msg_list_delete));
                 } else {
@@ -353,26 +345,29 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
      * 从数据库取得收藏夹数据
      * @return
      */
-    private ArrayList<Favorite> getFavoriteList() {
-        if(!mFavoriteList.isEmpty()) {
-            mFavoriteList.clear();
+    public static ArrayList<Favorite> getFavoriteList(ArrayList<Favorite> list) {
+        if(!list.isEmpty()) {
+            list.clear();
         }
         Cursor cursor=null;
         try {
             cursor=
-                mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null,
-                    null, null, null);
+                NncApp
+                    .getInstance()
+                    .getReadableDB()
+                    .query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_TITLE, DatabaseUtil.COLUMN_URL}, null, null,
+                        null, null, null);
 
             for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 String webTitle=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_TITLE));
                 String webUrl=cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL));
                 Favorite favorite=new Favorite(webTitle, webUrl);
-                mFavoriteList.add(favorite);
+                list.add(favorite);
             }
         } finally {
             DatabaseUtil.closeCursor(cursor);
         }
-        return mFavoriteList;
+        return list;
 
     }
 
@@ -381,10 +376,12 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
      * @param url
      * @return
      */
-    private boolean hasUrlInDB(String url) {
+    private static boolean hasUrlInDB(String url) {
         Cursor cursor=null;
         try {
-            cursor=mDB.query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
+            cursor=
+                NncApp.getInstance().getReadableDB()
+                    .query(DatabaseUtil.mTableName, new String[]{DatabaseUtil.COLUMN_URL}, null, null, null, null, null);
             for(cursor.moveToFirst(); !cursor.isAfterLast(); cursor.moveToNext()) {
                 if(cursor.getString(cursor.getColumnIndexOrThrow(DatabaseUtil.COLUMN_URL)).equals(url)) {
                     return true;
@@ -406,13 +403,14 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
         values.put(DatabaseUtil.COLUMN_TITLE, title);
         String whereClause=DatabaseUtil.COLUMN_URL + "=?";
         String[] whereArgs=new String[]{url};
-        int id=mDB.update(DatabaseUtil.mTableName, values, whereClause, whereArgs);
+        int id=NncApp.getInstance().getWritableDB().update(DatabaseUtil.mTableName, values, whereClause, whereArgs);
         if(id > 0) {
-            mFavoriteList=getFavoriteList();
+            list=NncApp.getInstance().getFavoriteList();
+            list=getFavoriteList(list);
             mAdapter.notifyDataSetChanged();
-            ToastUtil.shortToast(activity, getString(R.string.msg_rename));
+            ToastUtil.shortToast(mContext, getString(R.string.msg_rename));
         } else {
-            ToastUtil.shortToast(activity, getString(R.string.msg_rename_error));
+            ToastUtil.shortToast(mContext, getString(R.string.msg_rename_error));
         }
     }
 
