@@ -18,8 +18,9 @@ public class UrlUtil {
         if(editUrl != null && editUrl.length() > 0) {
             if(isWebsite(editUrl)) {
                 return url2HttpUrl(editUrl);
-            } else { // 不是网址则默认百度搜索，因为谷歌实在不稳定
-                return "http://m.baidu.com/s?word=" + editUrl;
+            } else { // 不是网址则默认谷歌搜索，但是有时谷歌不稳定
+                // return "http://m.baidu.com/s?word=" + editUrl; // 百度
+                return "http://www.google.com.hk/search?q=" + editUrl; // 谷歌
             }
         }
         return null;

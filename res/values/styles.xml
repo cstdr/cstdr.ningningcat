@@ -1,7 +1,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="DayTheme" parent="@android:style/Theme.Light">
-        <item name="android:windowTitleSize">30dp</item>
+        <item name="android:windowTitleSize">24dp</item>
     </style>
 
     <style name="NightMode" parent="@android:style/Theme.Light">

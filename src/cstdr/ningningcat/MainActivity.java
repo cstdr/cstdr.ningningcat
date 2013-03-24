@@ -150,13 +150,13 @@ public class MainActivity extends Activity implements EventConstant {
         super.onCreate(savedInstanceState);
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
-        requestWindowFeature(Window.FEATURE_LEFT_ICON);
+        // requestWindowFeature(Window.FEATURE_LEFT_ICON);
 
         setContentView(R.layout.activity_main);
 
         initReceiver();
         initView();
-        WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
+        // WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
         processData();
     }
 
@@ -285,17 +285,17 @@ public class MainActivity extends Activity implements EventConstant {
                 }
             }
         });
-        mWebView.setOnScrollChangedListener(new ScrollInterface() { // TODO
+        mWebView.setOnScrollChangedListener(new ScrollInterface() {
 
-                @Override
-                public void onScrollChange(int l, int t, int oldl, int oldt) {
-                    if((t - oldt) > 5) {
-                        navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
-                    } else if((oldt - t) > 5) {
-                        navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
-                    }
+            @Override
+            public void onScrollChange(int l, int t, int oldl, int oldt) {
+                if((t - oldt) > 5) {
+                    navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+                } else if((oldt - t) > 5) {
+                    navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
                 }
-            });
+            }
+        });
         mWebView.setWebChromeClient(new MyWebChromeClient());
         mWebView.setWebViewClient(new MyWebViewClient());
         mWebView.setDownloadListener(new MyDownloadListener());
@@ -390,8 +390,6 @@ public class MainActivity extends Activity implements EventConstant {
                     @Override
                     public void run() {
                         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-
-                        // TODO
                         FavoriteActivity.insertFavorite(NncApp.getInstance().getCurrentTitle(), NncApp.getInstance()
                             .getCurrentUrl());
                     }
@@ -474,8 +472,8 @@ public class MainActivity extends Activity implements EventConstant {
 
         @Override
         public void onReceivedIcon(WebView view, Bitmap icon) {
-            Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap 转换为 Drawable
-            setFeatureDrawable(Window.FEATURE_LEFT_ICON, drawableIcon);
+            // Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap 转换为 Drawable
+            // setFeatureDrawable(Window.FEATURE_LEFT_ICON, drawableIcon);
             super.onReceivedIcon(view, icon);
         }
 
@@ -746,7 +744,6 @@ public class MainActivity extends Activity implements EventConstant {
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        // TODO Auto-generated method stub
         super.onConfigurationChanged(newConfig);
     }
 
