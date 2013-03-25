@@ -241,8 +241,8 @@ public class MainActivity extends Activity implements EventConstant {
         mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
         mWebSettings.setPluginsEnabled(true);
         mWebSettings.setLoadsImagesAutomatically(true); // 当GPRS下提示是否加载图片
-        // mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
-        // mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
+        mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
+        mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
         // mWebSettings.setNeedInitialFocus(true); // （无效）当webview调用requestFocus时为webview设置节点，这样系统可以自动滚动到指定位置
         mWebSettings.setSaveFormData(true); // 保存表单数据
         mWebSettings.setSavePassword(true); // 保存密码
