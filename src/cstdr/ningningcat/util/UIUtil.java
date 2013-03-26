@@ -1,5 +1,7 @@
 package cstdr.ningningcat.util;
 
+import java.math.BigDecimal;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -170,6 +172,26 @@ public class UIUtil {
         Settings.System.putInt(cr, SCREEN_BRIGHTNESS, brightness);
         Uri uri=Settings.System.getUriFor(SCREEN_BRIGHTNESS);
         cr.notifyChange(uri, null);
+    }
+
+    /**
+     * 将long类型长度转换为合理的文件大小
+     * @param contentLength
+     * @return
+     */
+    public static String changeSize(long length) {
+        String size;
+        if(length < 1024) {
+            size=length + "Byte";
+        } else if(length < 1024 * 1024) {
+            int kb=(int)(length / 1024);
+            size=kb + "KB";
+        } else {
+            double dLength=(double)length / 1024 / 1024;
+            BigDecimal b=new BigDecimal(dLength);
+            size=String.valueOf(b.setScale(2, BigDecimal.ROUND_HALF_UP)) + "MB";
+        }
+        return size;
     }
 
 }

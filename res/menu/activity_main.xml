@@ -37,11 +37,14 @@
                     android:menuCategory="secondary"
                     android:orderInCategory="2" >
                     <item
-                        android:id="@+id/menu_report"
-                        android:title="@string/menu_report"/>
+                        android:id="@+id/menu_download_list"
+                        android:title="@string/menu_download_list"/>
                     <item
                         android:id="@+id/menu_update"
                         android:title="@string/menu_update"/>
+                    <item
+                        android:id="@+id/menu_report"
+                        android:title="@string/menu_report"/>
                     <item
                         android:id="@+id/menu_about"
                         android:title="@string/menu_about"/>

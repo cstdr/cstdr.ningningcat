@@ -3,14 +3,13 @@ package cstdr.ningningcat;
 import java.util.LinkedList;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +35,6 @@ import android.webkit.GeolocationPermissions.Callback;
 import android.webkit.JsResult;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
-import android.webkit.WebIconDatabase;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebStorage.QuotaUpdater;
@@ -60,9 +58,12 @@ import com.umeng.update.UpdateResponse;
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
+import cstdr.ningningcat.receiver.DownloadCompleteReceiver;
+import cstdr.ningningcat.receiver.DownloadNotificationClickReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
+import cstdr.ningningcat.util.DownloadUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
@@ -107,6 +108,10 @@ public class MainActivity extends Activity implements EventConstant {
     private BroadcastReceiver mConnectitvityReceiver=null;
 
     private BroadcastReceiver mGotoReceiver=null;
+
+    private BroadcastReceiver mDownloadCompleteReceiver=null;
+
+    private BroadcastReceiver mDownloadNotificationClickReceiver=null;
 
     private static WebBackForwardList mWebBackForwardList;
 
@@ -169,12 +174,21 @@ public class MainActivity extends Activity implements EventConstant {
         }
         IntentFilter filter=new IntentFilter(ConnectivityReceiver.ACTION_CONNECT_CHANGE);
         registerReceiver(mConnectitvityReceiver, filter);
-
         if(mGotoReceiver == null) {
             mGotoReceiver=new GotoReceiver();
         }
         filter=new IntentFilter(GotoReceiver.ACTION_GOTO);
         registerReceiver(mGotoReceiver, filter);
+        if(mDownloadCompleteReceiver == null) {
+            mDownloadCompleteReceiver=new DownloadCompleteReceiver();
+        }
+        filter=new IntentFilter(DownloadCompleteReceiver.ACTION_DOWNLOAD_COMPLETE);
+        registerReceiver(mDownloadCompleteReceiver, filter);
+        if(mDownloadNotificationClickReceiver == null) {
+            mDownloadNotificationClickReceiver=new DownloadNotificationClickReceiver();
+        }
+        filter=new IntentFilter(DownloadNotificationClickReceiver.ACTION_NOTIFICATION_CLICK);
+        registerReceiver(mDownloadNotificationClickReceiver, filter);
     }
 
     /**
@@ -565,14 +579,12 @@ public class MainActivity extends Activity implements EventConstant {
             if(LOG.DEBUG) {
                 LOG.cstdr(TAG, "MyDownloadListener : mimetype -> " + mimetype);
             }
-            Intent intent=new Intent(Intent.ACTION_VIEW);
-            Uri uri=Uri.parse(url);
-            // 下载链接时调用系统浏览器下载 TODO
             if(mimetype.equals("application/vnd.android.package-archive")) {
-                ToastUtil.longToast(mContext, getString(R.string.msg_download));
-                intent.setData(uri);
-                startActivity(intent);
+                ToastUtil.shortToast(mContext, getString(R.string.msg_download_start, url));
+                DownloadUtil.startDownload(url, userAgent, contentDisposition, mimetype, contentLength);
             } else {
+                Intent intent=new Intent(Intent.ACTION_VIEW);
+                Uri uri=Uri.parse(url);
                 intent.setDataAndType(uri, mimetype); // 只用setType方法会清除先前放入的data数据
                 startActivity(intent);
             }
@@ -617,14 +629,19 @@ public class MainActivity extends Activity implements EventConstant {
             // case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
             // UIUtil.changeBrightMode(mContext, mActivity);
             // break;
-            case R.id.menu_report: // 反馈
-                MobclickAgent.onEvent(mContext, MENU_REPORT);
-                UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
-                UMFeedbackService.openUmengFeedbackSDK(mContext);
+            case R.id.menu_download_list:
+                MobclickAgent.onEvent(mContext, MENU_DOWNLOAD_LIST);
+                Intent downloadsIntent=new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+                startActivity(downloadsIntent);
                 break;
             case R.id.menu_update: // 更新
                 MobclickAgent.onEvent(mContext, MENU_UPDATE);
                 update();
+                break;
+            case R.id.menu_report: // 反馈
+                MobclickAgent.onEvent(mContext, MENU_REPORT);
+                UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
+                UMFeedbackService.openUmengFeedbackSDK(mContext);
                 break;
             case R.id.menu_about: // 关于
                 MobclickAgent.onEvent(mContext, MENU_ABOUT);

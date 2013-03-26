@@ -10,8 +10,9 @@
     <string name="menu_share">分享</string>
     <string name="menu_exit">拜拜</string>
     <string name="menu_more">More</string>
-    <string name="menu_report">反馈</string>
+    <string name="menu_download_list">下载管理</string>
     <string name="menu_update">更新宁宁猫</string>
+    <string name="menu_report">反馈</string>
     <string name="menu_about">关于</string>
     <string name="menu_share_favorite_list">分享收藏夹给好友</string>
     <string name="menu_delete_favorite_list">清空收藏夹</string>
@@ -34,7 +35,6 @@
     <string name="msg_web_insert_same">这个已经收藏过啦！</string>
     <string name="msg_web_delete">丢掉啦！</string>
     <string name="msg_web_delete_confirm">真的要丢掉吗？</string>
-    <string name="msg_download">目前宁宁猫还没有下载功能哦～请先使用其他工具吧:)</string>
     <string name="msg_no_favorite">收藏夹中还没有网页哦:)</string>
     <string name="msg_list_delete">全部丢掉啦！</string>
     <string name="msg_list_delete_confirm">确定要全部丢掉吗？</string>
@@ -42,6 +42,8 @@
     <string name="msg_save_index">已经设置好啦！~</string>
     <string name="msg_rename">已经重命名啦！~</string>
     <string name="msg_rename_error">重命名操作出现了百年难得一见的问题，再来一遍吧~</string>
+    <string name="msg_download_complete">下载完成啦！快点安装吧~</string>
+    <string name="msg_download_start">开始下载：%s</string>
     <!-- btn -->
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>

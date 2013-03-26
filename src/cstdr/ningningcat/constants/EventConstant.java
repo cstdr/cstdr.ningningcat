@@ -51,6 +51,9 @@ public interface EventConstant {
     /** 菜单-“更新宁宁猫” **/
     String MENU_UPDATE="MENU_UPDATE";
 
+    /** 菜单-“下载管理” **/
+    String MENU_DOWNLOAD_LIST="MENU_DOWNLOAD_LIST";
+
     /** 导航栏-添加收藏 **/
     String NAVIGATION_ADD_FAVORITE="NAVIGATION_ADD_FAVORITE";
 
