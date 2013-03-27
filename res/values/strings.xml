@@ -44,6 +44,10 @@
     <string name="msg_rename_error">重命名操作出现了百年难得一见的问题，再来一遍吧~</string>
     <string name="msg_download_complete">下载完成啦！快点安装吧~</string>
     <string name="msg_download_start">开始下载：%s</string>
+    <string name="msg_about">正在跳转至我的微博:)</string>
+    <string name="msg_update_no">宁宁猫正在努力开发中，暂时没有更新哦~</string>
+    <string name="msg_update_nowifi">没有连接Wifi，还是省点流量吧~</string>
+    <string name="msg_update_timeout">联网出现超时，等会再试吧~</string>
     <!-- btn -->
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>

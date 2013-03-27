@@ -144,51 +144,51 @@ public final class R {
         public static final int activity_main=0x7f090001;
     }
     public static final class string {
-        public static final int UMAppUpdate=0x7f06005b;
-        public static final int UMBreak_Network=0x7f060056;
-        public static final int UMContentTooLong=0x7f06003a;
-        public static final int UMDeleteFeedback=0x7f06004f;
-        public static final int UMDeleteMsg=0x7f060051;
-        public static final int UMDeleteThread=0x7f06004d;
-        public static final int UMDialog_InstallAPK=0x7f06005e;
-        public static final int UMEmptyFbNotAllowed=0x7f060039;
-        public static final int UMFbList_ListItem_State_Fail=0x7f06003e;
-        public static final int UMFbList_ListItem_State_ReSend=0x7f06003b;
-        public static final int UMFbList_ListItem_State_Resending=0x7f06003d;
-        public static final int UMFbList_ListItem_State_Sending=0x7f06003c;
-        public static final int UMFb_Atom_State_Fail=0x7f06003f;
-        public static final int UMFb_Atom_State_Resend=0x7f060041;
-        public static final int UMFb_Atom_State_Resending=0x7f060055;
-        public static final int UMFb_Atom_State_Sending=0x7f060040;
-        public static final int UMFeedbackContent=0x7f060046;
-        public static final int UMFeedbackConversationTitle=0x7f060044;
-        public static final int UMFeedbackGoBack=0x7f060048;
-        public static final int UMFeedbackGotIt=0x7f060049;
-        public static final int UMFeedbackListTitle=0x7f060043;
-        public static final int UMFeedbackSeeDetail=0x7f06004a;
-        public static final int UMFeedbackSummit=0x7f060047;
-        public static final int UMFeedbackTitle=0x7f060045;
-        public static final int UMFeedbackUmengTitle=0x7f060042;
-        public static final int UMGprsCondition=0x7f060059;
-        public static final int UMNewReplyAlertTitle=0x7f06004c;
-        public static final int UMNewReplyFlick=0x7f060052;
-        public static final int UMNewReplyHint=0x7f060054;
-        public static final int UMNewReplyTitle=0x7f060053;
-        public static final int UMNewVersion=0x7f060058;
-        public static final int UMNotNow=0x7f06005c;
-        public static final int UMResendFeedback=0x7f060050;
-        public static final int UMToast_IsUpdating=0x7f06005d;
-        public static final int UMUpdateNow=0x7f06005a;
-        public static final int UMUpdateTitle=0x7f060057;
-        public static final int UMViewFeedback=0x7f06004e;
-        public static final int UMViewThread=0x7f06004b;
+        public static final int UMAppUpdate=0x7f06005f;
+        public static final int UMBreak_Network=0x7f06005a;
+        public static final int UMContentTooLong=0x7f06003e;
+        public static final int UMDeleteFeedback=0x7f060053;
+        public static final int UMDeleteMsg=0x7f060055;
+        public static final int UMDeleteThread=0x7f060051;
+        public static final int UMDialog_InstallAPK=0x7f060062;
+        public static final int UMEmptyFbNotAllowed=0x7f06003d;
+        public static final int UMFbList_ListItem_State_Fail=0x7f060042;
+        public static final int UMFbList_ListItem_State_ReSend=0x7f06003f;
+        public static final int UMFbList_ListItem_State_Resending=0x7f060041;
+        public static final int UMFbList_ListItem_State_Sending=0x7f060040;
+        public static final int UMFb_Atom_State_Fail=0x7f060043;
+        public static final int UMFb_Atom_State_Resend=0x7f060045;
+        public static final int UMFb_Atom_State_Resending=0x7f060059;
+        public static final int UMFb_Atom_State_Sending=0x7f060044;
+        public static final int UMFeedbackContent=0x7f06004a;
+        public static final int UMFeedbackConversationTitle=0x7f060048;
+        public static final int UMFeedbackGoBack=0x7f06004c;
+        public static final int UMFeedbackGotIt=0x7f06004d;
+        public static final int UMFeedbackListTitle=0x7f060047;
+        public static final int UMFeedbackSeeDetail=0x7f06004e;
+        public static final int UMFeedbackSummit=0x7f06004b;
+        public static final int UMFeedbackTitle=0x7f060049;
+        public static final int UMFeedbackUmengTitle=0x7f060046;
+        public static final int UMGprsCondition=0x7f06005d;
+        public static final int UMNewReplyAlertTitle=0x7f060050;
+        public static final int UMNewReplyFlick=0x7f060056;
+        public static final int UMNewReplyHint=0x7f060058;
+        public static final int UMNewReplyTitle=0x7f060057;
+        public static final int UMNewVersion=0x7f06005c;
+        public static final int UMNotNow=0x7f060060;
+        public static final int UMResendFeedback=0x7f060054;
+        public static final int UMToast_IsUpdating=0x7f060061;
+        public static final int UMUpdateNow=0x7f06005e;
+        public static final int UMUpdateTitle=0x7f06005b;
+        public static final int UMViewFeedback=0x7f060052;
+        public static final int UMViewThread=0x7f06004f;
         /**  main 
          */
         public static final int app_name=0x7f060000;
-        public static final int btn_cancel=0x7f060029;
+        public static final int btn_cancel=0x7f06002d;
         /**  btn 
          */
-        public static final int btn_ok=0x7f060028;
+        public static final int btn_ok=0x7f06002c;
         public static final int http=0x7f060002;
         public static final int index=0x7f060003;
         public static final int menu_about=0x7f06000b;
@@ -204,6 +204,7 @@ public final class R {
         public static final int menu_share=0x7f060005;
         public static final int menu_share_favorite_list=0x7f06000c;
         public static final int menu_update=0x7f060009;
+        public static final int msg_about=0x7f060028;
         public static final int msg_cache_max_size=0x7f060015;
         public static final int msg_database_fail=0x7f060022;
         public static final int msg_download_complete=0x7f060026;
@@ -222,6 +223,9 @@ public final class R {
         public static final int msg_rename_error=0x7f060025;
         public static final int msg_save_index=0x7f060023;
         public static final int msg_timeout=0x7f060016;
+        public static final int msg_update_no=0x7f060029;
+        public static final int msg_update_nowifi=0x7f06002a;
+        public static final int msg_update_timeout=0x7f06002b;
         public static final int msg_web_delete=0x7f06001d;
         public static final int msg_web_delete_confirm=0x7f06001e;
         public static final int msg_web_insert=0x7f06001a;
@@ -229,27 +233,27 @@ public final class R {
         public static final int msg_web_insert_same=0x7f06001c;
         /**  sp 
          */
-        public static final int sp_main=0x7f06002a;
-        public static final int spkey_bright_mode_last=0x7f06002f;
-        public static final int spkey_bright_mode_now=0x7f06002e;
-        public static final int spkey_first_launch_time=0x7f06002b;
-        public static final int spkey_index=0x7f06002d;
-        public static final int spkey_last_brightness=0x7f060030;
-        public static final int spkey_last_launch_time=0x7f06002c;
+        public static final int sp_main=0x7f06002e;
+        public static final int spkey_bright_mode_last=0x7f060033;
+        public static final int spkey_bright_mode_now=0x7f060032;
+        public static final int spkey_first_launch_time=0x7f06002f;
+        public static final int spkey_index=0x7f060031;
+        public static final int spkey_last_brightness=0x7f060034;
+        public static final int spkey_last_launch_time=0x7f060030;
         /**  title 
          */
         public static final int title_alert=0x7f06000f;
         public static final int title_confirm=0x7f060010;
         public static final int title_favorite=0x7f060012;
         public static final int title_no_connect=0x7f060011;
-        public static final int umeng_common_action_cancel=0x7f060035;
-        public static final int umeng_common_action_continue=0x7f060034;
-        public static final int umeng_common_action_info_exist=0x7f060031;
-        public static final int umeng_common_action_pause=0x7f060033;
-        public static final int umeng_common_download_failed=0x7f060038;
-        public static final int umeng_common_download_notification_prefix=0x7f060036;
-        public static final int umeng_common_info_interrupt=0x7f060032;
-        public static final int umeng_common_network_break_alert=0x7f060037;
+        public static final int umeng_common_action_cancel=0x7f060039;
+        public static final int umeng_common_action_continue=0x7f060038;
+        public static final int umeng_common_action_info_exist=0x7f060035;
+        public static final int umeng_common_action_pause=0x7f060037;
+        public static final int umeng_common_download_failed=0x7f06003c;
+        public static final int umeng_common_download_notification_prefix=0x7f06003a;
+        public static final int umeng_common_info_interrupt=0x7f060036;
+        public static final int umeng_common_network_break_alert=0x7f06003b;
         public static final int website_hint=0x7f060001;
     }
     public static final class style {

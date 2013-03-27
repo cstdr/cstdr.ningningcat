@@ -54,7 +54,13 @@ public class DownloadUtil {
         // request.setAllowedOverRoaming(false);
         request.setShowRunningNotification(true);
         request.setTitle(fileName);
-        request.setDescription(UIUtil.changeSize(contentLength) + "-" + uri.getHost());
+        String description="";
+        if(contentLength > 0) { // 同一个APK文件，在不同的WIFI环境下载，有时获取不到文件长度，返回值为-1
+            description=UIUtil.changeSize(contentLength) + "-" + uri.getHost();
+        } else {
+            description=uri.getHost();
+        }
+        request.setDescription(description);
         request.setVisibleInDownloadsUi(true); // 在下载管理中可见
         mDownloadManager.enqueue(request);
     }

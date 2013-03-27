@@ -30,4 +30,7 @@ public interface Constants {
     /** 出错页面的链接地址 **/
     String ERROR_URL="file:///android_asset/html/error.html";
 
+    /** APK的文件类型 **/
+    String APK_MIMETYPE="application/vnd.android.package-archive";
+
 }

@@ -65,6 +65,7 @@ import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.DownloadUtil;
 import cstdr.ningningcat.util.LOG;
+import cstdr.ningningcat.util.NetworkUtil;
 import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UIUtil;
@@ -228,6 +229,9 @@ public class MainActivity extends Activity implements EventConstant {
             @Override
             public void onClick(View v) {
                 MobclickAgent.onEvent(mContext, NAVIGATION_REWRITE);
+                if(navigationHandler.hasMessages(NAVIGATION_HIDE)) {
+                    navigationHandler.removeMessages(NAVIGATION_HIDE);
+                }
                 mWebsite.setText("");
             }
         });
@@ -294,8 +298,8 @@ public class MainActivity extends Activity implements EventConstant {
 
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(!hasFocus) {
-                    navigationHandler.removeMessages(1); // 点击输入框后焦点才发生变化
+                if(!hasFocus && navigationHandler.hasMessages(NAVIGATION_HIDE)) {
+                    navigationHandler.removeMessages(NAVIGATION_HIDE); // 点击输入框后焦点才发生变化
                 }
             }
         });
@@ -325,6 +329,9 @@ public class MainActivity extends Activity implements EventConstant {
             @Override
             public void onClick(View v) {
                 MobclickAgent.onEvent(mContext, NAVIGATION_GOTO);
+                if(navigationHandler.hasMessages(NAVIGATION_HIDE)) {
+                    navigationHandler.removeMessages(NAVIGATION_HIDE);
+                }
                 gotoByEditText();
             }
         });
@@ -399,6 +406,9 @@ public class MainActivity extends Activity implements EventConstant {
             @Override
             public void onClick(View v) {
                 MobclickAgent.onEvent(mContext, NAVIGATION_ADD_FAVORITE);
+                if(navigationHandler.hasMessages(NAVIGATION_HIDE)) {
+                    navigationHandler.removeMessages(NAVIGATION_HIDE);
+                }
                 NncApp.getInstance().getHandler().post(new Runnable() {
 
                     @Override
@@ -579,7 +589,7 @@ public class MainActivity extends Activity implements EventConstant {
             if(LOG.DEBUG) {
                 LOG.cstdr(TAG, "MyDownloadListener : mimetype -> " + mimetype);
             }
-            if(mimetype.equals("application/vnd.android.package-archive")) {
+            if(mimetype.equals(Constants.APK_MIMETYPE)) {
                 ToastUtil.shortToast(mContext, getString(R.string.msg_download_start, url));
                 DownloadUtil.startDownload(url, userAgent, contentDisposition, mimetype, contentLength);
             } else {
@@ -645,7 +655,7 @@ public class MainActivity extends Activity implements EventConstant {
                 break;
             case R.id.menu_about: // 关于
                 MobclickAgent.onEvent(mContext, MENU_ABOUT);
-                ToastUtil.shortToast(mContext, "正在跳转至我的微博:)");
+                ToastUtil.shortToast(mContext, getString(R.string.msg_about));
                 loadUrlStr(Constants.WEIBO_URL);
                 break;
         }
@@ -673,28 +683,32 @@ public class MainActivity extends Activity implements EventConstant {
      * 更新宁宁猫
      */
     private void update() {
-        UmengUpdateAgent.update(mContext);
-        UmengUpdateAgent.setUpdateAutoPopup(false);
-        UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
+        if(NetworkUtil.checkNetwork(mContext)) {
+            UmengUpdateAgent.update(mContext);
+            UmengUpdateAgent.setUpdateAutoPopup(false);
+            UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
 
-            @Override
-            public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
-                switch(updateStatus) {
-                    case 0: // 有更新
-                        UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
-                        break;
-                    case 1: // 没有更新
-                        ToastUtil.shortToast(mContext, "宁宁猫正在努力开发中，暂时没有更新哦~");
-                        break;
-                    case 2: // 非Wifi下
-                        ToastUtil.shortToast(mContext, "没有连接Wifi，还是省点流量吧~");
-                        break;
-                    case 3: // 连接超时
-                        ToastUtil.shortToast(mContext, "联网出现超时，等会再试吧~");
-                        break;
+                @Override
+                public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
+                    switch(updateStatus) {
+                        case 0: // 有更新
+                            UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
+                            break;
+                        case 1: // 没有更新
+                            ToastUtil.shortToast(mContext, getString(R.string.msg_update_no));
+                            break;
+                        case 2: // 非Wifi下
+                            ToastUtil.shortToast(mContext, getString(R.string.msg_update_nowifi));
+                            break;
+                        case 3: // 连接超时
+                            ToastUtil.shortToast(mContext, getString(R.string.msg_update_timeout));
+                            break;
+                    }
                 }
-            }
-        });
+            });
+        } else {
+            ToastUtil.shortToast(mContext, getString(R.string.msg_no_connect));
+        }
     }
 
     /**
