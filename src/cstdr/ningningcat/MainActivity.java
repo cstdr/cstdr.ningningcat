@@ -172,24 +172,21 @@ public class MainActivity extends Activity implements EventConstant {
     private void initReceiver() {
         if(mConnectitvityReceiver == null) {
             mConnectitvityReceiver=new ConnectivityReceiver();
+            registerReceiver(mConnectitvityReceiver, new IntentFilter(ConnectivityReceiver.ACTION_CONNECT_CHANGE));
         }
-        IntentFilter filter=new IntentFilter(ConnectivityReceiver.ACTION_CONNECT_CHANGE);
-        registerReceiver(mConnectitvityReceiver, filter);
         if(mGotoReceiver == null) {
             mGotoReceiver=new GotoReceiver();
+            registerReceiver(mGotoReceiver, new IntentFilter(GotoReceiver.ACTION_GOTO));
         }
-        filter=new IntentFilter(GotoReceiver.ACTION_GOTO);
-        registerReceiver(mGotoReceiver, filter);
         if(mDownloadCompleteReceiver == null) {
             mDownloadCompleteReceiver=new DownloadCompleteReceiver();
+            registerReceiver(mDownloadCompleteReceiver, new IntentFilter(DownloadCompleteReceiver.ACTION_DOWNLOAD_COMPLETE));
         }
-        filter=new IntentFilter(DownloadCompleteReceiver.ACTION_DOWNLOAD_COMPLETE);
-        registerReceiver(mDownloadCompleteReceiver, filter);
         if(mDownloadNotificationClickReceiver == null) {
             mDownloadNotificationClickReceiver=new DownloadNotificationClickReceiver();
+            registerReceiver(mDownloadNotificationClickReceiver, new IntentFilter(
+                DownloadNotificationClickReceiver.ACTION_NOTIFICATION_CLICK));
         }
-        filter=new IntentFilter(DownloadNotificationClickReceiver.ACTION_NOTIFICATION_CLICK);
-        registerReceiver(mDownloadNotificationClickReceiver, filter);
     }
 
     /**
@@ -198,6 +195,8 @@ public class MainActivity extends Activity implements EventConstant {
     private void unregisterReceiver() {
         unregisterReceiver(mConnectitvityReceiver);
         unregisterReceiver(mGotoReceiver);
+        unregisterReceiver(mDownloadCompleteReceiver);
+        unregisterReceiver(mDownloadNotificationClickReceiver);
     }
 
     /**
@@ -720,7 +719,6 @@ public class MainActivity extends Activity implements EventConstant {
         }
         MobclickAgent.onEvent(this, EXIT_BACK);
         UIUtil.hideInputWindow(mWebView);
-        unregisterReceiver();
         finish();
         MobclickAgent.onKillProcess(mContext);
         android.os.Process.killProcess(android.os.Process.myPid());
@@ -741,6 +739,7 @@ public class MainActivity extends Activity implements EventConstant {
             LOG.cstdr(TAG, "============onDestroy============");
         }
         super.onDestroy();
+        unregisterReceiver();
     }
 
     @Override
@@ -773,8 +772,14 @@ public class MainActivity extends Activity implements EventConstant {
         MobclickAgent.onResume(this);
     }
 
+    /**
+     * 处理横竖屏切换，在Android 3.2（API 13）以后，在manifest中的configChanges需要添加screenSize，否则不会调用该方法
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "===========onConfigurationChanged===========");
+        }
         super.onConfigurationChanged(newConfig);
     }
 
@@ -811,6 +816,9 @@ public class MainActivity extends Activity implements EventConstant {
      */
     @Override
     protected void onNewIntent(Intent intent) {
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "============onNewIntent============");
+        }
         setIntent(intent);
         processData();
     }

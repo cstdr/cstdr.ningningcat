@@ -26,15 +26,15 @@ public class DownloadUtil {
      * @param url
      * @param userAgent
      * @param contentDisposition
-     * @param mimetype
+     * @param mimeType
      * @param contentLength
      */
-    public static void startDownload(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {
+    public static void startDownload(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
         if(LOG.DEBUG) {
             LOG.cstdr(TAG, "url = " + url);
             LOG.cstdr(TAG, "userAgent = " + userAgent);
             LOG.cstdr(TAG, "contentDisposition = " + contentDisposition);
-            LOG.cstdr(TAG, "mimetype = " + mimetype);
+            LOG.cstdr(TAG, "mimetype = " + mimeType);
             LOG.cstdr(TAG, "contentLength = " + contentLength);
         }
         if(mDownloadManager == null) {
@@ -43,11 +43,13 @@ public class DownloadUtil {
         Uri uri=Uri.parse(url);
         Request request=new Request(uri);
         request.addRequestHeader("User-Agent", userAgent);
+        request.setMimeType(mimeType);
         String fileName;
         if(TextUtils.isEmpty(contentDisposition)) {
             fileName=uri.getLastPathSegment();
         } else {
-            fileName=contentDisposition.replaceFirst("attachment;filename=", "");
+            fileName=contentDisposition.replaceFirst("attachment; filename=", "");
+            fileName=fileName.replace("\"", "");
         }
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
         // request.setAllowedNetworkTypes(Request.NETWORK_WIFI); // 只允许WIFI下
@@ -76,9 +78,16 @@ public class DownloadUtil {
         }
         Query query=new Query();
         query.setFilterByStatus(DownloadManager.STATUS_SUCCESSFUL);
-        Cursor c=mDownloadManager.query(query);
-        if(c.moveToFirst()) {
-            fileName=c.getString(c.getColumnIndex(DownloadManager.COLUMN_STATUS));
+        Cursor cursor=null;
+        try {
+            cursor=mDownloadManager.query(query);
+            if(cursor.moveToFirst()) {
+                fileName=cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE));
+            }
+        } finally {
+            if(cursor != null) {
+                cursor.close();
+            }
         }
         return fileName;
     }
