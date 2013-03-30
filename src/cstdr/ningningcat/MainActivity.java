@@ -31,7 +31,6 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.DownloadListener;
-import android.webkit.GeolocationPermissions.Callback;
 import android.webkit.JsResult;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
@@ -61,6 +60,7 @@ import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.DownloadCompleteReceiver;
 import cstdr.ningningcat.receiver.DownloadNotificationClickReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
+import cstdr.ningningcat.util.CacheUtil;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.DownloadUtil;
@@ -250,13 +250,13 @@ public class MainActivity extends Activity implements EventConstant {
         mWebSettings.setSupportZoom(true);
         // mWebSettings.setSupportMultipleWindows(true); // TODO 多窗口
         mWebSettings.setDefaultTextEncodingName("utf-8"); // 页面编码
-        mWebSettings.setAppCacheEnabled(false); // 支持缓存，不使用缓存
-        // mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
-        // mWebSettings.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 优先使用缓存，在程序退出时清理
-        mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不使用缓存
+        mWebSettings.setAppCacheEnabled(true); // 支持缓存
+        mWebSettings.setAppCacheMaxSize(Constants.CACHE_MAX_SIZE); // 缓存最大值
+        mWebSettings.setCacheMode(WebSettings.LOAD_DEFAULT); // 根据cache-control决定是否从网络上取数据
+        // mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE); // 不使用缓存
         mWebSettings.setDomStorageEnabled(true); // 设置可以使用localStorage
         mWebSettings.setPluginState(PluginState.ON); // 若打开flash则需要使用插件
-        mWebSettings.setPluginsEnabled(true);
+        // mWebSettings.setEnableSmoothTransition(true); // webview放大缩小更平滑，需要API 11以上
         mWebSettings.setLoadsImagesAutomatically(true); // 当GPRS下提示是否加载图片
         mWebSettings.setUseWideViewPort(true); // 设置页面宽度和屏幕一样
         mWebSettings.setLoadWithOverviewMode(true); // 设置页面宽度和屏幕一样
@@ -527,15 +527,22 @@ public class MainActivity extends Activity implements EventConstant {
 
         @Override
         public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
-            ToastUtil.shortToast(mContext, getString(R.string.msg_cache_max_size));
+            // 当达到上限时，清理缓存
+            new Thread() {
+
+                @Override
+                public void run() {
+                    CacheUtil.clearCache(mContext);
+                }
+            }.start();
             super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
         }
 
-        @Override
-        public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
-            callback.invoke(origin, true, false);
-            super.onGeolocationPermissionsShowPrompt(origin, callback);
-        }
+        // @Override
+        // public void onGeolocationPermissionsShowPrompt(String origin, Callback callback) {
+        // callback.invoke(origin, true, false);
+        // super.onGeolocationPermissionsShowPrompt(origin, callback);
+        // }
 
     }
 
@@ -647,6 +654,23 @@ public class MainActivity extends Activity implements EventConstant {
                 MobclickAgent.onEvent(mContext, MENU_UPDATE);
                 update();
                 break;
+            case R.id.menu_clear_formdata: // 清除表单数据
+                MobclickAgent.onEvent(mContext, MENU_CLEAR_FORMDATA);
+                new Thread() {
+
+                    @Override
+                    public void run() {
+                        CacheUtil.clearFormData(mContext);
+                        NncApp.getInstance().getHandler().post(new Runnable() {
+
+                            @Override
+                            public void run() {
+                                ToastUtil.shortToast(mContext, getString(R.string.msg_delete_formdata));
+                            }
+                        });
+                    }
+                }.start();
+                break;
             case R.id.menu_report: // 反馈
                 MobclickAgent.onEvent(mContext, MENU_REPORT);
                 UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
@@ -670,6 +694,7 @@ public class MainActivity extends Activity implements EventConstant {
                 ToastUtil.shortToast(mContext, getString(R.string.msg_exit));
                 mLastBackPressTimeMillis=System.currentTimeMillis();
             } else {
+                MobclickAgent.onEvent(this, EXIT_BACK);
                 exit();
             }
             return true;
@@ -717,7 +742,6 @@ public class MainActivity extends Activity implements EventConstant {
         if(LOG.DEBUG) {
             LOG.cstdr(TAG, "============exit============");
         }
-        MobclickAgent.onEvent(this, EXIT_BACK);
         UIUtil.hideInputWindow(mWebView);
         finish();
         MobclickAgent.onKillProcess(mContext);

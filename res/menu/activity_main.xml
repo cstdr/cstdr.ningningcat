@@ -43,6 +43,9 @@
                         android:id="@+id/menu_update"
                         android:title="@string/menu_update"/>
                     <item
+                        android:id="@+id/menu_clear_formdata"
+                        android:title="@string/menu_clear_formdata"/>
+                    <item
                         android:id="@+id/menu_report"
                         android:title="@string/menu_report"/>
                     <item

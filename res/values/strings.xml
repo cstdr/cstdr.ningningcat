@@ -12,6 +12,7 @@
     <string name="menu_more">More</string>
     <string name="menu_download_list">下载管理</string>
     <string name="menu_update">更新宁宁猫</string>
+    <string name="menu_clear_formdata">清除表单数据</string>
     <string name="menu_report">反馈</string>
     <string name="menu_about">关于</string>
     <string name="menu_share_favorite_list">分享收藏夹给好友</string>
@@ -25,7 +26,6 @@
     <!-- msg -->
     <string name="msg_exit">再按一次宁宁猫就走啦~</string>
     <string name="msg_progress">喵~~~喵~~~</string>
-    <string name="msg_cache_max_size">缓存满啦！该清理啦～</string>
     <string name="msg_timeout">等到花都谢了也没反应，一会再试吧～</string>
     <string name="msg_no_url">你想跳转到哪里呢？</string>
     <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望您能喜欢:)</string>
@@ -48,6 +48,7 @@
     <string name="msg_update_no">宁宁猫正在努力开发中，暂时没有更新哦~</string>
     <string name="msg_update_nowifi">没有连接Wifi，还是省点流量吧~</string>
     <string name="msg_update_timeout">联网出现超时，等会再试吧~</string>
+    <string name="msg_delete_formdata">网站保存的用户名和密码都清理干净啦~</string>
     <!-- btn -->
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>

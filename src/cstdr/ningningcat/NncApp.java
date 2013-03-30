@@ -16,7 +16,9 @@ import com.umeng.analytics.MobclickAgent;
 import com.umeng.fb.UMFeedbackService;
 import com.umeng.fb.util.FeedBackListener;
 
+import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.data.Favorite;
+import cstdr.ningningcat.util.CacheUtil;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.LOG;
 import cstdr.ningningcat.util.SPUtil;
@@ -64,6 +66,18 @@ public class NncApp extends Application {
         mFavoriteList=FavoriteActivity.getFavoriteList(mFavoriteList);
         initSharedPreferences();
         initUMeng();
+        new Thread() {
+
+            @Override
+            public void run() {
+                if(LOG.DEBUG) {
+                    LOG.cstdr(TAG, "CacheUtil.getCacheSize(mInstance) = " + CacheUtil.getCacheSize(mInstance));
+                }
+                if(CacheUtil.getCacheSize(mInstance) > Constants.CACHE_MAX_SIZE) {
+                    CacheUtil.clearCache(mInstance);
+                }
+            }
+        }.start();
     }
 
     /**
