@@ -74,7 +74,7 @@ public final class R {
         public static final int ll_cover=0x7f0a0006;
         public static final int ll_favorites=0x7f0a0008;
         public static final int menu_about=0x7f0a003d;
-        public static final int menu_clear_formdata=0x7f0a003b;
+        public static final int menu_clear_cachedata=0x7f0a003b;
         public static final int menu_delete_favorite_list=0x7f0a0034;
         public static final int menu_download_list=0x7f0a0039;
         public static final int menu_exit=0x7f0a0037;
@@ -193,7 +193,7 @@ public final class R {
         public static final int http=0x7f060002;
         public static final int index=0x7f060003;
         public static final int menu_about=0x7f06000c;
-        public static final int menu_clear_formdata=0x7f06000a;
+        public static final int menu_clear_cachedata=0x7f06000a;
         public static final int menu_delete_favorite_list=0x7f06000e;
         public static final int menu_download_list=0x7f060008;
         public static final int menu_exit=0x7f060006;
@@ -208,7 +208,7 @@ public final class R {
         public static final int menu_update=0x7f060009;
         public static final int msg_about=0x7f060028;
         public static final int msg_database_fail=0x7f060022;
-        public static final int msg_delete_formdata=0x7f06002c;
+        public static final int msg_delete_cachedata=0x7f06002c;
         public static final int msg_download_complete=0x7f060026;
         public static final int msg_download_start=0x7f060027;
         /**  msg 

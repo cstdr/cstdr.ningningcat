@@ -43,8 +43,8 @@
                         android:id="@+id/menu_update"
                         android:title="@string/menu_update"/>
                     <item
-                        android:id="@+id/menu_clear_formdata"
-                        android:title="@string/menu_clear_formdata"/>
+                        android:id="@+id/menu_clear_cachedata"
+                        android:title="@string/menu_clear_cachedata"/>
                     <item
                         android:id="@+id/menu_report"
                         android:title="@string/menu_report"/>

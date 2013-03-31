@@ -654,19 +654,20 @@ public class MainActivity extends Activity implements EventConstant {
                 MobclickAgent.onEvent(mContext, MENU_UPDATE);
                 update();
                 break;
-            case R.id.menu_clear_formdata: // 清除表单数据和Cookie
-                MobclickAgent.onEvent(mContext, MENU_CLEAR_FORMDATA);
+            case R.id.menu_clear_cachedata: // 清除缓存数据（包括缓存文件、表单数据和Cookie）
+                MobclickAgent.onEvent(mContext, MENU_CLEAR_CACHEDATA);
                 new Thread() {
 
                     @Override
                     public void run() {
+                        CacheUtil.clearCache(mContext);
                         CacheUtil.clearFormData(mContext);
                         CacheUtil.clearCookie();
                         NncApp.getInstance().getHandler().post(new Runnable() {
 
                             @Override
                             public void run() {
-                                ToastUtil.shortToast(mContext, getString(R.string.msg_delete_formdata));
+                                ToastUtil.shortToast(mContext, getString(R.string.msg_delete_cachedata));
                             }
                         });
                     }

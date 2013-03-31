@@ -52,7 +52,7 @@ public interface EventConstant {
     String MENU_UPDATE="MENU_UPDATE";
 
     /** 菜单-“清除表单数据” **/
-    String MENU_CLEAR_FORMDATA="MENU_CLEAR_FORMDATA";
+    String MENU_CLEAR_CACHEDATA="MENU_CLEAR_CACHEDATA";
 
     /** 菜单-“下载管理” **/
     String MENU_DOWNLOAD_LIST="MENU_DOWNLOAD_LIST";
