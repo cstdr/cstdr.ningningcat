@@ -70,9 +70,10 @@ import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
-import cstdr.ningningcat.widget.MyAutoCompleteTextView;
-import cstdr.ningningcat.widget.MyWebView;
-import cstdr.ningningcat.widget.MyWebView.ScrollInterface;
+import cstdr.ningningcat.widget.DRAutoCompleteTextView;
+import cstdr.ningningcat.widget.DRWebView;
+import cstdr.ningningcat.widget.DRWebView.ScrollInterface;
+import cstdr.ningningcat.widget.layout.WebLayout;
 
 /**
  * 宁宁猫主界面
@@ -84,19 +85,21 @@ public class MainActivity extends Activity implements EventConstant {
 
     private final Context mContext=this;
 
+    private WebLayout webLayout;
+
     private RelativeLayout mWebsiteNavigation;
 
-    private ImageView mAddFavorite=null;
+    private ImageView mAddFavorite;
 
-    private MyAutoCompleteTextView mWebsite=null;
+    private DRAutoCompleteTextView mWebsite;
 
-    private ImageView mRewrite=null;
+    private ImageView mRewrite;
 
-    private ImageView mGoto=null;
+    private ImageView mGoto;
 
-    private MyWebView mWebView=null;
+    private DRWebView mWebView;
 
-    private WebSettings mWebSettings=null;
+    private WebSettings mWebSettings;
 
     private long mLastBackPressTimeMillis=0L;
 
@@ -106,13 +109,13 @@ public class MainActivity extends Activity implements EventConstant {
 
     private static final int NAVIGATION_SHOW=2;
 
-    private BroadcastReceiver mConnectitvityReceiver=null;
+    private BroadcastReceiver mConnectitvityReceiver;
 
-    private BroadcastReceiver mGotoReceiver=null;
+    private BroadcastReceiver mGotoReceiver;
 
-    private BroadcastReceiver mDownloadCompleteReceiver=null;
+    private BroadcastReceiver mDownloadCompleteReceiver;
 
-    private BroadcastReceiver mDownloadNotificationClickReceiver=null;
+    private BroadcastReceiver mDownloadNotificationClickReceiver;
 
     private static WebBackForwardList mWebBackForwardList;
 
@@ -156,14 +159,24 @@ public class MainActivity extends Activity implements EventConstant {
         super.onCreate(savedInstanceState);
         // 必须开始就设置
         requestWindowFeature(Window.FEATURE_PROGRESS);
-        // requestWindowFeature(Window.FEATURE_LEFT_ICON);
-
-        setContentView(R.layout.activity_main);
-
+        initWebLayout();
         initReceiver();
-        initView();
         // WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
         processData();
+    }
+
+    /**
+     * 初始化浏览网页的主Layout
+     */
+    private void initWebLayout() {
+        webLayout=new WebLayout(mContext);
+        setContentView(webLayout);
+        initNavigation();
+        initAddFavorite();
+        initWebsite();
+        initRewrite();
+        initGoto();
+        initWebView();
     }
 
     /**
@@ -200,28 +213,10 @@ public class MainActivity extends Activity implements EventConstant {
     }
 
     /**
-     * 初始化各种View
-     */
-    private void initView() {
-
-        initNavigation();
-
-        initAddFavorite();
-
-        initWebsite();
-
-        initRewrite();
-
-        initGoto();
-
-        initWebView();
-    }
-
-    /**
      * 初始化重写按钮
      */
     private void initRewrite() {
-        mRewrite=(ImageView)findViewById(R.id.iv_rewrite);
+        mRewrite=webLayout.getRewrite();
         mRewrite.setVisibility(View.GONE);
         mRewrite.setOnClickListener(new OnClickListener() {
 
@@ -240,7 +235,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 初始化WebView
      */
     private void initWebView() {
-        mWebView=(MyWebView)findViewById(R.id.wv_web);
+        mWebView=webLayout.getWebview();
 
         /** WebSettings配置 **/
         mWebSettings=mWebView.getSettings();
@@ -267,7 +262,6 @@ public class MainActivity extends Activity implements EventConstant {
         /** WebView配置 **/
         mWebView.setScrollbarFadingEnabled(true); // 滚动条自动消失
         mWebView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY); // WebView右侧无空隙
-        mWebView.setVisibility(View.VISIBLE);
         // mWebView.setInitialScale(100); // 初始缩放比例
         // mWebView.requestFocusFromTouch(); // 接收触摸焦点
         mWebView.setOnTouchListener(new OnTouchListener() {
@@ -313,16 +307,16 @@ public class MainActivity extends Activity implements EventConstant {
                 }
             }
         });
-        mWebView.setWebChromeClient(new MyWebChromeClient());
-        mWebView.setWebViewClient(new MyWebViewClient());
-        mWebView.setDownloadListener(new MyDownloadListener());
+        mWebView.setWebChromeClient(new DRWebChromeClient());
+        mWebView.setWebViewClient(new DRWebViewClient());
+        mWebView.setDownloadListener(new DRDownloadListener());
     }
 
     /**
      * 初始化导航栏中跳转按钮的配置
      */
     private void initGoto() {
-        mGoto=(ImageView)findViewById(R.id.iv_goto);
+        mGoto=webLayout.getGotoView();
         mGoto.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -340,7 +334,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 初始化导航栏中EditText输入框的配置
      */
     private void initWebsite() {
-        mWebsite=(MyAutoCompleteTextView)findViewById(R.id.actv_website);
+        mWebsite=webLayout.getWebsite();
         mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
         mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -357,7 +351,8 @@ public class MainActivity extends Activity implements EventConstant {
                 return false;
             }
         });
-        mAutoCompleteAdapter=new ArrayAdapter<String>(mContext, R.layout.list_autocomplete);
+        // mAutoCompleteAdapter=new ArrayAdapter<String>(mContext, R.layout.list_autocomplete); // TODO 修改布局文件
+        mAutoCompleteAdapter=new ArrayAdapter<String>(mContext, R.layout.list_autocomplete); // TODO 修改布局文件
         mHistoryUrlList=new LinkedList<String>();
         mWebsite.setThreshold(1); // 最小匹配字符为1个字符
         // mWebsite.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
@@ -399,7 +394,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 添加导航栏中收藏按鈕配置
      */
     private void initAddFavorite() {
-        mAddFavorite=(ImageView)findViewById(R.id.iv_add);
+        mAddFavorite=webLayout.getAdd();
         mAddFavorite.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -413,7 +408,7 @@ public class MainActivity extends Activity implements EventConstant {
                     @Override
                     public void run() {
                         android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-                        FavoriteActivity.insertFavorite(NncApp.getInstance().getCurrentTitle(), NncApp.getInstance()
+                        FavoriteActivity.insertFavorite(mContext, NncApp.getInstance().getCurrentTitle(), NncApp.getInstance()
                             .getCurrentUrl());
                     }
                 });
@@ -425,7 +420,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 初始化RelativeLayout导航栏
      */
     private void initNavigation() {
-        mWebsiteNavigation=(RelativeLayout)findViewById(R.id.rl_website_navigation);
+        mWebsiteNavigation=webLayout.getNavLayout();
         animNavigationFadeOut=AnimationUtils.loadAnimation(mContext, R.anim.navigation_fade_out);
         animNavigationFadeIn=AnimationUtils.loadAnimation(mContext, R.anim.navigation_fade_in);
         animNavigationFadeOut.setAnimationListener(new AnimationListener() {
@@ -485,7 +480,7 @@ public class MainActivity extends Activity implements EventConstant {
      * WebView的WebChromeClient
      * @author cstdingran@gmail.com
      */
-    class MyWebChromeClient extends WebChromeClient {
+    class DRWebChromeClient extends WebChromeClient {
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
@@ -550,7 +545,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 主WebView的WebViewClient
      * @author cstdingran@gmail.com
      */
-    class MyWebViewClient extends WebViewClient {
+    class DRWebViewClient extends WebViewClient {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -588,7 +583,7 @@ public class MainActivity extends Activity implements EventConstant {
      * 监听下载链接
      * @author cstdingran@gmail.com
      */
-    class MyDownloadListener implements DownloadListener {
+    class DRDownloadListener implements DownloadListener {
 
         @Override
         public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength) {

@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.DisplayMetrics;
 import android.view.KeyEvent;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.LinearLayout;
 
 import com.umeng.analytics.MobclickAgent;
+
+import cstdr.ningningcat.util.LOG;
+import cstdr.ningningcat.widget.layout.CoverLayout;
 
 /**
  * 封面页
@@ -17,14 +18,16 @@ import com.umeng.analytics.MobclickAgent;
  */
 public class CoverActivity extends Activity {
 
+    private static final String TAG="CoverActivity";
+
+    private CoverLayout coverLayout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.cover);
-        LinearLayout cover=(LinearLayout)findViewById(R.id.ll_cover);
-        cover.setBackgroundResource(R.drawable.cover);
-        Animation animCover=AnimationUtils.loadAnimation(this, android.R.anim.fade_in); // 简单的渐进动画效果，显示更平滑
-        cover.setAnimation(animCover);
+        initUI();
+        coverLayout=new CoverLayout(this);
+        setContentView(coverLayout);
 
         new Handler().postDelayed(new Runnable() {
 
@@ -36,6 +39,20 @@ public class CoverActivity extends Activity {
                 finish();
             }
         }, 2000);
+    }
+
+    /**
+     * 初始化UI参数，将值传入NncApp
+     */
+    private void initUI() {
+        DisplayMetrics metrics=new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        if(LOG.DEBUG) {
+            LOG.cstdr(TAG, "metrics.widthPixels = " + metrics.widthPixels);
+            LOG.cstdr(TAG, "metrics.heightPixels = " + metrics.heightPixels);
+            LOG.cstdr(TAG, "metrics.density = " + metrics.density);
+        }
+        NncApp.setUI_SCALE_X(metrics.density / 2);
     }
 
     @Override

@@ -12,7 +12,7 @@
     <string name="menu_more">More</string>
     <string name="menu_download_list">下载管理</string>
     <string name="menu_update">更新宁宁猫</string>
-    <string name="menu_clear_cachedata">清除缓存\数据</string>
+    <string name="menu_clear_cachedata">清除缓存数据</string>
     <string name="menu_report">反馈</string>
     <string name="menu_about">关于</string>
     <string name="menu_share_favorite_list">分享收藏夹给好友</string>

@@ -51,6 +51,9 @@ public class NncApp extends Application {
 
     private static String mCurrentUrl=null;
 
+    /** 手机屏幕宽的比例，以1280x720为准 **/
+    private static float UI_SCALE_X;
+
     @Override
     public void onCreate() {
         if(LOG.DEBUG) {
@@ -217,6 +220,14 @@ public class NncApp extends Application {
 
     public ArrayList<Favorite> getFavoriteList() {
         return mFavoriteList;
+    }
+
+    public static float getUI_SCALE_X() {
+        return UI_SCALE_X;
+    }
+
+    public static void setUI_SCALE_X(float uI_SCALE_X) {
+        UI_SCALE_X=uI_SCALE_X;
     }
 
 }
