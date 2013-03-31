@@ -3,6 +3,7 @@ package cstdr.ningningcat.util;
 import java.io.File;
 
 import android.content.Context;
+import android.webkit.CookieManager;
 import android.webkit.WebViewDatabase;
 
 /**
@@ -56,6 +57,17 @@ public class CacheUtil {
         }
         if(db.hasUsernamePassword()) {
             db.clearUsernamePassword();
+        }
+    }
+
+    /**
+     * 清理Cookie
+     * @param context
+     */
+    public static void clearCookie() {
+        CookieManager manager=CookieManager.getInstance();
+        if(manager.hasCookies()) {
+            manager.removeAllCookie();
         }
     }
 }
