@@ -51,7 +51,7 @@ public interface EventConstant {
     /** 菜单-“更新宁宁猫” **/
     String MENU_UPDATE="MENU_UPDATE";
 
-    /** 菜单-“清除表单数据” **/
+    /** 菜单-“清除缓存数据” **/
     String MENU_CLEAR_CACHEDATA="MENU_CLEAR_CACHEDATA";
 
     /** 菜单-“下载管理” **/

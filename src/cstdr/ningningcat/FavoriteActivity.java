@@ -2,8 +2,8 @@ package cstdr.ningningcat;
 
 import java.util.ArrayList;
 
+import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -17,9 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -34,16 +34,19 @@ import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ShortcutUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.widget.item.FavoriteItem;
+import cstdr.ningningcat.widget.layout.FavoriteLayout;
 
 /**
  * “我的收藏”界面
  * @author cstdingran@gmail.com
  */
-public class FavoriteActivity extends ListActivity implements EventConstant {
+public class FavoriteActivity extends Activity implements EventConstant {
 
     private static final String TAG="FavoriteActivity";
 
     private Context mContext=this;
+
+    private FavoriteLayout layout;
 
     private BaseAdapter mAdapter;
 
@@ -60,8 +63,24 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
             LOG.cstdr(TAG, "============onCreate============");
         }
         super.onCreate(savedInstanceState);
-        this.setTitle(R.string.title_favorite);
-        getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
+        initFavoriteLayout();
+    }
+
+    /**
+     * 初始化导航栏
+     */
+    private void initFavoriteLayout() {
+        layout=new FavoriteLayout(mContext);
+        layout.setOnItemClick(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> l, View v, int position, long id) {
+                Intent intent=new Intent(GotoReceiver.ACTION_GOTO);
+                intent.putExtra(DatabaseUtil.COLUMN_URL, NncApp.getInstance().getFavoriteList().get(position).getUrl());
+                sendBroadcast(intent);
+            }
+        });
+        layout.setOnItemLongClick(new OnItemLongClickListener() {
 
             @Override
             public boolean onItemLongClick(AdapterView<?> adapter, View view, int position, long id) {
@@ -105,10 +124,9 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
                 return true;
             }
         });
-        if(mAdapter == null) {
-            mAdapter=new FavoriteAdapter(mContext);
-        }
-        setListAdapter(mAdapter);
+        mAdapter=new FavoriteAdapter(mContext);
+        layout.setListAdapter(mAdapter);
+        this.setContentView(layout);
     }
 
     @Override
@@ -179,13 +197,6 @@ public class FavoriteActivity extends ListActivity implements EventConstant {
             item.setUrl(NncApp.getInstance().getFavoriteList().get(position).getUrl());
             return item;
         }
-    }
-
-    @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent intent=new Intent(GotoReceiver.ACTION_GOTO);
-        intent.putExtra(DatabaseUtil.COLUMN_URL, NncApp.getInstance().getFavoriteList().get(position).getUrl());
-        sendBroadcast(intent);
     }
 
     /**
