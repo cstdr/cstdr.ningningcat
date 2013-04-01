@@ -3,10 +3,13 @@ package cstdr.ningningcat.widget.layout;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.InputType;
+import android.view.LayoutInflater;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import cstdr.ningningcat.R;
 import cstdr.ningningcat.widget.DRAutoCompleteTextView;
+import cstdr.ningningcat.widget.DRNavigationBar;
 import cstdr.ningningcat.widget.DRWebView;
 
 /**
@@ -18,6 +21,9 @@ public class WebLayout extends DRRelativeLayout {
     private DRWebView webview;
 
     private RelativeLayout navLayout;
+
+    /** 标题栏 **/
+    private DRNavigationBar title;
 
     /** 添加收藏按钮 **/
     private ImageView add;
@@ -33,6 +39,9 @@ public class WebLayout extends DRRelativeLayout {
     /** 重写按钮 **/
     private ImageView rewrite;
 
+    /** 网页加载进度条 **/
+    private ProgressBar progress;
+
     private RelativeLayout.LayoutParams webviewLP;
 
     private RelativeLayout.LayoutParams navLayoutLP;
@@ -46,6 +55,8 @@ public class WebLayout extends DRRelativeLayout {
     private RelativeLayout.LayoutParams gotoViewLP;
 
     private RelativeLayout.LayoutParams rewriteLP;
+
+    private final int ID_TITLE=1304010025;
 
     private final int ID_ADD=1304010026;
 
@@ -62,11 +73,13 @@ public class WebLayout extends DRRelativeLayout {
         this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
         initWebView();
         initNavLayout();
+        initTitle();
         initAdd();
         initWebsiteLayout();
         initWebsite();
         initGoto();
         initRewrite();
+        initProgress();
     }
 
     private void initWebView() {
@@ -85,9 +98,17 @@ public class WebLayout extends DRRelativeLayout {
         this.addView(navLayout);
     }
 
+    private void initTitle() {
+        title=new DRNavigationBar(mContext);
+        title.setId(ID_TITLE);
+        title.setText(R.string.app_name);
+        navLayout.addView(title);
+    }
+
     private void initAdd() {
         addLP=new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         addLP.addRule(CENTER_VERTICAL);
+        addLP.addRule(BELOW, ID_TITLE);
         addLP.setMargins(0, 0, 0, 0);
         add=new ImageView(mContext);
         add.setId(ID_ADD);
@@ -100,6 +121,7 @@ public class WebLayout extends DRRelativeLayout {
         websiteLayoutLP=new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         websiteLayoutLP.setMargins(0, 0, 0, 0);
         websiteLayoutLP.addRule(RIGHT_OF, ID_ADD);
+        websiteLayoutLP.addRule(BELOW, ID_TITLE);
         websiteLayout=new RelativeLayout(mContext);
         websiteLayout.setId(ID_WEBSITE_LAYOUT);
         websiteLayout.setLayoutParams(websiteLayoutLP);
@@ -145,6 +167,13 @@ public class WebLayout extends DRRelativeLayout {
         websiteLayout.addView(gotoView);
     }
 
+    private void initProgress() {
+        LayoutInflater inflater=LayoutInflater.from(mContext);
+        progress=(ProgressBar)inflater.inflate(R.layout.progress_bar_horizontal, null);
+        // progress=(ProgressBar)findViewById(R.id.progress_bar_horizontal); // 直接findView会报空指针
+        this.addView(progress);
+    }
+
     public RelativeLayout getNavLayout() {
         return navLayout;
     }
@@ -167,6 +196,18 @@ public class WebLayout extends DRRelativeLayout {
 
     public DRWebView getWebview() {
         return webview;
+    }
+
+    public void setTitle(String str) {
+        title.setText(str);
+    }
+
+    public void setProgress(int i) {
+        progress.setProgress(i);
+    }
+
+    public void setProgressVisibility(int i) {
+        progress.setVisibility(i);
     }
 
 }

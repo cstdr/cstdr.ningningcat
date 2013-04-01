@@ -25,7 +25,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
-import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
@@ -79,7 +78,7 @@ import cstdr.ningningcat.widget.layout.WebLayout;
  * 宁宁猫主界面
  * @author cstdingran@gmail.com
  */
-public class MainActivity extends Activity implements EventConstant {
+public class WebActivity extends Activity implements EventConstant {
 
     private static final String TAG="MainActivity";
 
@@ -157,8 +156,6 @@ public class MainActivity extends Activity implements EventConstant {
             LOG.cstdr(TAG, "============onCreate============");
         }
         super.onCreate(savedInstanceState);
-        // 必须开始就设置
-        requestWindowFeature(Window.FEATURE_PROGRESS);
         initWebLayout();
         initReceiver();
         // WebIconDatabase.getInstance().open(getDir("icon", MODE_PRIVATE).getPath()); // 允许请求网页icon
@@ -484,7 +481,12 @@ public class MainActivity extends Activity implements EventConstant {
 
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
-            setProgress(newProgress * 100);
+            webLayout.setProgress(newProgress);
+            if(newProgress == 100) {
+                webLayout.setProgressVisibility(View.GONE);
+            } else {
+                webLayout.setProgressVisibility(View.VISIBLE);
+            }
             super.onProgressChanged(view, newProgress);
         }
 
@@ -498,7 +500,7 @@ public class MainActivity extends Activity implements EventConstant {
         @Override
         public void onReceivedTitle(WebView view, String title) {
             NncApp.getInstance().setCurrentTitle(title);
-            setTitle(title + "-" + getString(R.string.app_name));
+            webLayout.setTitle(title + "-" + getString(R.string.app_name));
             super.onReceivedTitle(view, title);
         }
 
@@ -622,7 +624,7 @@ public class MainActivity extends Activity implements EventConstant {
         switch(item.getItemId()) {
             case R.id.menu_favorite: // 查看已收藏页面
                 MobclickAgent.onEvent(mContext, MENU_GOTO_FAVORITE_LIST);
-                Intent intent=new Intent(MainActivity.this, FavoriteActivity.class);
+                Intent intent=new Intent(WebActivity.this, FavoriteActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
                 startActivity(intent);
                 break;

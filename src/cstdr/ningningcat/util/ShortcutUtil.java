@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import cstdr.ningningcat.CoverActivity;
-import cstdr.ningningcat.MainActivity;
+import cstdr.ningningcat.WebActivity;
 import cstdr.ningningcat.R;
 
 /**
@@ -69,7 +69,7 @@ public class ShortcutUtil {
 
         Intent shortcutIntent=new Intent(Intent.ACTION_MAIN);
         shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);
-        shortcutIntent.setClass(context, MainActivity.class);
+        shortcutIntent.setClass(context, WebActivity.class);
         shortcutIntent.setData(Uri.parse(url));
         shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 

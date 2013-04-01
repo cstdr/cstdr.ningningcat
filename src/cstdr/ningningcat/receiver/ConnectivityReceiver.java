@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
-import cstdr.ningningcat.MainActivity;
+import cstdr.ningningcat.WebActivity;
 import cstdr.ningningcat.NncApp;
 import cstdr.ningningcat.util.DialogUtil;
 
@@ -28,7 +28,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
             } else {
                 if(!nncApp.isNetworkMode()) { // 重新加载当前网址，用于网络重新连通后
                     nncApp.setNetworkMode(true);
-                    Intent reloadIntent=new Intent(context, MainActivity.class);
+                    Intent reloadIntent=new Intent(context, WebActivity.class);
                     context.startActivity(reloadIntent);
                 }
             }

@@ -3,7 +3,7 @@ package cstdr.ningningcat.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import cstdr.ningningcat.MainActivity;
+import cstdr.ningningcat.WebActivity;
 
 /**
  * 页面跳转Receiver
@@ -17,7 +17,7 @@ public class GotoReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        intent.setClass(context, MainActivity.class);
+        intent.setClass(context, WebActivity.class);
         context.startActivity(intent);
     }
 
