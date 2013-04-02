@@ -2,6 +2,7 @@ package cstdr.ningningcat.widget;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.TextUtils.TruncateAt;
 import android.view.Gravity;
 import android.widget.RelativeLayout.LayoutParams;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class DRNavigationBar extends TextView {
         LayoutParams LP=new LayoutParams(LayoutParams.MATCH_PARENT, (int)(NncApp.getUI_SCALE_X() * 48));
         this.setLayoutParams(LP);
         this.setBackgroundColor(Color.DKGRAY);
+        this.setSingleLine();
+        this.setEllipsize(TruncateAt.END);
         this.setTextSize((int)(NncApp.getUI_SCALE_X() * 14));
         this.setTextColor(Color.WHITE);
         this.setGravity(Gravity.CENTER_VERTICAL);
