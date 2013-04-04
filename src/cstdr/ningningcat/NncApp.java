@@ -1,20 +1,14 @@
 package cstdr.ningningcat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
-import android.widget.EditText;
 
 import com.umeng.analytics.MobclickAgent;
-import com.umeng.fb.UMFeedbackService;
-import com.umeng.fb.util.FeedBackListener;
 
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.data.Favorite;
@@ -70,7 +64,6 @@ public class NncApp extends Application {
 		mFavoriteList = new ArrayList<Favorite>();
 		mFavoriteList = FavoriteActivity.getFavoriteList(mFavoriteList);
 		initSharedPreferences();
-		initUMeng();
 		new Thread() {
 
 			@Override
@@ -110,41 +103,6 @@ public class NncApp extends Application {
 
 		mCurrentUrl = mSp.getString(getString(R.string.spkey_index),
 				getString(R.string.index)); // 获取首页
-	}
-
-	/**
-	 * 初始化友盟组件
-	 */
-	private void initUMeng() {
-		FeedBackListener listener = new FeedBackListener() {
-
-			@Override
-			public void onSubmitFB(Activity activity) {
-				EditText nameText = (EditText) activity
-						.findViewById(R.id.feedback_name);
-				EditText emailText = (EditText) activity
-						.findViewById(R.id.feedback_email);
-				Map<String, String> remarkMap = new HashMap<String, String>();
-				remarkMap.put("name", nameText.getText().toString());
-				remarkMap.put("email", emailText.getText().toString());
-				UMFeedbackService.setRemarkMap(remarkMap);
-			}
-
-			@Override
-			public void onResetFB(Activity activity,
-					Map<String, String> contactMap,
-					Map<String, String> remarkMap) {
-				EditText nameText = (EditText) activity
-						.findViewById(R.id.feedback_name);
-				EditText emailText = (EditText) activity
-						.findViewById(R.id.feedback_email);
-				if (remarkMap != null) {
-					nameText.setText(remarkMap.get("name"));
-					emailText.setText(remarkMap.get("email"));
-				}
-			}
-		};
-		UMFeedbackService.setFeedBackListener(listener);
 	}
 
 	// //////////////////////////////////////////////////////////////////////////////////
