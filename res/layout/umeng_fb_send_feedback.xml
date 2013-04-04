@@ -84,6 +84,18 @@
             android:paddingTop="10dip"
             android:textColor="#737373" />
 
+        <TextView
+            android:id="@+id/umeng_fb_submit"
+            android:layout_width="70dip"
+            android:layout_height="40dip"
+            android:layout_alignParentRight="true"
+            android:layout_alignTop="@id/feedback_name"
+            android:layout_marginRight="8dip"
+            android:background="@drawable/umeng_fb_submit_selector"
+            android:gravity="center"
+            android:text="发出去"
+            android:textColor="#FFFFFF" />
+
         <EditText
             android:id="@+id/feedback_email"
             android:layout_width="match_parent"
@@ -92,9 +104,10 @@
             android:layout_marginLeft="9dip"
             android:layout_marginRight="9dip"
             android:layout_marginTop="7dip"
+            android:layout_toLeftOf="@+id/umeng_fb_submit"
             android:layout_toRightOf="@+id/feedback_name"
             android:gravity="top"
-            android:hint="邮箱"
+            android:hint="联系方式"
             android:maxEms="10"
             android:minEms="10"
             android:paddingLeft="9dip"
@@ -102,13 +115,7 @@
             android:textColor="#737373" />
     </RelativeLayout>
 
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="55dip"
-        android:layout_marginTop="2dip"
-        android:orientation="horizontal" >
-
-        <!--
+    <!--
      		<Spinner android:id="@+id/umeng_fb_age_spinner"
 			android:layout_alignParentLeft="true" android:layout_width="wrap_content"
 			android:layout_height="wrap_content" android:layout_marginLeft="8dip"
@@ -116,10 +123,11 @@
 		<Spinner android:id="@+id/umeng_fb_gender_spinner"
 			android:layout_toRightOf="@id/umeng_fb_age_spinner"
 			android:layout_marginLeft="7dip" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:layout_centerVertical="true" />
-        -->
+			android:layout_height="wrap_content" android:layout_centerVertical="true" />    -->
 
-        <EditText
+
+    <!--
+             <EditText
             android:id="@+id/feedback_phone"
             android:layout_width="100dip"
             android:layout_height="wrap_content"
@@ -151,19 +159,7 @@
             android:minEms="10"
             android:paddingLeft="9dip"
             android:paddingTop="10dip"
-            android:textColor="#737373" />
-
-        <TextView
-            android:id="@+id/umeng_fb_submit"
-            android:layout_width="70dip"
-            android:layout_height="40dip"
-            android:layout_alignTop="@id/feedback_qq"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="8dip"
-            android:background="@drawable/umeng_fb_submit_selector"
-            android:gravity="center"
-            android:text="发出去"
-            android:textColor="#FFFFFF" />
-    </RelativeLayout>
+            android:textColor="#737373" />
+    -->
 
 </LinearLayout>

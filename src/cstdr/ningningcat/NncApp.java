@@ -120,18 +120,10 @@ public class NncApp extends Application {
 
 			@Override
 			public void onSubmitFB(Activity activity) {
-				EditText phoneText = (EditText) activity
-						.findViewById(R.id.feedback_phone);
-				EditText qqText = (EditText) activity
-						.findViewById(R.id.feedback_qq);
 				EditText nameText = (EditText) activity
 						.findViewById(R.id.feedback_name);
 				EditText emailText = (EditText) activity
 						.findViewById(R.id.feedback_email);
-				Map<String, String> contactMap = new HashMap<String, String>();
-				contactMap.put("phone", phoneText.getText().toString());
-				contactMap.put("qq", qqText.getText().toString());
-				UMFeedbackService.setContactMap(contactMap);
 				Map<String, String> remarkMap = new HashMap<String, String>();
 				remarkMap.put("name", nameText.getText().toString());
 				remarkMap.put("email", emailText.getText().toString());
@@ -142,10 +134,6 @@ public class NncApp extends Application {
 			public void onResetFB(Activity activity,
 					Map<String, String> contactMap,
 					Map<String, String> remarkMap) {
-				EditText phoneText = (EditText) activity
-						.findViewById(R.id.feedback_phone);
-				EditText qqText = (EditText) activity
-						.findViewById(R.id.feedback_qq);
 				EditText nameText = (EditText) activity
 						.findViewById(R.id.feedback_name);
 				EditText emailText = (EditText) activity
@@ -153,10 +141,6 @@ public class NncApp extends Application {
 				if (remarkMap != null) {
 					nameText.setText(remarkMap.get("name"));
 					emailText.setText(remarkMap.get("email"));
-				}
-				if (contactMap != null) {
-					phoneText.setText(contactMap.get("phone"));
-					qqText.setText(contactMap.get("qq"));
 				}
 			}
 		};
