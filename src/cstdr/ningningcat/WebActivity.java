@@ -81,7 +81,7 @@ import cstdr.ningningcat.widget.layout.WebLayout;
  */
 public class WebActivity extends Activity implements EventConstant {
 
-	private static final String TAG = "MainActivity";
+	private static final String TAG = "WebActivity";
 
 	private final Context mContext = this;
 
@@ -159,6 +159,7 @@ public class WebActivity extends Activity implements EventConstant {
 			LOG.cstdr(TAG, "============onCreate============");
 		}
 		super.onCreate(savedInstanceState);
+		UIUtil.initUI(WebActivity.this);
 		initWebLayout();
 		initReceiver();
 		// WebIconDatabase.getInstance().open(getDir("icon",

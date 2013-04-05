@@ -4,12 +4,11 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.DisplayMetrics;
 import android.view.KeyEvent;
 
 import com.umeng.analytics.MobclickAgent;
 
-import cstdr.ningningcat.util.LOG;
+import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.widget.layout.CoverLayout;
 
 /**
@@ -19,14 +18,14 @@ import cstdr.ningningcat.widget.layout.CoverLayout;
  */
 public class CoverActivity extends Activity {
 
-	private static final String TAG = "CoverActivity";
+	// private static final String TAG = "CoverActivity";
 
 	private CoverLayout coverLayout;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		initUI();
+		UIUtil.initUI(CoverActivity.this);
 		coverLayout = new CoverLayout(this);
 		setContentView(coverLayout);
 
@@ -42,20 +41,6 @@ public class CoverActivity extends Activity {
 				finish();
 			}
 		}, 2000);
-	}
-
-	/**
-	 * 初始化UI参数，将值传入NncApp
-	 */
-	private void initUI() {
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		if (LOG.DEBUG) {
-			LOG.cstdr(TAG, "metrics.widthPixels = " + metrics.widthPixels);
-			LOG.cstdr(TAG, "metrics.heightPixels = " + metrics.heightPixels);
-			LOG.cstdr(TAG, "metrics.density = " + metrics.density);
-		}
-		NncApp.setUI_SCALE_X(metrics.density / 2);
 	}
 
 	@Override

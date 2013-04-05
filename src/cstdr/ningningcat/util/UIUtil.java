@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.provider.Settings;
 import android.provider.Settings.SettingNotFoundException;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +22,8 @@ import cstdr.ningningcat.R;
  * @author cstdingran@gmail.com
  */
 public class UIUtil {
+
+	private static final String TAG = "UIUtil";
 
 	private static final String SCREEN_BRIGHTNESS = "screen_brightness";
 
@@ -219,6 +222,22 @@ public class UIUtil {
 					+ "MB";
 		}
 		return size;
+	}
+
+	/**
+	 * 初始化UI参数，将值传入NncApp
+	 */
+	public static void initUI(Activity activity) {
+		if (NncApp.getUI_SCALE_X() == 0) {
+			DisplayMetrics metrics = new DisplayMetrics();
+			activity.getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			if (LOG.DEBUG) {
+				LOG.cstdr(TAG, "metrics.widthPixels = " + metrics.widthPixels);
+				LOG.cstdr(TAG, "metrics.heightPixels = " + metrics.heightPixels);
+				LOG.cstdr(TAG, "metrics.density = " + metrics.density);
+			}
+			NncApp.setUI_SCALE_X(metrics.density / 2);
+		}
 	}
 
 }
