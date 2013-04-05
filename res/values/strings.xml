@@ -2,56 +2,59 @@
 
     <!-- main -->
     <string name="app_name">宁宁猫浏览器</string>
-    <string name="website_hint">在这里输入网址吧！</string>
+    <string name="website_hint">谷歌搜索或直接输入网址</string>
     <string name="http">http://</string>
     <string name="index">http://m.hao123.com/</string>
     <!-- menu -->
     <string name="menu_favorite">我的收藏</string>
     <string name="menu_share">分享</string>
     <string name="menu_exit">拜拜</string>
-    <string name="menu_more">More</string>
+    <string name="menu_more">更多</string>
     <string name="menu_download_list">下载管理</string>
     <string name="menu_update">更新宁宁猫</string>
     <string name="menu_clear_cachedata">清除缓存数据</string>
-    <string name="menu_report">反馈</string>
-    <string name="menu_about">关于</string>
+    <string name="menu_report">我要吐槽</string>
+    <string name="menu_about">关于作者</string>
     <string name="menu_share_favorite_list">分享收藏夹给好友</string>
     <string name="menu_delete_favorite_list">清空收藏夹</string>
     <string name="menu_nightmode">切换夜间模式</string>
     <!-- title -->
-    <string name="title_alert">这是页面的提示信息:)</string>
-    <string name="title_confirm">这是页面的确认信息:)</string>
+    <string name="title_alert">来自网站的提示信息:)</string>
+    <string name="title_confirm">来自网站的确认信息:)</string>
     <string name="title_no_connect">木网啦</string>
     <string name="title_favorite">我的收藏</string>
     <!-- msg -->
     <string name="msg_exit">再按一次宁宁猫就走啦~</string>
     <string name="msg_progress">喵~~~喵~~~</string>
     <string name="msg_timeout">等到花都谢了也没反应，一会再试吧～</string>
-    <string name="msg_no_url">你想跳转到哪里呢？</string>
-    <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望您能喜欢:)</string>
+    <string name="msg_no_url">上面的输入框忘记填写啦</string>
+    <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望你能喜欢，随时欢迎吐槽:)</string>
     <string name="msg_no_connect">没有网是万万不能的！马上联网吧:)</string>
-    <string name="msg_web_insert">已经收藏好啦！</string>
+    <string name="msg_web_insert">已经收藏好啦</string>
     <string name="msg_web_insert_error">这个收藏不下来=_=</string>
-    <string name="msg_web_insert_same">这个已经收藏过啦！</string>
+    <string name="msg_web_insert_same">这个已经收藏过啦</string>
     <string name="msg_web_delete">丢掉啦！</string>
     <string name="msg_web_delete_confirm">真的要丢掉吗？</string>
     <string name="msg_no_favorite">收藏夹中还没有网页哦:)</string>
     <string name="msg_list_delete">全部丢掉啦！</string>
     <string name="msg_list_delete_confirm">确定要全部丢掉吗？</string>
-    <string name="msg_database_fail">数据库操作出现了百年难得一见的问题，再来一遍吧~</string>
-    <string name="msg_save_index">已经设置好啦！~</string>
-    <string name="msg_rename">已经重命名啦！~</string>
-    <string name="msg_rename_error">重命名操作出现了百年难得一见的问题，再来一遍吧~</string>
-    <string name="msg_download_complete">下载完成啦！快点安装吧~</string>
+    <string name="msg_database_fail">数据库操作出现了百年难得一见的问题，再来一遍吧</string>
+    <string name="msg_save_index">已经设置好啦</string>
+    <string name="msg_rename">已经重命名啦</string>
+    <string name="msg_rename_error">重命名操作出现了百年难得一见的问题，再来一遍吧</string>
+    <string name="msg_download_complete">下载完成啦！快点安装吧</string>
     <string name="msg_download_start">开始下载：%s</string>
     <string name="msg_about">正在跳转至我的微博:)</string>
-    <string name="msg_update_no">宁宁猫正在努力开发中，暂时没有更新哦~</string>
-    <string name="msg_update_nowifi">没有连接Wifi，还是省点流量吧~</string>
-    <string name="msg_update_timeout">联网出现超时，等会再试吧~</string>
-    <string name="msg_delete_cachedata">保存的缓存文件和表单数据都清理干净啦~</string>
+    <string name="msg_update_no">宁宁猫正在努力开发中，暂时没有更新哦</string>
+    <string name="msg_update_nowifi">没有连接Wifi，还是省点流量吧</string>
+    <string name="msg_update_timeout">联网出现超时，等会再试吧</string>
+    <string name="msg_delete_cachedata">保存的缓存文件和表单数据都清理干净啦</string>
     <!-- btn -->
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>
+    <string name="btn_settings">设置</string>
+    <string name="btn_noconnect">暂时不联网</string>
+    <string name="btn_rename">重命名</string>
     <!-- sp -->
     <string name="sp_main">main</string>
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>

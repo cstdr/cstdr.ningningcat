@@ -594,19 +594,15 @@ public class WebActivity extends Activity implements EventConstant {
 			if (LOG.DEBUG) {
 				LOG.cstdr(TAG, "onPageStarted -> url = " + url);
 			}
-			if (!url.equals(Constants.ERROR_URL)) { // 当显示出错页面时，输入框网址不变
-				mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
-				NncApp.getInstance().setCurrentUrl(url);
-			}
+			mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
+			NncApp.getInstance().setCurrentUrl(url);
 			super.onPageStarted(view, url, favicon);
 		}
 
 		@Override
 		public void onReceivedError(WebView view, int errorCode,
 				String description, String failingUrl) {
-			// 不显示默认出错信息，采用自己的出错页面
-			view.clearView();
-			view.loadUrl(Constants.ERROR_URL);
+			DialogUtil.showNoConnectDialog(mContext);
 		}
 
 		@Override

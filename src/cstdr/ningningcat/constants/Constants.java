@@ -28,9 +28,6 @@ public interface Constants {
 	/** “关于”中的微博链接地址 **/
 	String WEIBO_URL = "http://weibo.com/cstdr";
 
-	/** 出错页面的链接地址 **/
-	String ERROR_URL = "file:///android_asset/html/error.html";
-
 	/** APK的文件类型 **/
 	String APK_MIMETYPE = "application/vnd.android.package-archive";
 

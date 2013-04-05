@@ -60,7 +60,6 @@ public class DownloadUtil {
 				Environment.DIRECTORY_DOWNLOADS, fileName);
 		// request.setAllowedNetworkTypes(Request.NETWORK_WIFI); // 只允许WIFI下
 		// request.setAllowedOverRoaming(false);
-		request.setShowRunningNotification(true);
 		request.setTitle(fileName);
 		String description = "";
 		if (contentLength > 0) { // 同一个APK文件，在不同的WIFI环境下载，有时获取不到文件长度，返回值为-1

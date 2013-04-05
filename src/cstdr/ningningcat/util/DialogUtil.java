@@ -130,20 +130,25 @@ public class DialogUtil {
 		noConnectDialog = new AlertDialog.Builder(context)
 				.setTitle(R.string.title_no_connect)
 				.setMessage(R.string.msg_no_connect)
-				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+				.setPositiveButton(R.string.btn_noconnect,
+						new OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
 
-					}
-				}).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+							}
+						})
+				.setNegativeButton(R.string.btn_settings,
+						new OnClickListener() {
 
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						Intent intent = new Intent(ACTION_SETTINGS);
-						context.startActivity(intent);
-					}
-				}).create();
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								Intent intent = new Intent(ACTION_SETTINGS);
+								context.startActivity(intent);
+							}
+						}).create();
 		noConnectDialog.show();
 	}
 
@@ -201,7 +206,8 @@ public class DialogUtil {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 					}
-				}).setNegativeButton(R.string.btn_ok, new OnClickListener() {
+				})
+				.setNegativeButton(R.string.btn_rename, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
