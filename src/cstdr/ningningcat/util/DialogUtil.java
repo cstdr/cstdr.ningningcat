@@ -1,5 +1,7 @@
 package cstdr.ningningcat.util;
 
+import java.util.ArrayList;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -10,10 +12,14 @@ import android.text.TextUtils;
 import android.webkit.JsResult;
 import android.widget.EditText;
 import android.widget.RelativeLayout.LayoutParams;
+import cstdr.ningningcat.FavoriteActivity;
 import cstdr.ningningcat.FavoriteActivity.DialogItemClickListener;
 import cstdr.ningningcat.FavoriteActivity.DialogRenameListener;
+import cstdr.ningningcat.FavoriteActivity.FavoriteAdapter;
+import cstdr.ningningcat.NncApp;
 import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
+import cstdr.ningningcat.data.Favorite;
 
 /**
  * 弹窗工具类
@@ -26,13 +32,15 @@ public class DialogUtil {
 
 	private static Dialog jsConfirmDialog; // 页面JS确认框
 
-	private static Dialog alertDialog; // 警告框
-
 	private static Dialog noConnectDialog; // 无网状态框
 
 	private static Dialog favoriteDialog; // 长按收藏夹Item弹出框
 
 	private static Dialog renameDialog; // 显示重命名收藏页面的弹出框
+
+	private static Dialog deleteFavoriteListDialog; // 显示清空收藏夹的弹出框
+
+	private static Dialog deleteFavoriteDialog; // 显示删除收藏的弹出框
 
 	/** 手机设置页面ACTION **/
 	private static final String ACTION_SETTINGS = "android.settings.SETTINGS";
@@ -95,27 +103,6 @@ public class DialogUtil {
 						}).create();
 		jsConfirmDialog.show();
 
-	}
-
-	/**
-	 * 显示普通提示窗 TODO
-	 * 
-	 * @param context
-	 * @param message
-	 */
-	public static void showAlertDialog(Context context, String message) {
-		if (alertDialog != null && alertDialog.isShowing()) {
-			return;
-		}
-		alertDialog = new AlertDialog.Builder(context)
-				.setTitle(R.string.title_alert).setMessage(message)
-				.setPositiveButton(android.R.string.ok, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-					}
-				}).create();
-		alertDialog.show();
 	}
 
 	/**
@@ -221,5 +208,115 @@ public class DialogUtil {
 					}
 				}).create();
 		renameDialog.show();
+	}
+
+	/**
+	 * 清空收藏夹
+	 * 
+	 * @param context
+	 * @param adapter
+	 */
+	public static void deleteFavoriteList(final Context context,
+			final FavoriteAdapter adapter) {
+		if (deleteFavoriteListDialog != null
+				&& deleteFavoriteListDialog.isShowing()) {
+			return;
+		}
+		if (NncApp.getInstance().getFavoriteList().isEmpty()) {
+			ToastUtil.shortToast(context,
+					context.getString(R.string.msg_no_favorite));
+			return;
+		}
+		deleteFavoriteListDialog = new AlertDialog.Builder(context)
+				.setMessage(R.string.msg_list_delete_confirm)
+				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				})
+				.setNegativeButton(R.string.btn_delete_favorite_list,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								int id = NncApp
+										.getInstance()
+										.getWritableDB()
+										.delete(DatabaseUtil.mTableName, null,
+												null);
+								if (id > 0) {
+									ArrayList<Favorite> list = NncApp
+											.getInstance().getFavoriteList();
+									list = FavoriteActivity
+											.getFavoriteList(list);
+									adapter.notifyDataSetChanged();
+									ToastUtil.shortToast(
+											context,
+											context.getString(R.string.msg_list_delete));
+								} else {
+									ToastUtil.shortToast(
+											context,
+											context.getString(R.string.msg_database_fail));
+								}
+							}
+						}).create();
+		deleteFavoriteListDialog.show();
+	}
+
+	/**
+	 * 删除收藏完后列表刷新
+	 * 
+	 * @param context
+	 * @param adapter
+	 * @param position
+	 */
+	public static void deleteFavorite(final Context context,
+			final FavoriteAdapter adapter, final int position) {
+		if (deleteFavoriteDialog != null && deleteFavoriteDialog.isShowing()) {
+			return;
+		}
+		deleteFavoriteDialog = new AlertDialog.Builder(context)
+				.setMessage(R.string.msg_web_delete_confirm)
+				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+
+					}
+				})
+				.setNegativeButton(R.string.btn_delete_favorite,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								int id = NncApp
+										.getInstance()
+										.getWritableDB()
+										.delete(DatabaseUtil.mTableName,
+												DatabaseUtil.COLUMN_URL + "=?",
+												new String[] { NncApp
+														.getInstance()
+														.getFavoriteList()
+														.get(position).getUrl() });
+								if (id > 0) {
+									ArrayList<Favorite> list = NncApp
+											.getInstance().getFavoriteList();
+									list = FavoriteActivity
+											.getFavoriteList(list);
+									adapter.notifyDataSetChanged();
+									ToastUtil.shortToast(context, context
+											.getString(R.string.msg_web_delete));
+								} else {
+									ToastUtil.shortToast(
+											context,
+											context.getString(R.string.msg_database_fail));
+								}
+							}
+						}).create();
+		deleteFavoriteDialog.show();
 	}
 }

@@ -3,11 +3,8 @@ package cstdr.ningningcat;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -49,7 +46,7 @@ public class FavoriteActivity extends Activity implements EventConstant {
 
 	private FavoriteLayout layout;
 
-	private BaseAdapter mAdapter;
+	private FavoriteAdapter mAdapter;
 
 	private static ArrayList<Favorite> list;
 
@@ -134,7 +131,8 @@ public class FavoriteActivity extends Activity implements EventConstant {
 								case 4: // 删除
 									MobclickAgent.onEvent(mContext,
 											FAVORITE_MENU_DELETE);
-									deleteFavorite(position);
+									DialogUtil.deleteFavorite(mContext,
+											mAdapter, position);
 									break;
 								}
 							}
@@ -172,7 +170,7 @@ public class FavoriteActivity extends Activity implements EventConstant {
 			break;
 		case R.id.menu_delete_favorite_list: // 清空收藏夹
 			MobclickAgent.onEvent(mContext, MENU_DELETE_FAVORITE_LIST);
-			deleteFavoriteList();
+			DialogUtil.deleteFavoriteList(mContext, mAdapter);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -284,83 +282,6 @@ public class FavoriteActivity extends Activity implements EventConstant {
 						context.getString(R.string.msg_web_insert_error));
 			}
 		}
-	}
-
-	/**
-	 * 删除收藏完后列表刷新
-	 * 
-	 * @param position
-	 */
-	private void deleteFavorite(final int position) {
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		builder.setMessage(R.string.msg_web_delete_confirm)
-				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				}).setNegativeButton(R.string.btn_ok, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						int id = NncApp
-								.getInstance()
-								.getWritableDB()
-								.delete(DatabaseUtil.mTableName,
-										DatabaseUtil.COLUMN_URL + "=?",
-										new String[] { NncApp.getInstance()
-												.getFavoriteList()
-												.get(position).getUrl() });
-						if (id > 0) {
-							list = NncApp.getInstance().getFavoriteList();
-							list = getFavoriteList(list);
-							mAdapter.notifyDataSetChanged();
-							ToastUtil.shortToast(mContext,
-									mContext.getString(R.string.msg_web_delete));
-						} else {
-							ToastUtil.shortToast(mContext, mContext
-									.getString(R.string.msg_database_fail));
-						}
-					}
-				}).create().show();
-	}
-
-	/**
-	 * 清空收藏夹
-	 */
-	private void deleteFavoriteList() {
-		if (NncApp.getInstance().getFavoriteList().isEmpty()) {
-			ToastUtil.shortToast(mContext,
-					mContext.getString(R.string.msg_no_favorite));
-			return;
-		}
-		AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-		builder.setMessage(R.string.msg_list_delete_confirm)
-				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-
-					}
-				}).setNegativeButton(R.string.btn_ok, new OnClickListener() {
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						int id = NncApp.getInstance().getWritableDB()
-								.delete(DatabaseUtil.mTableName, null, null);
-						if (id > 0) {
-							list = NncApp.getInstance().getFavoriteList();
-							list = getFavoriteList(list);
-							mAdapter.notifyDataSetChanged();
-							ToastUtil.shortToast(mContext, mContext
-									.getString(R.string.msg_list_delete));
-						} else {
-							ToastUtil.shortToast(mContext, mContext
-									.getString(R.string.msg_database_fail));
-						}
-					}
-				}).create().show();
 	}
 
 	/**

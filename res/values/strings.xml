@@ -24,9 +24,9 @@
     <string name="title_no_connect">木网啦</string>
     <string name="title_favorite">我的收藏</string>
     <!-- msg -->
-    <string name="msg_exit">再按一次宁宁猫就走啦~</string>
+    <string name="msg_exit">再按一次宁宁猫就走啦</string>
     <string name="msg_progress">喵~~~喵~~~</string>
-    <string name="msg_timeout">等到花都谢了也没反应，一会再试吧～</string>
+    <string name="msg_timeout">等到花都谢了也没反应，一会再试吧</string>
     <string name="msg_no_url">上面的输入框忘记填写啦</string>
     <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望你能喜欢，随时欢迎吐槽:)</string>
     <string name="msg_no_connect">没有网是万万不能的！马上联网吧:)</string>
@@ -55,6 +55,8 @@
     <string name="btn_settings">设置</string>
     <string name="btn_noconnect">暂时不联网</string>
     <string name="btn_rename">重命名</string>
+    <string name="btn_delete_favorite_list">全部丢掉</string>
+    <string name="btn_delete_favorite">丢掉</string>
     <!-- sp -->
     <string name="sp_main">main</string>
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>
