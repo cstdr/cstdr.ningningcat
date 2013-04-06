@@ -582,6 +582,9 @@ public class WebActivity extends Activity implements EventConstant {
 			if (FavoriteActivity.hasUrlInDB(url)) {
 				mAddFavorite
 						.setImageResource(R.drawable.navigation_add_favorite_pressed);
+			} else {
+				mAddFavorite
+						.setImageResource(R.drawable.navigation_add_favorite);
 			}
 			super.onPageStarted(view, url, favicon);
 		}
