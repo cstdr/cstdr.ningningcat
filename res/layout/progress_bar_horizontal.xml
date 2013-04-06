@@ -7,9 +7,9 @@
     android:indeterminateOnly="false"
     android:max="100"
     android:maxHeight="2dp"
-    android:maxWidth="360dp"
+    android:maxWidth="720dp"
     android:minHeight="2dp"
-    android:minWidth="360dp"
+    android:minWidth="720dp"
     android:progressDrawable="@drawable/progress_horizontal" >
 
 </ProgressBar>

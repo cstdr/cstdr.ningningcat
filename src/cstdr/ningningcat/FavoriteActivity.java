@@ -46,7 +46,7 @@ public class FavoriteActivity extends Activity implements EventConstant {
 
 	private FavoriteLayout layout;
 
-	private FavoriteAdapter mAdapter;
+	private static FavoriteAdapter mAdapter;
 
 	private static ArrayList<Favorite> list;
 
@@ -256,31 +256,49 @@ public class FavoriteActivity extends Activity implements EventConstant {
 
 	// //////////////////////////数据库操作//////////////////////////////////////
 	/**
-	 * 添加收藏
+	 * 点击收藏按钮
 	 * 
 	 * @param title
 	 * @param url
 	 */
-	public static void insertFavorite(Context context, String title, String url) {
-		if (hasUrlInDB(url)) {
+	public static void addFavorite(Context context, String title, String url) {
+		ContentValues values = new ContentValues();
+		values.put(DatabaseUtil.COLUMN_TITLE, title);
+		values.put(DatabaseUtil.COLUMN_URL, url);
+		int id = (int) NncApp.getInstance().getWritableDB()
+				.insert(DatabaseUtil.mTableName, null, values);
+		if (id > 0) {
 			ToastUtil.shortToast(context,
-					context.getString(R.string.msg_web_insert_same));
-			return;
+					context.getString(R.string.msg_web_insert));
+			list = NncApp.getInstance().getFavoriteList();
+			list = getFavoriteList(list);
 		} else {
-			ContentValues values = new ContentValues();
-			values.put(DatabaseUtil.COLUMN_TITLE, title);
-			values.put(DatabaseUtil.COLUMN_URL, url);
-			int id = (int) NncApp.getInstance().getWritableDB()
-					.insert(DatabaseUtil.mTableName, null, values);
-			if (id > 0) {
-				ToastUtil.shortToast(context,
-						context.getString(R.string.msg_web_insert));
-				list = NncApp.getInstance().getFavoriteList();
-				list = getFavoriteList(list);
-			} else {
-				ToastUtil.shortToast(context,
-						context.getString(R.string.msg_web_insert_error));
+			ToastUtil.shortToast(context,
+					context.getString(R.string.msg_web_insert_error));
+		}
+	}
+
+	/**
+	 * 删除收藏
+	 */
+	public static void deleteFavorite(Context context, String url,
+			FavoriteAdapter adapter) {
+		int id = NncApp
+				.getInstance()
+				.getWritableDB()
+				.delete(DatabaseUtil.mTableName,
+						DatabaseUtil.COLUMN_URL + "=?", new String[] { url });
+		if (id > 0) {
+			ArrayList<Favorite> list = NncApp.getInstance().getFavoriteList();
+			list = FavoriteActivity.getFavoriteList(list);
+			if (adapter != null) {
+				adapter.notifyDataSetChanged();
 			}
+			ToastUtil.shortToast(context,
+					context.getString(R.string.msg_web_delete));
+		} else {
+			ToastUtil.shortToast(context,
+					context.getString(R.string.msg_database_fail));
 		}
 	}
 
@@ -325,7 +343,7 @@ public class FavoriteActivity extends Activity implements EventConstant {
 	 * @param url
 	 * @return
 	 */
-	private static boolean hasUrlInDB(String url) {
+	public static boolean hasUrlInDB(String url) {
 		Cursor cursor = null;
 		try {
 			cursor = NncApp

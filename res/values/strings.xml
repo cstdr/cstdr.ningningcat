@@ -32,7 +32,6 @@
     <string name="msg_no_connect">没有网是万万不能的！马上联网吧:)</string>
     <string name="msg_web_insert">已经收藏好啦</string>
     <string name="msg_web_insert_error">这个收藏不下来=_=</string>
-    <string name="msg_web_insert_same">这个已经收藏过啦</string>
     <string name="msg_web_delete">丢掉啦！</string>
     <string name="msg_web_delete_confirm">真的要丢掉吗？</string>
     <string name="msg_no_favorite">收藏夹中还没有网页哦:)</string>

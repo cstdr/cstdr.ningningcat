@@ -15,7 +15,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.Process;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -95,8 +94,6 @@ public class WebActivity extends Activity implements EventConstant {
 	private DRAutoCompleteTextView mWebsite;
 
 	private ImageView mRewrite;
-
-	private ImageView mGoto;
 
 	private DRWebView mWebView;
 
@@ -178,7 +175,6 @@ public class WebActivity extends Activity implements EventConstant {
 		initAddFavorite();
 		initWebsite();
 		initRewrite();
-		initGoto();
 		initWebView();
 	}
 
@@ -323,24 +319,6 @@ public class WebActivity extends Activity implements EventConstant {
 	}
 
 	/**
-	 * 初始化导航栏中跳转按钮的配置
-	 */
-	private void initGoto() {
-		mGoto = webLayout.getGotoView();
-		mGoto.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View v) {
-				MobclickAgent.onEvent(mContext, NAVIGATION_GOTO);
-				if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
-					navigationHandler.removeMessages(NAVIGATION_HIDE);
-				}
-				gotoByEditText();
-			}
-		});
-	}
-
-	/**
 	 * 初始化导航栏中EditText输入框的配置
 	 */
 	private void initWebsite() {
@@ -362,8 +340,6 @@ public class WebActivity extends Activity implements EventConstant {
 				return false;
 			}
 		});
-		// mAutoCompleteAdapter=new ArrayAdapter<String>(mContext,
-		// R.layout.list_autocomplete); // TODO 修改布局文件
 		mAutoCompleteAdapter = new ArrayAdapter<String>(mContext,
 				R.layout.list_autocomplete); // TODO 修改布局文件
 		mHistoryUrlList = new LinkedList<String>();
@@ -427,11 +403,18 @@ public class WebActivity extends Activity implements EventConstant {
 
 					@Override
 					public void run() {
-						android.os.Process
-								.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-						FavoriteActivity.insertFavorite(mContext, NncApp
-								.getInstance().getCurrentTitle(), NncApp
-								.getInstance().getCurrentUrl());
+						String title = NncApp.getInstance().getCurrentTitle();
+						String url = NncApp.getInstance().getCurrentUrl();
+						if (FavoriteActivity.hasUrlInDB(url)) {
+							FavoriteActivity
+									.deleteFavorite(mContext, url, null);
+							mAddFavorite
+									.setImageResource(R.drawable.navigation_add_favorite);
+						} else {
+							FavoriteActivity.addFavorite(mContext, title, url);
+							mAddFavorite
+									.setImageResource(R.drawable.navigation_add_favorite_pressed);
+						}
 					}
 				});
 			}
@@ -530,7 +513,6 @@ public class WebActivity extends Activity implements EventConstant {
 		@Override
 		public void onReceivedTitle(WebView view, String title) {
 			NncApp.getInstance().setCurrentTitle(title);
-			webLayout.setTitle(title + "-" + getString(R.string.app_name));
 			super.onReceivedTitle(view, title);
 		}
 
@@ -597,6 +579,10 @@ public class WebActivity extends Activity implements EventConstant {
 			}
 			mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
 			NncApp.getInstance().setCurrentUrl(url);
+			if (FavoriteActivity.hasUrlInDB(url)) {
+				mAddFavorite
+						.setImageResource(R.drawable.navigation_add_favorite_pressed);
+			}
 			super.onPageStarted(view, url, favicon);
 		}
 

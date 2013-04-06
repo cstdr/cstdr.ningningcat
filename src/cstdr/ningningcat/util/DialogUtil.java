@@ -293,28 +293,11 @@ public class DialogUtil {
 							@Override
 							public void onClick(DialogInterface dialog,
 									int which) {
-								int id = NncApp
-										.getInstance()
-										.getWritableDB()
-										.delete(DatabaseUtil.mTableName,
-												DatabaseUtil.COLUMN_URL + "=?",
-												new String[] { NncApp
-														.getInstance()
-														.getFavoriteList()
-														.get(position).getUrl() });
-								if (id > 0) {
-									ArrayList<Favorite> list = NncApp
-											.getInstance().getFavoriteList();
-									list = FavoriteActivity
-											.getFavoriteList(list);
-									adapter.notifyDataSetChanged();
-									ToastUtil.shortToast(context, context
-											.getString(R.string.msg_web_delete));
-								} else {
-									ToastUtil.shortToast(
-											context,
-											context.getString(R.string.msg_database_fail));
-								}
+								String url = NncApp.getInstance()
+										.getFavoriteList().get(position)
+										.getUrl();
+								FavoriteActivity.deleteFavorite(context, url,
+										adapter);
 							}
 						}).create();
 		deleteFavoriteDialog.show();

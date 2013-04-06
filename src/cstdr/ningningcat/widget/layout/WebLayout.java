@@ -9,7 +9,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import cstdr.ningningcat.R;
 import cstdr.ningningcat.widget.DRAutoCompleteTextView;
-import cstdr.ningningcat.widget.DRNavigationBar;
 import cstdr.ningningcat.widget.DRWebView;
 
 /**
@@ -23,9 +22,6 @@ public class WebLayout extends DRRelativeLayout {
 
 	private RelativeLayout navLayout;
 
-	/** 标题栏 **/
-	private DRNavigationBar title;
-
 	/** 添加收藏按钮 **/
 	private ImageView add;
 
@@ -33,9 +29,6 @@ public class WebLayout extends DRRelativeLayout {
 
 	/** 输入框 **/
 	private DRAutoCompleteTextView website;
-
-	/** 跳转按钮 **/
-	private ImageView gotoView;
 
 	/** 重写按钮 **/
 	private ImageView rewrite;
@@ -53,19 +46,13 @@ public class WebLayout extends DRRelativeLayout {
 
 	private RelativeLayout.LayoutParams websiteLP;
 
-	private RelativeLayout.LayoutParams gotoViewLP;
-
 	private RelativeLayout.LayoutParams rewriteLP;
 
-	private final int ID_TITLE = 1304010025;
-
-	private final int ID_ADD = 1304010026;
+	private final int ID_ADD = 1304010025;
 
 	private final int ID_WEBSITE_LAYOUT = 1304010027;
 
 	private final int ID_WEBSITE = 1304010028;
-
-	private final int ID_GOTO = 1304010029;
 
 	private final int ID_REWRITE = 1304010030;
 
@@ -75,11 +62,9 @@ public class WebLayout extends DRRelativeLayout {
 				LayoutParams.MATCH_PARENT));
 		initWebView();
 		initNavLayout();
-		initTitle();
 		initAdd();
 		initWebsiteLayout();
 		initWebsite();
-		initGoto();
 		initRewrite();
 		initProgress();
 	}
@@ -94,51 +79,42 @@ public class WebLayout extends DRRelativeLayout {
 
 	private void initNavLayout() {
 		navLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+				getIntScaleX(114));
 		navLayoutLP.addRule(ALIGN_PARENT_TOP);
 		navLayout = new RelativeLayout(mContext);
 		navLayout.setLayoutParams(navLayoutLP);
-		navLayout.setBackgroundColor(Color.DKGRAY);
+		navLayout.setBackgroundResource(R.drawable.bg_navigation);
 		this.addView(navLayout);
 	}
 
-	private void initTitle() {
-		title = new DRNavigationBar(mContext);
-		title.setId(ID_TITLE);
-		title.setText(R.string.app_name);
-		navLayout.addView(title);
-	}
-
 	private void initAdd() {
-		addLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
+		addLP = new LayoutParams(getIntScaleX(94), getIntScaleX(70));
 		addLP.addRule(CENTER_VERTICAL);
-		addLP.addRule(BELOW, ID_TITLE);
 		addLP.setMargins(0, 0, 0, 0);
 		add = new ImageView(mContext);
 		add.setId(ID_ADD);
 		add.setLayoutParams(addLP);
-		add.setImageResource(R.drawable.navigation_add);
+		add.setImageResource(R.drawable.navigation_add_favorite);
 		navLayout.addView(add);
 	}
 
 	private void initWebsiteLayout() {
-		websiteLayoutLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
+		websiteLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT);
-		websiteLayoutLP.setMargins(0, 0, 0, 0);
+		websiteLayoutLP.setMargins(0, 0, getIntScaleX(2), 0);
 		websiteLayoutLP.addRule(RIGHT_OF, ID_ADD);
-		websiteLayoutLP.addRule(BELOW, ID_TITLE);
+		websiteLayoutLP.addRule(CENTER_VERTICAL);
 		websiteLayout = new RelativeLayout(mContext);
 		websiteLayout.setId(ID_WEBSITE_LAYOUT);
 		websiteLayout.setLayoutParams(websiteLayoutLP);
-		websiteLayout.setBackgroundResource(R.drawable.navigation_background);
+		websiteLayout.setBackgroundResource(R.drawable.bg_website);
 		navLayout.addView(websiteLayout);
 	}
 
 	private void initWebsite() {
-		websiteLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
+		websiteLP = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT);
-		websiteLP.setMargins(0, 0, 0, 0);
+		websiteLP.setMargins(0, getIntScaleX(2), 0, 0);
 		websiteLP.addRule(ALIGN_PARENT_LEFT);
 		websiteLP.addRule(LEFT_OF, ID_REWRITE);
 		website = new DRAutoCompleteTextView(mContext);
@@ -146,15 +122,17 @@ public class WebLayout extends DRRelativeLayout {
 		website.setLayoutParams(websiteLP);
 		website.setBackgroundColor(Color.TRANSPARENT);
 		website.setHint(R.string.website_hint);
+		website.setSingleLine();
+		website.setTextSize(getIntScaleX(16));
+		website.setTextColor(Color.BLACK);
 		website.setInputType(InputType.TYPE_TEXT_FLAG_AUTO_COMPLETE);
 		website.setHighlightColor(Color.parseColor("#0099CC"));
 		websiteLayout.addView(website);
 	}
 
 	private void initRewrite() {
-		rewriteLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-		rewriteLP.addRule(LEFT_OF, ID_GOTO);
+		rewriteLP = new LayoutParams(getIntScaleX(40), getIntScaleX(40));
+		rewriteLP.addRule(ALIGN_PARENT_RIGHT);
 		rewriteLP.addRule(CENTER_VERTICAL);
 		rewriteLP.setMargins(0, 0, getIntScaleX(4), 0);
 		rewrite = new ImageView(mContext);
@@ -164,23 +142,11 @@ public class WebLayout extends DRRelativeLayout {
 		websiteLayout.addView(rewrite);
 	}
 
-	private void initGoto() {
-		gotoViewLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
-		gotoViewLP.addRule(ALIGN_PARENT_RIGHT);
-		gotoViewLP.addRule(CENTER_VERTICAL);
-		gotoView = new ImageView(mContext);
-		gotoView.setId(ID_GOTO);
-		gotoView.setLayoutParams(gotoViewLP);
-		gotoView.setImageResource(R.drawable.navigation_goto);
-		websiteLayout.addView(gotoView);
-	}
-
 	private void initProgress() {
 		LayoutInflater inflater = LayoutInflater.from(mContext);
 		progress = (ProgressBar) inflater.inflate(
 				R.layout.progress_bar_horizontal, null);
-		// progress=(ProgressBar)findViewById(R.id.progress_bar_horizontal); //
+		// progress=(ProgressBar)findViewById(R.id.progress_bar_horizontal);
 		// 直接findView会报空指针
 		this.addView(progress);
 	}
@@ -201,16 +167,8 @@ public class WebLayout extends DRRelativeLayout {
 		return rewrite;
 	}
 
-	public ImageView getGotoView() {
-		return gotoView;
-	}
-
 	public DRWebView getWebview() {
 		return webview;
-	}
-
-	public void setTitle(String str) {
-		title.setText(str);
 	}
 
 	public void setProgress(int i) {
