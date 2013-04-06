@@ -73,4 +73,7 @@ public interface EventConstant {
 	/** Intent-外部链接跳转 **/
 	String ACTION_GOTO_INTENT = "ACTION_GOTO_INTENT";
 
+	/** Intent-外部搜索跳转 **/
+	String ACTION_GOTO_WEB_SEARCH = "ACTION_GOTO_WEB_SEARCH";
+
 }

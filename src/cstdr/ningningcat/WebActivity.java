@@ -4,6 +4,7 @@ import java.util.LinkedList;
 
 import android.app.Activity;
 import android.app.DownloadManager;
+import android.app.SearchManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -908,22 +909,28 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 		if (action != null) {
 			if (action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
-				String url = intent.getStringExtra(DatabaseUtil.COLUMN_URL);
 				MobclickAgent.onEvent(mContext,
 						ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK);
+				String url = intent.getStringExtra(DatabaseUtil.COLUMN_URL);
+				if (LOG.DEBUG) {
+					LOG.cstdr(TAG, "processData : url =  " + url);
+				}
 				loadUrlStr(url);
-			} else if (action.equals(GotoReceiver.ACTION_VIEW)
+			} else if (action.equals(Intent.ACTION_VIEW)
 					|| action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
+				MobclickAgent.onEvent(mContext, ACTION_GOTO_INTENT);
 				Uri uri = intent.getData();
 				if (LOG.DEBUG) {
 					LOG.cstdr(TAG, "processData : uri =  " + uri);
 				}
-				if (uri != null) {
-					MobclickAgent.onEvent(mContext, ACTION_GOTO_INTENT);
-					loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
-				} else {
-					loadUrlStr(getString(R.string.index)); // 加载首页
+				loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
+			} else if (action.equals(Intent.ACTION_WEB_SEARCH)) { // 处理谷歌搜索请求
+				MobclickAgent.onEvent(mContext, ACTION_GOTO_WEB_SEARCH);
+				String words = intent.getStringExtra(SearchManager.QUERY);
+				if (LOG.DEBUG) {
+					LOG.cstdr(TAG, "processData : words =  " + words);
 				}
+				loadUrlStr(Constants.GOOGLE_URL + words);
 			}
 		} else {
 			loadUrlStr(NncApp.getInstance().getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页

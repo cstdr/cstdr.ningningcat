@@ -22,7 +22,7 @@ public class UrlUtil {
 				return url2HttpUrl(editUrl);
 			} else { // 不是网址则默认谷歌搜索，但是有时谷歌不稳定
 				// return "http://m.baidu.com/s?word=" + editUrl; // 百度
-				return "http://www.google.com.hk/search?q=" + editUrl; // 谷歌
+				return Constants.GOOGLE_URL + editUrl; // 谷歌
 			}
 		}
 		return null;

@@ -10,6 +10,6 @@
     android:maxWidth="360dp"
     android:minHeight="2dp"
     android:minWidth="360dp"
-    android:progressDrawable="@android:drawable/progress_horizontal" >
+    android:progressDrawable="@drawable/progress_horizontal" >
 
 </ProgressBar>
