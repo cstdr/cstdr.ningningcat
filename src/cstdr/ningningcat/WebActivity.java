@@ -912,7 +912,11 @@ public class WebActivity extends Activity implements EventConstant {
 				if (LOG.DEBUG) {
 					LOG.cstdr(TAG, "processData : uri =  " + uri);
 				}
-				loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
+				if (uri != null) {
+					loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
+				} else {
+					loadUrlStr(NncApp.getInstance().getCurrentUrl());
+				}
 			} else if (action.equals(Intent.ACTION_WEB_SEARCH)) { // 处理谷歌搜索请求
 				MobclickAgent.onEvent(mContext, ACTION_GOTO_WEB_SEARCH);
 				String words = intent.getStringExtra(SearchManager.QUERY);

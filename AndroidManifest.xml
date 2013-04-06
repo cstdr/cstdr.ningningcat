@@ -18,22 +18,23 @@
 
     <application
         android:name=".NncApp"
+        android:allowBackup="true"
         android:icon="@drawable/icon"
         android:label="@string/app_name"
-        android:theme="@android:style/Theme.Light.NoTitleBar" android:allowBackup="true">
+        android:theme="@android:style/Theme.Light.NoTitleBar" >
         <activity
             android:name=".CoverActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".WebActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

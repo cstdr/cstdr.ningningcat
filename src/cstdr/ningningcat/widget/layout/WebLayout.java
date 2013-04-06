@@ -101,9 +101,8 @@ public class WebLayout extends DRRelativeLayout {
 	private void initWebsiteLayout() {
 		websiteLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT);
-		websiteLayoutLP.setMargins(0, 0, getIntScaleX(2), 0);
+		websiteLayoutLP.setMargins(0, getIntScaleX(1), getIntScaleX(2), 0);
 		websiteLayoutLP.addRule(RIGHT_OF, ID_ADD);
-		websiteLayoutLP.addRule(CENTER_VERTICAL);
 		websiteLayout = new RelativeLayout(mContext);
 		websiteLayout.setId(ID_WEBSITE_LAYOUT);
 		websiteLayout.setLayoutParams(websiteLayoutLP);
