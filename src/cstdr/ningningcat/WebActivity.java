@@ -2,6 +2,7 @@ package cstdr.ningningcat;
 
 import java.util.LinkedList;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.SearchManager;
@@ -125,9 +126,12 @@ public class WebActivity extends Activity implements EventConstant {
 
 	private Animation animNavigationFadeIn;
 
+	private View mDecorView;
+
 	/** 导航栏显示与隐藏的handler **/
 	private Handler navigationHandler = new Handler() {
 
+		@SuppressLint("NewApi")
 		@Override
 		public void handleMessage(Message msg) {
 			LOG.cstdr(TAG, "msg.what = " + msg.what);
@@ -138,12 +142,20 @@ public class WebActivity extends Activity implements EventConstant {
 					mWebsiteNavigation.startAnimation(animNavigationFadeOut);
 					mLastScrollTimeMillis = System.currentTimeMillis();
 				}
+				if (NncApp.SDK_INT > 13) { // SDK在14以上才可以隐藏状态栏的图标
+					mDecorView
+							.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+				}
 				break;
 			case NAVIGATION_SHOW:
 				if (!mWebsiteNavigation.isShown()
 						&& (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
 					mWebsiteNavigation.startAnimation(animNavigationFadeIn);
 					mLastScrollTimeMillis = System.currentTimeMillis();
+				}
+				if (NncApp.SDK_INT > 13) {
+					mDecorView
+							.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 				}
 				hideNavigation();
 				break;
@@ -157,6 +169,7 @@ public class WebActivity extends Activity implements EventConstant {
 			LOG.cstdr(TAG, "============onCreate============");
 		}
 		super.onCreate(savedInstanceState);
+		mDecorView = this.getWindow().getDecorView();
 		UIUtil.initUI(WebActivity.this);
 		initWebLayout();
 		initReceiver();

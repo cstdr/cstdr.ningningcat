@@ -49,6 +49,8 @@ public class NncApp extends Application {
 	/** 手机屏幕宽的比例，以1280x720为准 **/
 	private static float UI_SCALE_X;
 
+	public static int SDK_INT;
+
 	@Override
 	public void onCreate() {
 		if (LOG.DEBUG) {
@@ -57,6 +59,7 @@ public class NncApp extends Application {
 		// 友盟在线更新配置
 		MobclickAgent.updateOnlineConfig(this);
 
+		SDK_INT = android.os.Build.VERSION.SDK_INT;
 		mInstance = this;
 		handler = new Handler();
 		mDBHelper = new DatabaseUtil(mInstance, DatabaseUtil.mDatabaseName,
