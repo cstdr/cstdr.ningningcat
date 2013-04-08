@@ -20,6 +20,7 @@ import android.widget.BaseAdapter;
 
 import com.umeng.analytics.MobclickAgent;
 
+import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
@@ -263,6 +264,9 @@ public class FavoriteActivity extends Activity implements EventConstant {
 	 */
 	public static void addFavorite(Context context, String title, String url) {
 		ContentValues values = new ContentValues();
+		if (title.equals(Constants.TITLE_NULL)) {
+			title = Constants.TITLE_NULL_DEFAULT;
+		}
 		values.put(DatabaseUtil.COLUMN_TITLE, title);
 		values.put(DatabaseUtil.COLUMN_URL, url);
 		int id = (int) NncApp.getInstance().getWritableDB()

@@ -130,7 +130,8 @@ public class WebLayout extends DRRelativeLayout {
 	}
 
 	private void initRewrite() {
-		rewriteLP = new LayoutParams(getIntScaleX(40), getIntScaleX(40));
+		rewriteLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
+				LayoutParams.WRAP_CONTENT);
 		rewriteLP.addRule(ALIGN_PARENT_RIGHT);
 		rewriteLP.addRule(CENTER_VERTICAL);
 		rewriteLP.setMargins(0, 0, getIntScaleX(4), 0);

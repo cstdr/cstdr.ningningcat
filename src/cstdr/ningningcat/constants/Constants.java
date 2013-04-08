@@ -23,7 +23,10 @@ public interface Constants {
 	int MODE_BLACK = 1;
 
 	/** 网页标题为空时的默认标题 **/
-	String TITLE_NULL = "宁宁猫的未知网页";
+	String TITLE_NULL_DEFAULT = "宁宁猫的未知网页";
+
+	/** 断网时系统默认标题 **/
+	String TITLE_NULL = "找不到网页";
 
 	/** “关于”中的微博链接地址 **/
 	String WEIBO_URL = "http://weibo.com/cstdr";

@@ -10,7 +10,7 @@ import java.io.File;
 public class FileUtil {
 
 	/**
-	 * 删除文件
+	 * 删除文件和文件夹
 	 * 
 	 * @param path
 	 */
@@ -20,6 +20,7 @@ public class FileUtil {
 				for (File f : file.listFiles()) {
 					deleteFile(f);
 				}
+				file.delete();
 			} else {
 				file.delete();
 			}

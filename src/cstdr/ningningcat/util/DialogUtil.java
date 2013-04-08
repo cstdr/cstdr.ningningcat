@@ -200,7 +200,7 @@ public class DialogUtil {
 					public void onClick(DialogInterface dialog, int which) {
 						String titleStr = editText.getText().toString();
 						if (TextUtils.isEmpty(titleStr)) {
-							titleStr = Constants.TITLE_NULL;
+							titleStr = Constants.TITLE_NULL_DEFAULT;
 						} else if (titleStr.length() > 20) { // 数据库中定义title长度为20
 							titleStr = titleStr.substring(0, 20);
 						}

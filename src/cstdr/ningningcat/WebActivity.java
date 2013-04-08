@@ -244,6 +244,7 @@ public class WebActivity extends Activity implements EventConstant {
 					navigationHandler.removeMessages(NAVIGATION_HIDE);
 				}
 				mWebsite.setText("");
+				mWebsite.showDropDown();
 			}
 		});
 	}
@@ -869,8 +870,8 @@ public class WebActivity extends Activity implements EventConstant {
 		int size = mWebBackForwardList.getSize();
 		for (int i = size - 1; i >= 0; i--) {
 			title = mWebBackForwardList.getItemAtIndex(i).getTitle();
-			if (title == null) {
-				title = Constants.TITLE_NULL;
+			if (title.equals(Constants.TITLE_NULL)) {
+				title = Constants.TITLE_NULL_DEFAULT;
 			}
 			url = mWebBackForwardList.getItemAtIndex(i).getUrl();
 			if (!mHistoryUrlList.contains(url)) {

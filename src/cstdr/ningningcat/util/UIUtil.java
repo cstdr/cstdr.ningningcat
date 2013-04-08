@@ -235,8 +235,10 @@ public class UIUtil {
 				LOG.cstdr(TAG, "metrics.widthPixels = " + metrics.widthPixels);
 				LOG.cstdr(TAG, "metrics.heightPixels = " + metrics.heightPixels);
 				LOG.cstdr(TAG, "metrics.density = " + metrics.density);
+				LOG.cstdr(TAG, "(float) metrics.widthPixels / 720 = "
+						+ (float) metrics.widthPixels / 720);
 			}
-			NncApp.setUI_SCALE_X(metrics.density / 2);
+			NncApp.setUI_SCALE_X((float) metrics.widthPixels / 720);
 		}
 	}
 
