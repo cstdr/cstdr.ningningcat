@@ -36,9 +36,6 @@ public class DownloadCompleteReceiver extends BroadcastReceiver {
 							context.getString(R.string.msg_download_complete));
 					String fileUri = c.getString(c
 							.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-					// FIXME
-					// 这里获取的竟然和onDownloadStart()方法中得到的mimeType不同，例如糗事百科APK
-					// String mimeType=Constants.APK_MIMETYPE;
 					String mimeType = c.getString(c
 							.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE));
 					if (LOG.DEBUG) {

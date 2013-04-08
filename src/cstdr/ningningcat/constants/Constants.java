@@ -37,4 +37,7 @@ public interface Constants {
 	/** APK的文件类型 **/
 	String APK_MIMETYPE = "application/vnd.android.package-archive";
 
+	/** ZIP的文件类型 **/
+	String ZIP_MIMETYPE = "application/x-zip-compressed";
+
 }

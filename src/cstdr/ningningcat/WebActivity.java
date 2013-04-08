@@ -30,6 +30,7 @@ import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
 import android.webkit.JsResult;
 import android.webkit.WebBackForwardList;
@@ -629,7 +630,9 @@ public class WebActivity extends Activity implements EventConstant {
 			if (LOG.DEBUG) {
 				LOG.cstdr(TAG, "MyDownloadListener : mimetype -> " + mimetype);
 			}
-			if (mimetype.equals(Constants.APK_MIMETYPE)) {
+			// ZIP_MIMETYPE下载完文件无法直接执行 TODO
+			if (mimetype.equals(Constants.APK_MIMETYPE)
+					|| mimetype.equals(Constants.ZIP_MIMETYPE)) {
 				ToastUtil.shortToast(mContext,
 						getString(R.string.msg_download_start, url));
 				DownloadUtil.startDownload(url, userAgent, contentDisposition,
@@ -802,6 +805,7 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 		super.onPause();
 		MobclickAgent.onPause(this);
+		CookieSyncManager.getInstance().stopSync();
 	}
 
 	@Override
@@ -843,6 +847,7 @@ public class WebActivity extends Activity implements EventConstant {
 				NotificationType.NotificationBar);
 		super.onResume();
 		MobclickAgent.onResume(this);
+		CookieSyncManager.getInstance().startSync(); // set up for sync
 	}
 
 	/**
@@ -895,8 +900,10 @@ public class WebActivity extends Activity implements EventConstant {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "============onNewIntent============");
 		}
-		setIntent(intent);
-		processData();
+		if (intent.getAction().equals(GotoReceiver.ACTION_GOTO)) {
+			setIntent(intent);
+			processData();
+		}
 	}
 
 	/**
@@ -939,9 +946,11 @@ public class WebActivity extends Activity implements EventConstant {
 				}
 				loadUrlStr(Constants.GOOGLE_URL + words);
 			}
-		} else {
-			loadUrlStr(NncApp.getInstance().getCurrentUrl()); // 加载在initSharedPreferences方法中获取到的首页
 		}
+		// else {
+		// loadUrlStr(NncApp.getInstance().getCurrentUrl()); //
+		// 加载在initSharedPreferences方法中获取到的首页
+		// }
 	}
 
 	/**
