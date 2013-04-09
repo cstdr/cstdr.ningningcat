@@ -508,9 +508,13 @@ public class WebActivity extends Activity implements EventConstant {
 
 		@Override
 		public void onProgressChanged(WebView view, int newProgress) {
+			if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
+				navigationHandler.removeMessages(NAVIGATION_HIDE);
+			}
 			webLayout.setProgress(newProgress);
 			if (newProgress == 100) {
 				webLayout.setProgressVisibility(View.GONE);
+				navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
 			} else {
 				webLayout.setProgressVisibility(View.VISIBLE);
 			}
@@ -601,6 +605,7 @@ public class WebActivity extends Activity implements EventConstant {
 				mAddFavorite
 						.setImageResource(R.drawable.navigation_add_favorite);
 			}
+			navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
 			super.onPageStarted(view, url, favicon);
 		}
 
@@ -612,7 +617,6 @@ public class WebActivity extends Activity implements EventConstant {
 
 		@Override
 		public void onPageFinished(WebView view, String url) {
-			navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
 			setAutoComplete(); // 这个位置需要考虑
 		}
 	}
@@ -900,10 +904,13 @@ public class WebActivity extends Activity implements EventConstant {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "============onNewIntent============");
 		}
-		if (intent.getAction().equals(GotoReceiver.ACTION_GOTO)) {
-			setIntent(intent);
-			processData();
+		String action = intent.getAction();
+		if (action != null && action.equals(Intent.ACTION_MAIN)
+				&& (intent.getData() == null)) { // 当后台宁宁猫运行，再点击icon的时候，不会再刷新页面
+			return;
 		}
+		setIntent(intent);
+		processData();
 	}
 
 	/**
@@ -935,7 +942,7 @@ public class WebActivity extends Activity implements EventConstant {
 				}
 				if (uri != null) {
 					loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
-				} else {
+				} else { // 首次打开宁宁猫，加载首页
 					loadUrlStr(NncApp.getInstance().getCurrentUrl());
 				}
 			} else if (action.equals(Intent.ACTION_WEB_SEARCH)) { // 处理谷歌搜索请求
@@ -946,11 +953,9 @@ public class WebActivity extends Activity implements EventConstant {
 				}
 				loadUrlStr(Constants.GOOGLE_URL + words);
 			}
+		} else { // 断网后重连时，重新加载当前网址
+			loadUrlStr(NncApp.getInstance().getCurrentUrl());
 		}
-		// else {
-		// loadUrlStr(NncApp.getInstance().getCurrentUrl()); //
-		// 加载在initSharedPreferences方法中获取到的首页
-		// }
 	}
 
 	/**
