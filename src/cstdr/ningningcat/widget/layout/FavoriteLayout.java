@@ -42,6 +42,7 @@ public class FavoriteLayout extends DRLinearLayout {
 		list = new ListView(mContext);
 		list.setLayoutParams(listLP);
 		list.setDividerHeight(getIntScaleX(1));
+		list.setSmoothScrollbarEnabled(true);
 		// list.setDivider(null);
 		this.addView(list);
 	}

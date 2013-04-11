@@ -963,7 +963,9 @@ public class WebActivity extends Activity implements EventConstant {
 	 */
 	private void hideNavigation() {
 		// 2秒后导航栏自动消失
-		navigationHandler.removeMessages(NAVIGATION_HIDE);
+		if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
+			navigationHandler.removeMessages(NAVIGATION_HIDE);
+		}
 		navigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
 	}
 
