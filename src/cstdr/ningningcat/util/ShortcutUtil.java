@@ -4,9 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import cstdr.ningningcat.CoverActivity;
-import cstdr.ningningcat.WebActivity;
 import cstdr.ningningcat.R;
+import cstdr.ningningcat.ui.WebActivity;
 
 /**
  * 手机桌面快捷方式工具类
@@ -56,7 +55,7 @@ public class ShortcutUtil {
 
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN); // 这样卸载APP的时候，快捷方式也会删除
 		shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER); // 如果堆栈中已经此Activity，则不再new一个新的
-		shortcutIntent.setClass(context, CoverActivity.class);
+		shortcutIntent.setClass(context, WebActivity.class);
 		shortcut.putExtra(Intent.EXTRA_SHORTCUT_INTENT, shortcutIntent);
 
 		context.sendBroadcast(shortcut);

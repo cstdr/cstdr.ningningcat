@@ -1,4 +1,4 @@
-package cstdr.ningningcat;
+package cstdr.ningningcat.ui;
 
 import java.util.LinkedList;
 
@@ -55,12 +55,18 @@ import com.umeng.update.UmengUpdateAgent;
 import com.umeng.update.UmengUpdateListener;
 import com.umeng.update.UpdateResponse;
 
+import cstdr.ningningcat.NncApp;
+import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.DownloadCompleteReceiver;
 import cstdr.ningningcat.receiver.DownloadNotificationClickReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
+import cstdr.ningningcat.ui.widget.DRAutoCompleteTextView;
+import cstdr.ningningcat.ui.widget.DRWebView;
+import cstdr.ningningcat.ui.widget.DRWebView.ScrollInterface;
+import cstdr.ningningcat.ui.widget.layout.WebLayout;
 import cstdr.ningningcat.util.CacheUtil;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
@@ -71,10 +77,6 @@ import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ToastUtil;
 import cstdr.ningningcat.util.UIUtil;
 import cstdr.ningningcat.util.UrlUtil;
-import cstdr.ningningcat.widget.DRAutoCompleteTextView;
-import cstdr.ningningcat.widget.DRWebView;
-import cstdr.ningningcat.widget.DRWebView.ScrollInterface;
-import cstdr.ningningcat.widget.layout.WebLayout;
 
 /**
  * 宁宁猫主界面

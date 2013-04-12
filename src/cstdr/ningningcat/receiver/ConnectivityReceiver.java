@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import cstdr.ningningcat.NncApp;
-import cstdr.ningningcat.WebActivity;
+import cstdr.ningningcat.ui.WebActivity;
 import cstdr.ningningcat.util.DialogUtil;
 
 /**

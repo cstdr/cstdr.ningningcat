@@ -1,4 +1,4 @@
-package cstdr.ningningcat.widget.layout;
+package cstdr.ningningcat.ui.widget.layout;
 
 import android.content.Context;
 import android.widget.AdapterView.OnItemClickListener;
@@ -6,7 +6,7 @@ import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import cstdr.ningningcat.R;
-import cstdr.ningningcat.widget.DRNavigationBar;
+import cstdr.ningningcat.ui.widget.DRNavigationBar;
 
 /**
  * 收藏列表Layout

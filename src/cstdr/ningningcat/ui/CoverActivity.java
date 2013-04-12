@@ -1,4 +1,4 @@
-package cstdr.ningningcat;
+package cstdr.ningningcat.ui;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -8,8 +8,9 @@ import android.view.KeyEvent;
 
 import com.umeng.analytics.MobclickAgent;
 
+import cstdr.ningningcat.R;
+import cstdr.ningningcat.ui.widget.layout.CoverLayout;
 import cstdr.ningningcat.util.UIUtil;
-import cstdr.ningningcat.widget.layout.CoverLayout;
 
 /**
  * 封面页

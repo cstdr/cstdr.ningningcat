@@ -1,4 +1,4 @@
-package cstdr.ningningcat;
+package cstdr.ningningcat.ui;
 
 import java.util.ArrayList;
 
@@ -20,10 +20,14 @@ import android.widget.BaseAdapter;
 
 import com.umeng.analytics.MobclickAgent;
 
+import cstdr.ningningcat.NncApp;
+import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
+import cstdr.ningningcat.ui.widget.item.FavoriteItem;
+import cstdr.ningningcat.ui.widget.layout.FavoriteLayout;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
 import cstdr.ningningcat.util.LOG;
@@ -31,8 +35,6 @@ import cstdr.ningningcat.util.SPUtil;
 import cstdr.ningningcat.util.ShareUtil;
 import cstdr.ningningcat.util.ShortcutUtil;
 import cstdr.ningningcat.util.ToastUtil;
-import cstdr.ningningcat.widget.item.FavoriteItem;
-import cstdr.ningningcat.widget.layout.FavoriteLayout;
 
 /**
  * “我的收藏”界面

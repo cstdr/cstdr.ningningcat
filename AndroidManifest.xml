@@ -23,11 +23,11 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Light.NoTitleBar" >
         <activity
-            android:name=".CoverActivity"
+            android:name=".ui.CoverActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" >
         </activity>
         <activity
-            android:name=".WebActivity"
+            android:name=".ui.WebActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" >
             <intent-filter>
@@ -52,7 +52,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".FavoriteActivity"
+            android:name=".ui.FavoriteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask" >
         </activity>

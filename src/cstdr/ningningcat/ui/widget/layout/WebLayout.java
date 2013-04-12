@@ -1,4 +1,4 @@
-package cstdr.ningningcat.widget.layout;
+package cstdr.ningningcat.ui.widget.layout;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import cstdr.ningningcat.R;
-import cstdr.ningningcat.widget.DRAutoCompleteTextView;
-import cstdr.ningningcat.widget.DRWebView;
+import cstdr.ningningcat.ui.widget.DRAutoCompleteTextView;
+import cstdr.ningningcat.ui.widget.DRWebView;
 
 /**
  * 浏览网页的主Layout

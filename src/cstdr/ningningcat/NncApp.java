@@ -13,6 +13,7 @@ import com.umeng.analytics.MobclickAgent;
 
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.data.Favorite;
+import cstdr.ningningcat.ui.FavoriteActivity;
 import cstdr.ningningcat.util.CacheUtil;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.LOG;

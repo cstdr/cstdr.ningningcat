@@ -1,4 +1,4 @@
-package cstdr.ningningcat.widget.layout;
+package cstdr.ningningcat.ui.widget.layout;
 
 import android.content.Context;
 import android.widget.RelativeLayout;

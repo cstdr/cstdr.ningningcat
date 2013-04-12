@@ -1,4 +1,4 @@
-package cstdr.ningningcat.widget;
+package cstdr.ningningcat.ui.widget;
 
 import android.content.Context;
 import android.graphics.Color;

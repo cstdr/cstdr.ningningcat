@@ -1,4 +1,4 @@
-package cstdr.ningningcat.widget.item;
+package cstdr.ningningcat.ui.widget.item;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -6,7 +6,7 @@ import android.text.TextUtils.TruncateAt;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import cstdr.ningningcat.widget.layout.DRRelativeLayout;
+import cstdr.ningningcat.ui.widget.layout.DRRelativeLayout;
 
 /**
  * 收藏列表单个收藏item
