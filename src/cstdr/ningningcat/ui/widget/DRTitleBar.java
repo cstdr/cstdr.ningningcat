@@ -13,9 +13,9 @@ import cstdr.ningningcat.NncApp;
  * 
  * @author cstdingran@gmail.com
  */
-public class DRNavigationBar extends TextView {
+public class DRTitleBar extends TextView {
 
-	public DRNavigationBar(Context context) {
+	public DRTitleBar(Context context) {
 		super(context);
 		init();
 	}

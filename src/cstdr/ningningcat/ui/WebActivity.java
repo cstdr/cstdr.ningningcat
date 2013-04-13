@@ -129,6 +129,10 @@ public class WebActivity extends Activity implements EventConstant {
 
 	private Animation animNavigationFadeIn;
 
+	private Animation animFavoriteAdd;
+
+	private Animation animFavoriteDelete;
+
 	private View mDecorView;
 
 	/** 导航栏显示与隐藏的handler **/
@@ -407,6 +411,42 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 添加导航栏中收藏按鈕配置
 	 */
 	private void initAddFavorite() {
+		animFavoriteAdd = AnimationUtils.loadAnimation(mContext,
+				R.anim.favorite_add);
+		animFavoriteDelete = AnimationUtils.loadAnimation(mContext,
+				R.anim.favorite_delete);
+		animFavoriteAdd.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+				mAddFavorite
+						.setImageResource(R.drawable.navigation_add_favorite_pressed);
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+			}
+		});
+		animFavoriteDelete.setAnimationListener(new AnimationListener() {
+
+			@Override
+			public void onAnimationStart(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+			}
+
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				mAddFavorite
+						.setImageResource(R.drawable.navigation_add_favorite);
+			}
+		});
 		mAddFavorite = webLayout.getAdd();
 		mAddFavorite.setOnClickListener(new OnClickListener() {
 
@@ -425,12 +465,11 @@ public class WebActivity extends Activity implements EventConstant {
 						if (FavoriteActivity.hasUrlInDB(url)) {
 							FavoriteActivity
 									.deleteFavorite(mContext, url, null);
-							mAddFavorite
-									.setImageResource(R.drawable.navigation_add_favorite);
+							mAddFavorite.startAnimation(animFavoriteDelete);
+							// TODO
 						} else {
 							FavoriteActivity.addFavorite(mContext, title, url);
-							mAddFavorite
-									.setImageResource(R.drawable.navigation_add_favorite_pressed);
+							mAddFavorite.startAnimation(animFavoriteAdd);
 						}
 					}
 				});
@@ -881,18 +920,22 @@ public class WebActivity extends Activity implements EventConstant {
 		int size = mWebBackForwardList.getSize();
 		for (int i = size - 1; i >= 0; i--) {
 			title = mWebBackForwardList.getItemAtIndex(i).getTitle();
-			if (title.equals(Constants.TITLE_NULL)) {
-				title = Constants.TITLE_NULL_DEFAULT;
-			}
-			url = mWebBackForwardList.getItemAtIndex(i).getUrl();
-			if (!mHistoryUrlList.contains(url)) {
-				mHistoryUrlList.add(url);
-				if (LOG.DEBUG) {
-					LOG.cstdr(TAG,
-							"setAutoComplete -> " + UrlUtil.httpUrl2Url(url));
+			if (title != null) {
+				if (title.equals(Constants.TITLE_NULL)) {
+					title = Constants.TITLE_NULL_DEFAULT;
 				}
-				mAutoCompleteAdapter.add(title + "\n"
-						+ UrlUtil.httpUrl2Url(url));
+				url = mWebBackForwardList.getItemAtIndex(i).getUrl();
+				if (!mHistoryUrlList.contains(url)) {
+					mHistoryUrlList.add(url);
+					if (LOG.DEBUG) {
+						LOG.cstdr(
+								TAG,
+								"setAutoComplete -> "
+										+ UrlUtil.httpUrl2Url(url));
+					}
+					mAutoCompleteAdapter.add(title + "\n"
+							+ UrlUtil.httpUrl2Url(url));
+				}
 			}
 		}
 		mWebsite.setAdapter(mAutoCompleteAdapter);

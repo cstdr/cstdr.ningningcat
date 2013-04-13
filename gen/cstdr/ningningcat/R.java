@@ -11,10 +11,10 @@ public final class R {
     public static final class anim {
         public static final int cover_put_in=0x7f040000;
         public static final int cover_put_out=0x7f040001;
-        public static final int navigation_fade_in=0x7f040002;
-        public static final int navigation_fade_out=0x7f040003;
-        public static final int webview_slide_down=0x7f040004;
-        public static final int webview_slide_up=0x7f040005;
+        public static final int favorite_add=0x7f040002;
+        public static final int favorite_delete=0x7f040003;
+        public static final int navigation_fade_in=0x7f040004;
+        public static final int navigation_fade_out=0x7f040005;
     }
     public static final class array {
         public static final int UMageList=0x7f080000;
@@ -248,8 +248,8 @@ public final class R {
         public static final int website_hint=0x7f060001;
     }
     public static final class style {
-        public static final int DayTheme=0x7f070000;
-        public static final int NightMode=0x7f070001;
+        public static final int AppTheme=0x7f070000;
+        public static final int activityAnimation=0x7f070001;
     }
     public static final class xml {
         public static final int more=0x7f050000;

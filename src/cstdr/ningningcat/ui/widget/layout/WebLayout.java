@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.text.InputType;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import cstdr.ningningcat.R;
@@ -95,6 +96,7 @@ public class WebLayout extends DRRelativeLayout {
 		add.setId(ID_ADD);
 		add.setLayoutParams(addLP);
 		add.setImageResource(R.drawable.navigation_add_favorite);
+		add.setScaleType(ScaleType.FIT_XY);
 		navLayout.addView(add);
 	}
 
@@ -113,7 +115,7 @@ public class WebLayout extends DRRelativeLayout {
 	private void initWebsite() {
 		websiteLP = new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT);
-		websiteLP.setMargins(0, getIntScaleX(2), 0, 0);
+		websiteLP.setMargins(0, getIntScaleX(4), 0, 0);
 		websiteLP.addRule(ALIGN_PARENT_LEFT);
 		websiteLP.addRule(LEFT_OF, ID_REWRITE);
 		website = new DRAutoCompleteTextView(mContext);
@@ -139,6 +141,7 @@ public class WebLayout extends DRRelativeLayout {
 		rewrite.setId(ID_REWRITE);
 		rewrite.setLayoutParams(rewriteLP);
 		rewrite.setImageResource(R.drawable.navigation_rewrite);
+		rewrite.setScaleType(ScaleType.FIT_XY);
 		websiteLayout.addView(rewrite);
 	}
 
