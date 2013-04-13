@@ -69,12 +69,10 @@ public class NncApp extends Application {
 		mFavoriteList = new ArrayList<Favorite>();
 		mFavoriteList = FavoriteActivity.getFavoriteList(mFavoriteList);
 		initSharedPreferences();
-		CookieSyncManager.createInstance(this); // The CookieSyncManager is used
-												// to synchronize the browser
-												// cookie store between RAM and
-												// permanent storage. To get the
-												// best performance, browser
-												// cookies are saved in RAM.
+		// The CookieSyncManager is used to synchronize the browser cookie store
+		// between RAM and permanent storage. To get the best performance,
+		// browser cookies are saved in RAM.
+		CookieSyncManager.createInstance(this);
 		new Thread() {
 
 			@Override

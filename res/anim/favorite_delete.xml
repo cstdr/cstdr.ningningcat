@@ -8,11 +8,11 @@
 
     <scale
         android:duration="500"
-        android:fromXScale="150%"
-        android:fromYScale="150%"
+        android:fromXScale="100%"
+        android:fromYScale="100%"
         android:pivotX="50%"
         android:pivotY="50%"
-        android:toXScale="0%"
-        android:toYScale="0%" />
+        android:toXScale="150%"
+        android:toYScale="150%" />
 
 </set>

@@ -13,7 +13,7 @@ import cstdr.ningningcat.ui.widget.layout.CoverLayout;
 import cstdr.ningningcat.util.UIUtil;
 
 /**
- * 封面页
+ * 封面页（暂时没有用到）
  * 
  * @author cstdingran@gmail.com
  */

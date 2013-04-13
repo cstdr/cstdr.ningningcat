@@ -180,8 +180,6 @@ public class WebActivity extends Activity implements EventConstant {
 		UIUtil.initUI(WebActivity.this);
 		initWebLayout();
 		initReceiver();
-		// WebIconDatabase.getInstance().open(getDir("icon",
-		// MODE_PRIVATE).getPath()); // 允许请求网页icon
 		processData();
 	}
 
@@ -563,14 +561,6 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 
 		@Override
-		public void onReceivedIcon(WebView view, Bitmap icon) {
-			// Drawable drawableIcon=new BitmapDrawable(icon); // Bitmap 转换为
-			// Drawable
-			// setFeatureDrawable(Window.FEATURE_LEFT_ICON, drawableIcon);
-			super.onReceivedIcon(view, icon);
-		}
-
-		@Override
 		public void onReceivedTitle(WebView view, String title) {
 			NncApp.getInstance().setCurrentTitle(title);
 			super.onReceivedTitle(view, title);
@@ -609,13 +599,6 @@ public class WebActivity extends Activity implements EventConstant {
 			}.start();
 			super.onReachedMaxAppCacheSize(requiredStorage, quota, quotaUpdater);
 		}
-
-		// @Override
-		// public void onGeolocationPermissionsShowPrompt(String origin,
-		// Callback callback) {
-		// callback.invoke(origin, true, false);
-		// super.onGeolocationPermissionsShowPrompt(origin, callback);
-		// }
 
 	}
 
@@ -867,12 +850,6 @@ public class WebActivity extends Activity implements EventConstant {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "============onStop============");
 		}
-		// if(mSp == null) {
-		// mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
-		// }
-		// if(mSp.getInt(getString(R.string.spkey_bright_mode_now), -2) == -1) {
-		// UIUtil.changeBrightMode(mContext, mActivity); // 若退出时为夜间模式，再进来也要保持此模式
-		// }
 		super.onStop();
 	}
 
@@ -881,13 +858,6 @@ public class WebActivity extends Activity implements EventConstant {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "============onResume============");
 		}
-		// if(mSp == null) {
-		// mSp=SPUtil.getSP(mContext, getString(R.string.sp_main));
-		// }
-		// if(mSp.getInt(getString(R.string.spkey_bright_mode_last), -2) == -1)
-		// {
-		// UIUtil.changeBrightMode(mContext, mActivity); // 若退出时为夜间模式，再进来也要保持此模式
-		// }
 		UMFeedbackService.enableNewReplyNotification(mContext,
 				NotificationType.NotificationBar);
 		super.onResume();

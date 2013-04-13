@@ -1,5 +1,7 @@
 package cstdr.ningningcat.data;
 
+import cstdr.ningningcat.constants.Constants;
+
 /**
  * 一个网页收藏
  * 
@@ -13,7 +15,7 @@ public class Favorite {
 
 	public Favorite(String title, String url) {
 		if (title == null) {
-			title = "没名儿网页"; // TODO
+			title = Constants.TITLE_NULL_DEFAULT;
 		}
 		this.title = title;
 		this.url = url;
