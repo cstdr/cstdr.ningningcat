@@ -12,11 +12,9 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.BaseAdapter;
 
 import com.umeng.analytics.MobclickAgent;
 
@@ -26,7 +24,7 @@ import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.constants.EventConstant;
 import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.receiver.GotoReceiver;
-import cstdr.ningningcat.ui.widget.item.FavoriteItem;
+import cstdr.ningningcat.ui.adapter.FavoriteAdapter;
 import cstdr.ningningcat.ui.widget.layout.FavoriteLayout;
 import cstdr.ningningcat.util.DatabaseUtil;
 import cstdr.ningningcat.util.DialogUtil;
@@ -52,13 +50,6 @@ public class FavoriteActivity extends Activity implements EventConstant {
 	private static FavoriteAdapter mAdapter;
 
 	private static ArrayList<Favorite> list;
-
-	// /** 选自谷歌LOGO颜色 **/
-	// private int[] mColorArray={Color.BLUE, Color.RED, Color.YELLOW,
-	// Color.BLUE, Color.GREEN, Color.RED};
-
-	private int[] mColorArray = { 0xFFa7c7c6, 0xFFe4d9bb, 0xFFfcc4b7,
-			0xFFdd9598, 0xFFba928a };
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -179,48 +170,6 @@ public class FavoriteActivity extends Activity implements EventConstant {
 		return super.onOptionsItemSelected(item);
 	}
 
-	public class FavoriteAdapter extends BaseAdapter {
-
-		private Context mContext;
-
-		private FavoriteItem item;
-
-		FavoriteAdapter(Context context) {
-			mContext = context;
-		}
-
-		@Override
-		public int getCount() {
-			return NncApp.getInstance().getFavoriteList().size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return NncApp.getInstance().getFavoriteList().get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			if (convertView == null) {
-				item = new FavoriteItem(mContext);
-			} else {
-				item = (FavoriteItem) convertView;
-			}
-			item.setIcon(mColorArray[position % 5]);
-			item.setTitle(NncApp.getInstance().getFavoriteList().get(position)
-					.getTitle());
-			item.setUrl(NncApp.getInstance().getFavoriteList().get(position)
-					.getUrl());
-			return item;
-		}
-	}
-
 	/**
 	 * 设置首页
 	 * 
@@ -325,7 +274,7 @@ public class FavoriteActivity extends Activity implements EventConstant {
 					.query(DatabaseUtil.mTableName,
 							new String[] { DatabaseUtil.COLUMN_TITLE,
 									DatabaseUtil.COLUMN_URL }, null, null,
-							null, null, null);
+							null, null, DatabaseUtil.COLUMN_PAGEVIEW + " DESC"); // 按照浏览量从高到低排序
 
 			for (cursor.moveToFirst(); !cursor.isAfterLast(); cursor
 					.moveToNext()) {
@@ -395,6 +344,61 @@ public class FavoriteActivity extends Activity implements EventConstant {
 		} else {
 			ToastUtil
 					.shortToast(mContext, getString(R.string.msg_rename_error));
+		}
+	}
+
+	/**
+	 * 得到该收藏的总浏览量
+	 * 
+	 * @param url
+	 * @return
+	 */
+	private static int getPageview(String url) {
+		Cursor cursor = null;
+		try {
+			String selection = DatabaseUtil.COLUMN_URL + "=?";
+			String[] selectionArgs = new String[] { url };
+			cursor = NncApp
+					.getInstance()
+					.getReadableDB()
+					.query(DatabaseUtil.mTableName,
+							new String[] { DatabaseUtil.COLUMN_PAGEVIEW },
+							selection, selectionArgs, null, null, null);
+			if (cursor.moveToFirst()) {
+				return cursor.getInt(cursor
+						.getColumnIndex(DatabaseUtil.COLUMN_PAGEVIEW));
+			}
+		} finally {
+			DatabaseUtil.closeCursor(cursor);
+		}
+		return 0;
+	}
+
+	/**
+	 * 增加一个浏览量
+	 * 
+	 * @param url
+	 */
+	public static void addPageview(String url) {
+		int pageview = getPageview(url);
+		if (LOG.DEBUG) {
+			LOG.cstdr(TAG, "url = " + url);
+			LOG.cstdr(TAG, "pageview = " + pageview);
+		}
+		if (pageview == Integer.MAX_VALUE) { // 防止超出Integer范围
+			pageview = pageview / 10;
+		}
+		ContentValues values = new ContentValues();
+		values.put(DatabaseUtil.COLUMN_PAGEVIEW, pageview + 1);
+		String whereClause = DatabaseUtil.COLUMN_URL + "=?";
+		String[] whereArgs = new String[] { url };
+		int id = NncApp
+				.getInstance()
+				.getWritableDB()
+				.update(DatabaseUtil.mTableName, values, whereClause, whereArgs);
+		if (id > 0) {
+			list = NncApp.getInstance().getFavoriteList();
+			list = getFavoriteList(list);
 		}
 	}
 

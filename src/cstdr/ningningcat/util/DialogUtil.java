@@ -19,7 +19,7 @@ import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.ui.FavoriteActivity;
 import cstdr.ningningcat.ui.FavoriteActivity.DialogItemClickListener;
 import cstdr.ningningcat.ui.FavoriteActivity.DialogRenameListener;
-import cstdr.ningningcat.ui.FavoriteActivity.FavoriteAdapter;
+import cstdr.ningningcat.ui.adapter.FavoriteAdapter;
 
 /**
  * 弹窗工具类

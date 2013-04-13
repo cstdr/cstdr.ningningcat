@@ -42,7 +42,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -63,6 +62,7 @@ import cstdr.ningningcat.receiver.ConnectivityReceiver;
 import cstdr.ningningcat.receiver.DownloadCompleteReceiver;
 import cstdr.ningningcat.receiver.DownloadNotificationClickReceiver;
 import cstdr.ningningcat.receiver.GotoReceiver;
+import cstdr.ningningcat.ui.adapter.HistoryAdapter;
 import cstdr.ningningcat.ui.widget.DRAutoCompleteTextView;
 import cstdr.ningningcat.ui.widget.DRWebView;
 import cstdr.ningningcat.ui.widget.DRWebView.ScrollInterface;
@@ -121,9 +121,9 @@ public class WebActivity extends Activity implements EventConstant {
 
 	private static WebBackForwardList mWebBackForwardList;
 
-	private static ArrayAdapter<String> mAutoCompleteAdapter;
+	private static HistoryAdapter mHistoryAdapter;
 
-	private static LinkedList<String> mHistoryUrlList; // 现在每次加载页面都清空mAutoCompleteAdapter再添加，历史记录暂时保存
+	private static LinkedList<String> mHistoryUrlList; // 暂时保存的历史记录，用于避免重复记录
 
 	private Animation animNavigationFadeOut;
 
@@ -359,8 +359,8 @@ public class WebActivity extends Activity implements EventConstant {
 				return false;
 			}
 		});
-		mAutoCompleteAdapter = new ArrayAdapter<String>(mContext,
-				R.layout.list_autocomplete); // TODO 修改布局文件
+		mHistoryAdapter = new HistoryAdapter(mContext,
+				R.layout.list_autocomplete);
 		mHistoryUrlList = new LinkedList<String>();
 		mWebsite.setThreshold(1); // 最小匹配字符为1个字符
 		// mWebsite.setTokenizer(new
@@ -464,7 +464,6 @@ public class WebActivity extends Activity implements EventConstant {
 							FavoriteActivity
 									.deleteFavorite(mContext, url, null);
 							mAddFavorite.startAnimation(animFavoriteDelete);
-							// TODO
 						} else {
 							FavoriteActivity.addFavorite(mContext, title, url);
 							mAddFavorite.startAnimation(animFavoriteAdd);
@@ -640,8 +639,18 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 
 		@Override
-		public void onPageFinished(WebView view, String url) {
+		public void onPageFinished(WebView view, final String url) {
 			setAutoComplete(); // 这个位置需要考虑
+			new Thread() {
+
+				@Override
+				public void run() {
+					if (FavoriteActivity.hasUrlInDB(url)) { // 记录浏览量
+						FavoriteActivity.addPageview(url);
+					}
+				}
+
+			}.start();
 		}
 	}
 
@@ -881,14 +890,11 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 得到浏览历史记录
 	 */
 	private void setAutoComplete() {
-		if (!mAutoCompleteAdapter.isEmpty()) {
-			mAutoCompleteAdapter.clear();
-		}
 		mWebBackForwardList = mWebView.copyBackForwardList();
 		String url;
 		String title;
 		int size = mWebBackForwardList.getSize();
-		for (int i = size - 1; i >= 0; i--) {
+		for (int i = 0; i < size; i++) {
 			title = mWebBackForwardList.getItemAtIndex(i).getTitle();
 			if (title != null) {
 				if (title.equals(Constants.TITLE_NULL)) {
@@ -903,12 +909,12 @@ public class WebActivity extends Activity implements EventConstant {
 								"setAutoComplete -> "
 										+ UrlUtil.httpUrl2Url(url));
 					}
-					mAutoCompleteAdapter.add(title + "\n"
-							+ UrlUtil.httpUrl2Url(url));
+					mHistoryAdapter
+							.add(title + "\n" + UrlUtil.httpUrl2Url(url));
 				}
 			}
 		}
-		mWebsite.setAdapter(mAutoCompleteAdapter);
+		mWebsite.setAdapter(mHistoryAdapter);
 	}
 
 	/**
