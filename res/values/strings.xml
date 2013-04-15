@@ -28,7 +28,7 @@
     <string name="msg_progress">喵~~~喵~~~</string>
     <string name="msg_timeout">等到花都谢了也没反应，一会再试吧</string>
     <string name="msg_no_url">上面的输入框忘记填写啦</string>
-    <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望你能喜欢，随时欢迎吐槽:)</string>
+    <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望你能喜欢，随时欢迎吐槽哦:)</string>
     <string name="msg_no_connect">没有网是万万不能的！马上联网吧:)</string>
     <string name="msg_web_insert">已经收藏好啦</string>
     <string name="msg_web_insert_error">这个收藏不下来=_=</string>
@@ -43,11 +43,12 @@
     <string name="msg_rename_error">重命名操作出现了百年难得一见的问题，再来一遍吧</string>
     <string name="msg_download_complete">下载完成啦！快点安装吧</string>
     <string name="msg_download_start">开始下载：%s</string>
-    <string name="msg_about">正在跳转至我的微博:)</string>
+    <string name="msg_about">正在跳转至关于页面:)</string>
     <string name="msg_update_no">宁宁猫正在努力开发中，暂时没有更新哦</string>
     <string name="msg_update_nowifi">没有连接Wifi，还是省点流量吧</string>
     <string name="msg_update_timeout">联网出现超时，等会再试吧</string>
     <string name="msg_delete_cachedata">保存的缓存文件和表单数据都清理干净啦</string>
+    <string name="msg_loading_too_long">这个网页加载太困难啦，要不等会再试吧</string>
     <!-- btn -->
     <string name="btn_ok">OK</string>
     <string name="btn_cancel">不啦</string>

@@ -31,6 +31,9 @@ public interface Constants {
 	/** “关于”中的微博链接地址 **/
 	String WEIBO_URL = "http://weibo.com/cstdr";
 
+	/** “关于”中的WIKI链接地址 **/
+	String ABOUT_URL = "https://github.com/cstdr/cstdr.ningningcat/wiki";
+
 	/** 谷歌搜索前缀 **/
 	String GOOGLE_URL = "http://www.google.com.hk/m?q=";
 

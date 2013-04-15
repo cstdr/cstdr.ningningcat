@@ -89,7 +89,7 @@ public class WebActivity extends Activity implements EventConstant {
 
 	private final Context mContext = this;
 
-	private WebLayout webLayout;
+	private WebLayout mWebLayout;
 
 	private RelativeLayout mWebsiteNavigation;
 
@@ -110,6 +110,8 @@ public class WebActivity extends Activity implements EventConstant {
 	private static final int NAVIGATION_HIDE = 1;
 
 	private static final int NAVIGATION_SHOW = 2;
+
+	private static final int LOADING_TOO_LONG = 1;
 
 	private BroadcastReceiver mConnectitvityReceiver;
 
@@ -135,8 +137,10 @@ public class WebActivity extends Activity implements EventConstant {
 
 	private View mDecorView;
 
+	private boolean hasShowedLoadingToast;
+
 	/** 导航栏显示与隐藏的handler **/
-	private Handler navigationHandler = new Handler() {
+	private Handler mNavigationHandler = new Handler() {
 
 		@SuppressLint("NewApi")
 		@Override
@@ -170,6 +174,17 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 	};
 
+	/** 网页加载时间过长提示 **/
+	private Handler mLoadingHandler = new Handler() {
+
+		@Override
+		public void handleMessage(Message msg) {
+			ToastUtil.shortToast(mContext,
+					getString(R.string.msg_loading_too_long));
+			hasShowedLoadingToast = true;
+		}
+	};
+
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		if (LOG.DEBUG) {
@@ -187,8 +202,8 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 初始化浏览网页的主Layout
 	 */
 	private void initWebLayout() {
-		webLayout = new WebLayout(mContext);
-		setContentView(webLayout);
+		mWebLayout = new WebLayout(mContext);
+		setContentView(mWebLayout);
 		initNavigation();
 		initAddFavorite();
 		initWebsite();
@@ -238,15 +253,15 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 初始化重写按钮
 	 */
 	private void initRewrite() {
-		mRewrite = webLayout.getRewrite();
+		mRewrite = mWebLayout.getRewrite();
 		mRewrite.setVisibility(View.GONE);
 		mRewrite.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				MobclickAgent.onEvent(mContext, NAVIGATION_REWRITE);
-				if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
-					navigationHandler.removeMessages(NAVIGATION_HIDE);
+				if (mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+					mNavigationHandler.removeMessages(NAVIGATION_HIDE);
 				}
 				mWebsite.setText("");
 				mWebsite.showDropDown();
@@ -258,7 +273,7 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 初始化WebView
 	 */
 	private void initWebView() {
-		mWebView = webLayout.getWebview();
+		mWebView = mWebLayout.getWebview();
 
 		/** WebSettings配置 **/
 		mWebSettings = mWebView.getSettings();
@@ -302,9 +317,11 @@ public class WebActivity extends Activity implements EventConstant {
 					// 使用户在点击顶部区域可以显示导航栏，再点击隐藏，这样处理其实不恰当
 					if (event.getY() < 48) {
 						if (mWebsiteNavigation.isShown()) {
-							navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+							mNavigationHandler
+									.sendEmptyMessage(NAVIGATION_HIDE);
 						} else {
-							navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+							mNavigationHandler
+									.sendEmptyMessage(NAVIGATION_SHOW);
 						}
 					}
 					break;
@@ -316,8 +333,9 @@ public class WebActivity extends Activity implements EventConstant {
 
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus && navigationHandler.hasMessages(NAVIGATION_HIDE)) {
-					navigationHandler.removeMessages(NAVIGATION_HIDE); // 点击输入框后焦点才发生变化
+				if (!hasFocus
+						&& mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+					mNavigationHandler.removeMessages(NAVIGATION_HIDE); // 点击输入框后焦点才发生变化
 				}
 			}
 		});
@@ -326,9 +344,9 @@ public class WebActivity extends Activity implements EventConstant {
 			@Override
 			public void onScrollChange(int l, int t, int oldl, int oldt) {
 				if ((t - oldt) > 5) {
-					navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+					mNavigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
 				} else if ((oldt - t) > 5) {
-					navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+					mNavigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
 				}
 			}
 		});
@@ -341,7 +359,7 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 初始化导航栏中EditText输入框的配置
 	 */
 	private void initWebsite() {
-		mWebsite = webLayout.getWebsite();
+		mWebsite = mWebLayout.getWebsite();
 		mWebsite.setImeOptions(EditorInfo.IME_ACTION_GO);
 		mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
@@ -445,14 +463,14 @@ public class WebActivity extends Activity implements EventConstant {
 						.setImageResource(R.drawable.navigation_add_favorite);
 			}
 		});
-		mAddFavorite = webLayout.getAdd();
+		mAddFavorite = mWebLayout.getAdd();
 		mAddFavorite.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
 				MobclickAgent.onEvent(mContext, NAVIGATION_ADD_FAVORITE);
-				if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
-					navigationHandler.removeMessages(NAVIGATION_HIDE);
+				if (mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+					mNavigationHandler.removeMessages(NAVIGATION_HIDE);
 				}
 				NncApp.getInstance().getHandler().post(new Runnable() {
 
@@ -478,7 +496,7 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 初始化RelativeLayout导航栏
 	 */
 	private void initNavigation() {
-		mWebsiteNavigation = webLayout.getNavLayout();
+		mWebsiteNavigation = mWebLayout.getNavLayout();
 		animNavigationFadeOut = AnimationUtils.loadAnimation(mContext,
 				R.anim.navigation_fade_out);
 		animNavigationFadeIn = AnimationUtils.loadAnimation(mContext,
@@ -546,15 +564,23 @@ public class WebActivity extends Activity implements EventConstant {
 
 		@Override
 		public void onProgressChanged(WebView view, int newProgress) {
-			if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
-				navigationHandler.removeMessages(NAVIGATION_HIDE);
+			if (!hasShowedLoadingToast
+					&& mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+				mNavigationHandler.removeMessages(NAVIGATION_HIDE);
 			}
-			webLayout.setProgress(newProgress);
+			if (mLoadingHandler.hasMessages(LOADING_TOO_LONG)) {
+				mLoadingHandler.removeMessages(LOADING_TOO_LONG);
+			}
+			mWebLayout.setProgress(newProgress);
 			if (newProgress == 100) {
-				webLayout.setProgressVisibility(View.GONE);
-				navigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+				mWebLayout.setProgressVisibility(View.GONE);
+				mNavigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
 			} else {
-				webLayout.setProgressVisibility(View.VISIBLE);
+				mWebLayout.setProgressVisibility(View.VISIBLE);
+				if (!hasShowedLoadingToast) {
+					mLoadingHandler.sendEmptyMessageDelayed(LOADING_TOO_LONG,
+							5000);
+				}
 			}
 			super.onProgressChanged(view, newProgress);
 		}
@@ -619,6 +645,7 @@ public class WebActivity extends Activity implements EventConstant {
 			if (LOG.DEBUG) {
 				LOG.cstdr(TAG, "onPageStarted -> url = " + url);
 			}
+			hasShowedLoadingToast = false;
 			mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
 			NncApp.getInstance().setCurrentUrl(url);
 			if (FavoriteActivity.hasUrlInDB(url)) {
@@ -628,7 +655,7 @@ public class WebActivity extends Activity implements EventConstant {
 				mAddFavorite
 						.setImageResource(R.drawable.navigation_add_favorite);
 			}
-			navigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+			mNavigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
 			super.onPageStarted(view, url, favicon);
 		}
 
@@ -762,7 +789,7 @@ public class WebActivity extends Activity implements EventConstant {
 		case R.id.menu_about: // 关于
 			MobclickAgent.onEvent(mContext, MENU_ABOUT);
 			ToastUtil.shortToast(mContext, getString(R.string.msg_about));
-			loadUrlStr(Constants.WEIBO_URL);
+			loadUrlStr(Constants.ABOUT_URL);
 			break;
 		}
 		return super.onOptionsItemSelected(item);
@@ -984,10 +1011,10 @@ public class WebActivity extends Activity implements EventConstant {
 	 */
 	private void hideNavigation() {
 		// 2秒后导航栏自动消失
-		if (navigationHandler.hasMessages(NAVIGATION_HIDE)) {
-			navigationHandler.removeMessages(NAVIGATION_HIDE);
+		if (mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+			mNavigationHandler.removeMessages(NAVIGATION_HIDE);
 		}
-		navigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
+		mNavigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
 	}
 
 }
