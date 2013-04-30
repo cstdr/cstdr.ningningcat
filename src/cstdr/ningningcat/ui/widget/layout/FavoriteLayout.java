@@ -5,8 +5,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ListAdapter;
 import android.widget.ListView;
-import cstdr.ningningcat.R;
-import cstdr.ningningcat.ui.widget.DRTitleBar;
 
 /**
  * 收藏列表Layout
@@ -14,8 +12,6 @@ import cstdr.ningningcat.ui.widget.DRTitleBar;
  * @author cstdingran@gmail.com
  */
 public class FavoriteLayout extends DRLinearLayout {
-
-	private DRTitleBar bar;
 
 	private ListView list;
 
@@ -26,14 +22,7 @@ public class FavoriteLayout extends DRLinearLayout {
 		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
 				LayoutParams.MATCH_PARENT));
 		this.setOrientation(VERTICAL);
-		initNavigationBar();
 		initListView();
-	}
-
-	private void initNavigationBar() {
-		bar = new DRTitleBar(mContext);
-		bar.setText(R.string.title_favorite);
-		this.addView(bar);
 	}
 
 	private void initListView() {
