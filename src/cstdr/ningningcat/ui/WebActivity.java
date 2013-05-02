@@ -672,7 +672,10 @@ public class WebActivity extends Activity implements EventConstant {
 
 				@Override
 				public void run() {
-					if (FavoriteActivity.hasUrlInDB(url)) { // 记录浏览量
+					// 当非断网情况且数据库中有该收藏，则记录浏览量
+					if (!NncApp.getInstance().getCurrentTitle()
+							.equals(Constants.TITLE_NULL)
+							&& FavoriteActivity.hasUrlInDB(url)) {
 						FavoriteActivity.addPageview(url);
 					}
 				}
