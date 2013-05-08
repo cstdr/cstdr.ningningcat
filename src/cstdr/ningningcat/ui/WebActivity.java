@@ -168,7 +168,9 @@ public class WebActivity extends Activity implements EventConstant {
 					mDecorView
 							.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
 				}
-				hideNavigation();
+				if (msg.obj == null) { // 但参数为空时，自动隐藏导航栏
+					hideNavigation();
+				}
 				break;
 			}
 		}
@@ -343,10 +345,19 @@ public class WebActivity extends Activity implements EventConstant {
 
 			@Override
 			public void onScrollChange(int l, int t, int oldl, int oldt) {
-				if ((t - oldt) > 5) {
-					mNavigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
-				} else if ((oldt - t) > 5) {
-					mNavigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+				// 但WebView滑动到底部时显示导航栏
+				if ((mWebView.getContentHeight() * mWebView.getScale()
+						- mWebView.getHeight() - t) < 5) {
+					Message msg = new Message();
+					msg.what = NAVIGATION_SHOW;
+					msg.obj = true;
+					mNavigationHandler.sendMessage(msg);
+				} else {
+					if ((t - oldt) > 5) {
+						mNavigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+					} else if ((oldt - t) > 5) {
+						mNavigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
+					}
 				}
 			}
 		});
