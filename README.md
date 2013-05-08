@@ -6,6 +6,10 @@ This APP is just for fun.
 ## Download
 Local download please click [here][LocalDownload].
 
+You can scan QR code to get the app !
+
+[![QR code][QRCode]][LocalDownload]
+
 Other channel will come soon:)
 
 ## My Email & QQ
@@ -27,4 +31,4 @@ GPLv3, full text of license see [here][LocalLicense].
 [LocalDownload]: https://github.com/cstdr/cstdr.ningningcat/raw/master/cstdr.ningningcat.apk "Local Download"
 [Email]: mailto:cstdingran@gmail.com "Send email to cstdr"
 [QQ]: http://wpa.qq.com/msgrd?v=3&uin=280114396&site=qq&menu=yes "QQ with me"  
-
+[QRCode]: https://github.com/cstdr/cstdr.ningningcat/raw/master/download_qr.png "QR code to get the app !"
