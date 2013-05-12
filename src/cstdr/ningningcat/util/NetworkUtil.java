@@ -3,6 +3,7 @@ package cstdr.ningningcat.util;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 
 /**
  * 网络相关工具类
@@ -26,6 +27,30 @@ public class NetworkUtil {
 		} else {
 			return false;
 		}
+	}
+
+	/**
+	 * 检查Wifi是否打开
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public static boolean isWifiEnabled(Context context) {
+		WifiManager wifiManager = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+		return wifiManager.isWifiEnabled();
+	}
+
+	/**
+	 * 打开Wifi
+	 * 
+	 * @param context
+	 * @return
+	 */
+	public static boolean openWifi(Context context) {
+		WifiManager wifiManager = (WifiManager) context
+				.getSystemService(Context.WIFI_SERVICE);
+		return wifiManager.setWifiEnabled(true);
 	}
 
 }

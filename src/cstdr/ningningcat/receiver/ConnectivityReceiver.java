@@ -25,7 +25,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 					ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
 				if (nncApp.isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
 					nncApp.setNetworkMode(false);
-					DialogUtil.showNoConnectDialog(context); // 这里必须传Activity，若传Context则报错
+					DialogUtil.showNoConnectDialog(context);
 				}
 			} else {
 				if (!nncApp.isNetworkMode()) { // 重新加载当前网址，用于网络重新连通后

@@ -860,7 +860,7 @@ public class WebActivity extends Activity implements EventConstant {
 				}
 			});
 		} else {
-			ToastUtil.shortToast(mContext, getString(R.string.msg_no_connect));
+			DialogUtil.showNoConnectDialog(mContext);
 		}
 	}
 

@@ -32,7 +32,7 @@ public class DialogUtil {
 
 	private static Dialog jsConfirmDialog; // 页面JS确认框
 
-	private static Dialog noConnectDialog; // 无网状态框
+	private static Dialog settingOpenDialog; // 无网状态框
 
 	private static Dialog favoriteDialog; // 长按收藏夹Item弹出框
 
@@ -41,6 +41,8 @@ public class DialogUtil {
 	private static Dialog deleteFavoriteListDialog; // 显示清空收藏夹的弹出框
 
 	private static Dialog deleteFavoriteDialog; // 显示删除收藏的弹出框
+
+	private static Dialog wifiOpenDialog; // 显示Wifi打开的弹出框
 
 	/** 手机设置页面ACTION **/
 	private static final String ACTION_SETTINGS = "android.settings.SETTINGS";
@@ -67,7 +69,6 @@ public class DialogUtil {
 					}
 				}).create();
 		jsAlertDialog.show();
-
 	}
 
 	/**
@@ -102,7 +103,6 @@ public class DialogUtil {
 							}
 						}).create();
 		jsConfirmDialog.show();
-
 	}
 
 	/**
@@ -110,13 +110,13 @@ public class DialogUtil {
 	 * 
 	 * @param context
 	 */
-	public static void showNoConnectDialog(final Context context) {
-		if (noConnectDialog != null && noConnectDialog.isShowing()) {
+	public static void showSettingOpenDialog(final Context context) {
+		if (settingOpenDialog != null && settingOpenDialog.isShowing()) {
 			return;
 		}
-		noConnectDialog = new AlertDialog.Builder(context)
+		settingOpenDialog = new AlertDialog.Builder(context)
 				.setTitle(R.string.title_no_connect)
-				.setMessage(R.string.msg_no_connect)
+				.setMessage(R.string.msg_no_connect_setting)
 				.setPositiveButton(R.string.btn_noconnect,
 						new OnClickListener() {
 
@@ -136,7 +136,7 @@ public class DialogUtil {
 								context.startActivity(intent);
 							}
 						}).create();
-		noConnectDialog.show();
+		settingOpenDialog.show();
 	}
 
 	/**
@@ -301,5 +301,54 @@ public class DialogUtil {
 							}
 						}).create();
 		deleteFavoriteDialog.show();
+	}
+
+	/**
+	 * Wifi打开对话框，打开后会直接连接已配置Wifi
+	 * 
+	 * @param context
+	 */
+	public static void showWifiOpenDialog(final Context context) {
+		if (wifiOpenDialog != null && wifiOpenDialog.isShowing()) {
+			return;
+		}
+		wifiOpenDialog = new AlertDialog.Builder(context)
+				.setTitle(R.string.title_no_connect)
+				.setMessage(R.string.msg_no_connect_wifiopen)
+				.setPositiveButton(R.string.btn_noconnect,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+
+							}
+						})
+				.setNegativeButton(R.string.btn_wifiopen,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								if (NetworkUtil.openWifi(context)) {
+									ToastUtil.longToast(context, context
+											.getString(R.string.msg_wifi_open));
+								}
+							}
+						}).create();
+		wifiOpenDialog.show();
+	}
+
+	/**
+	 * 无网状态下应该显示的对话框
+	 * 
+	 * @param context
+	 */
+	public static void showNoConnectDialog(Context context) {
+		if (NetworkUtil.isWifiEnabled(context)) { // 判断是Wifi未打开还是已打开但是没有连接Wifi
+			showSettingOpenDialog(context);
+		} else {
+			showWifiOpenDialog(context);
+		}
 	}
 }
