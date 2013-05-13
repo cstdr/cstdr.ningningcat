@@ -64,17 +64,18 @@ public final class R {
         public static final int umeng_fb_write_selector=0x7f020026;
     }
     public static final class id {
-        public static final int menu_about=0x7f0a002e;
-        public static final int menu_clear_cachedata=0x7f0a002c;
-        public static final int menu_delete_favorite_list=0x7f0a0025;
-        public static final int menu_download_list=0x7f0a002a;
-        public static final int menu_exit=0x7f0a0028;
-        public static final int menu_favorite=0x7f0a0026;
-        public static final int menu_more=0x7f0a0029;
-        public static final int menu_report=0x7f0a002d;
-        public static final int menu_share=0x7f0a0027;
-        public static final int menu_share_favorite_list=0x7f0a0024;
-        public static final int menu_update=0x7f0a002b;
+        public static final int feedback_name=0x7f0a0023;
+        public static final int menu_about=0x7f0a002f;
+        public static final int menu_clear_cachedata=0x7f0a002d;
+        public static final int menu_delete_favorite_list=0x7f0a0026;
+        public static final int menu_download_list=0x7f0a002b;
+        public static final int menu_exit=0x7f0a0029;
+        public static final int menu_favorite=0x7f0a0027;
+        public static final int menu_more=0x7f0a002a;
+        public static final int menu_report=0x7f0a002e;
+        public static final int menu_share=0x7f0a0028;
+        public static final int menu_share_favorite_list=0x7f0a0025;
+        public static final int menu_update=0x7f0a002c;
         public static final int progress_bar_horizontal=0x7f0a0001;
         public static final int tv_dropdown_url=0x7f0a0000;
         public static final int umeng_common_app=0x7f0a0002;
@@ -110,7 +111,7 @@ public final class R {
         public static final int umeng_fb_see_list_btn=0x7f0a0021;
         public static final int umeng_fb_stateOrTime=0x7f0a0010;
         public static final int umeng_fb_state_or_date=0x7f0a001a;
-        public static final int umeng_fb_submit=0x7f0a0023;
+        public static final int umeng_fb_submit=0x7f0a0024;
     }
     public static final class layout {
         public static final int list_autocomplete=0x7f030000;

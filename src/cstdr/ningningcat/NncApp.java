@@ -1,15 +1,21 @@
 package cstdr.ningningcat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.os.Handler;
 import android.webkit.CookieSyncManager;
+import android.widget.EditText;
 
 import com.umeng.analytics.MobclickAgent;
+import com.umeng.fb.UMFeedbackService;
+import com.umeng.fb.util.FeedBackListener;
 
 import cstdr.ningningcat.constants.Constants;
 import cstdr.ningningcat.data.Favorite;
@@ -51,7 +57,30 @@ public class NncApp extends Application {
 	/** 手机屏幕宽的比例，以1280x720为准 **/
 	private static float UI_SCALE_X;
 
+	/** SDK版本 **/
 	public static int SDK_INT;
+
+	private FeedBackListener fbListener = new FeedBackListener() {
+
+		@Override
+		public void onSubmitFB(Activity activity) {
+			EditText name = (EditText) activity
+					.findViewById(R.id.feedback_name);
+			Map<String, String> remarkMap = new HashMap<String, String>();
+			remarkMap.put("name", name.getText().toString());
+			UMFeedbackService.setRemarkMap(remarkMap);
+		}
+
+		@Override
+		public void onResetFB(Activity activity,
+				Map<String, String> contactMap, Map<String, String> remarkMap) {
+			EditText name = (EditText) activity
+					.findViewById(R.id.feedback_name);
+			if (remarkMap != null) {
+				name.setText(remarkMap.get("name"));
+			}
+		}
+	};
 
 	@Override
 	public void onCreate() {
@@ -86,6 +115,7 @@ public class NncApp extends Application {
 				}
 			}
 		}.start();
+		UMFeedbackService.setFeedBackListener(fbListener);
 	}
 
 	/**
