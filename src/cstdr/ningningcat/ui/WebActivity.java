@@ -765,7 +765,7 @@ public class WebActivity extends Activity implements EventConstant {
 		// case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
 		// UIUtil.changeBrightMode(mContext, mActivity);
 		// break;
-		case R.id.menu_download_list:
+		case R.id.menu_download_list: // 下载列表
 			MobclickAgent.onEvent(mContext, MENU_DOWNLOAD_LIST);
 			Intent downloadsIntent = new Intent(
 					DownloadManager.ACTION_VIEW_DOWNLOADS);
@@ -870,6 +870,11 @@ public class WebActivity extends Activity implements EventConstant {
 	private void exit() {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "============exit============");
+		}
+		if (NncApp.IS_FIRST_LAUNCH) { // 第一次退出APP时提示希望用户反馈
+			DialogUtil.showFeedbackDialog(mContext, new ExitListener());
+			NncApp.IS_FIRST_LAUNCH = false;
+			return;
 		}
 		UIUtil.hideInputWindow(mWebView);
 		finish();
@@ -1030,6 +1035,18 @@ public class WebActivity extends Activity implements EventConstant {
 			mNavigationHandler.removeMessages(NAVIGATION_HIDE);
 		}
 		mNavigationHandler.sendEmptyMessageDelayed(NAVIGATION_HIDE, 2000);
+	}
+
+	/**
+	 * 退出回调方法
+	 * 
+	 * @author cstdingran@gmail.com
+	 * 
+	 */
+	public class ExitListener {
+		public void doExit() {
+			exit();
+		}
 	}
 
 }

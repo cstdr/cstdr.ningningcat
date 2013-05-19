@@ -28,6 +28,7 @@
     <string name="msg_timeout">等到花都谢了也没反应，一会再试吧</string>
     <string name="msg_no_url">上面的输入框忘记填写啦</string>
     <string name="msg_first_launch">宁宁猫是一款简单而实用的浏览器，希望你能喜欢，随时欢迎吐槽哦:)</string>
+    <string name="msg_first_launch_feedback">谢谢使用，希望得到你的反馈:)</string>
     <string name="msg_no_connect_setting">没有网是万万不能的！跳转到设置页面马上联网吧:)</string>
     <string name="msg_no_connect_wifiopen">没有网是万万不能的！打开WIFI马上联网吧:)</string>
     <string name="msg_web_insert">已经收藏好啦</string>
@@ -59,6 +60,8 @@
     <string name="btn_rename">重命名</string>
     <string name="btn_delete_favorite_list">全部丢掉</string>
     <string name="btn_delete_favorite">丢掉</string>
+    <string name="btn_exit">直接退出</string>
+    <string name="btn_feedback">反馈</string>
     <!-- sp -->
     <string name="sp_main">main</string>
     <string name="spkey_first_launch_time">FIRST_LAUNCH_TIME</string>

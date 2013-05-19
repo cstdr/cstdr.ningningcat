@@ -46,8 +46,6 @@ public class NncApp extends Application {
 
 	private static ArrayList<Favorite> mFavoriteList;
 
-	private boolean isFirstLaunch = true;
-
 	private boolean isNetworkMode = true;
 
 	private static String mCurrentTitle = null;
@@ -56,6 +54,9 @@ public class NncApp extends Application {
 
 	/** 手机屏幕宽的比例，以1280x720为准 **/
 	private static float UI_SCALE_X;
+
+	/** 是否第一次运行 **/
+	public static boolean IS_FIRST_LAUNCH;
 
 	/** SDK版本 **/
 	public static int SDK_INT;
@@ -124,12 +125,13 @@ public class NncApp extends Application {
 	private void initSharedPreferences() {
 		mSp = SPUtil.getSP(this, getString(R.string.sp_main));
 		if (mSp.getString(getString(R.string.spkey_first_launch_time), null) != null) {
+			IS_FIRST_LAUNCH = false;
 			SPUtil.commitStrArrayToSP(
 					mSp,
 					new String[] { getString(R.string.spkey_last_launch_time) },
 					new String[] { String.valueOf(System.currentTimeMillis()) });
 		} else {
-			isFirstLaunch = false;
+			IS_FIRST_LAUNCH = true;
 			// if(!ShortcutUtil.hasShortcut(mContext)) { // 测试发现某些机型报错
 			ShortcutUtil.addShortcut(this);
 			// }
@@ -172,15 +174,6 @@ public class NncApp extends Application {
 			mSp = SPUtil.getSP(this, getString(R.string.sp_main));
 		}
 		return mSp;
-	}
-
-	/**
-	 * 是否第一次启动
-	 * 
-	 * @return
-	 */
-	public boolean isFirstLaunch() {
-		return isFirstLaunch;
 	}
 
 	/**

@@ -12,6 +12,9 @@ import android.text.TextUtils;
 import android.webkit.JsResult;
 import android.widget.EditText;
 import android.widget.RelativeLayout.LayoutParams;
+
+import com.umeng.fb.UMFeedbackService;
+
 import cstdr.ningningcat.NncApp;
 import cstdr.ningningcat.R;
 import cstdr.ningningcat.constants.Constants;
@@ -19,6 +22,7 @@ import cstdr.ningningcat.data.Favorite;
 import cstdr.ningningcat.ui.FavoriteActivity;
 import cstdr.ningningcat.ui.FavoriteActivity.DialogItemClickListener;
 import cstdr.ningningcat.ui.FavoriteActivity.DialogRenameListener;
+import cstdr.ningningcat.ui.WebActivity.ExitListener;
 import cstdr.ningningcat.ui.adapter.FavoriteAdapter;
 
 /**
@@ -43,6 +47,8 @@ public class DialogUtil {
 	private static Dialog deleteFavoriteDialog; // 显示删除收藏的弹出框
 
 	private static Dialog wifiOpenDialog; // 显示Wifi打开的弹出框
+
+	private static Dialog feedbackDialog; // 显示是否反馈的弹出框
 
 	/** 手机设置页面ACTION **/
 	private static final String ACTION_SETTINGS = "android.settings.SETTINGS";
@@ -350,5 +356,36 @@ public class DialogUtil {
 		} else {
 			showWifiOpenDialog(context);
 		}
+	}
+
+	/**
+	 * 第一次退出APP时显示是否反馈对话框
+	 * 
+	 * @param context
+	 */
+	public static void showFeedbackDialog(final Context context,
+			final ExitListener listener) {
+		if (feedbackDialog != null && feedbackDialog.isShowing()) {
+			return;
+		}
+		feedbackDialog = new AlertDialog.Builder(context)
+				.setMessage(R.string.msg_first_launch_feedback)
+				.setPositiveButton(R.string.btn_exit, new OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						listener.doExit();
+					}
+				})
+				.setNegativeButton(R.string.btn_feedback,
+						new OnClickListener() {
+
+							@Override
+							public void onClick(DialogInterface dialog,
+									int which) {
+								UMFeedbackService.openUmengFeedbackSDK(context);
+							}
+						}).create();
+		feedbackDialog.show();
 	}
 }
