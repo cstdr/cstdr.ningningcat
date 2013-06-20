@@ -3,67 +3,90 @@ package cstdr.ningningcat.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import cstdr.ningningcat.R;
 
 /**
  * SharedPreferences工具类
- * 
  * @author cstdingran@gmail.com
  */
 public class SPUtil {
 
-	private static final String TAG = "SPUtil";
+    private static final String TAG="SPUtil";
 
-	/**
-	 * 得到SharedPreferences
-	 * 
-	 * @param context
-	 * @param name
-	 * @return
-	 */
-	public static SharedPreferences getSP(Context context, String name) {
-		if (context == null || name == null) {
-			return null;
-		}
-		return context.getSharedPreferences(name, Context.MODE_PRIVATE);
-	}
+    private static SPUtil mSPUtil;
 
-	/**
-	 * 往SP中写入字符串数组
-	 * 
-	 * @param sp
-	 * @param keys
-	 * @param values
-	 */
-	public static void commitStrArrayToSP(SharedPreferences sp, String[] keys,
-			String[] values) {
-		if (LOG.DEBUG) {
-			if (keys.length == values.length) {
-				LOG.cstdr(TAG, "keys.length and values.length is same:"
-						+ keys.length);
-			} else {
-				return;
-			}
-		}
-		Editor editor = sp.edit();
-		for (int i = 0; i < keys.length; i++) {
-			editor.putString(keys[i], values[i]);
-		}
-		editor.commit();
-	}
+    private SharedPreferences mSP;
 
-	/**
-	 * 往SP中写入整形数组
-	 * 
-	 * @param sp
-	 * @param keys
-	 * @param values
-	 */
-	public static void commitIntArrayToSP(SharedPreferences sp, String[] keys,
-			int[] values) {
-		Editor editor = sp.edit();
-		for (int i = 0; i < keys.length; i++) {
-			editor.putInt(keys[i], values[i]);
-		}
-		editor.commit();
-	}
+    private Editor mEditor;
+
+    private SPUtil(Context context) {
+        if(mSP == null || mEditor == null) {
+            mSP=context.getSharedPreferences(context.getString(R.string.sp_main), Context.MODE_PRIVATE);
+            mEditor=mSP.edit();
+        }
+    }
+
+    /**
+     * 得到SPUtil实例
+     * @param context
+     * @return
+     */
+    public static SPUtil getInstance(Context context) {
+        if(mSPUtil == null) {
+            mSPUtil=new SPUtil(context);
+        }
+        return mSPUtil;
+    }
+
+    /**
+     * 往SP中写入字符串数组
+     * @param keys
+     * @param values
+     */
+    public void commitStrArrayToSP(String[] keys, String[] values) {
+        if(LOG.DEBUG) {
+            if(keys.length == values.length) {
+                LOG.cstdr(TAG, "keys.length and values.length is same:" + keys.length);
+            } else {
+                return;
+            }
+        }
+        for(int i=0; i < keys.length; i++) {
+            mEditor.putString(keys[i], values[i]);
+        }
+        // mEditor.commit();
+        mEditor.apply(); // 异步提交
+    }
+
+    /**
+     * 往SP中写入整形数组
+     * @param keys
+     * @param values
+     */
+    public void commitIntArrayToSP(String[] keys, int[] values) {
+        for(int i=0; i < keys.length; i++) {
+            mEditor.putInt(keys[i], values[i]);
+        }
+        mEditor.apply(); // 异步提交
+    }
+
+    /**
+     * 得到一个Int值
+     * @param key
+     * @param defValue
+     * @return
+     */
+    public int getInt(String key, int defValue) {
+        return mSP.getInt(key, defValue);
+    }
+
+    /**
+     * 得到一个String值
+     * @param key
+     * @param defValue
+     * @return
+     */
+    public String getString(String key, String defValue) {
+        return mSP.getString(key, defValue);
+    }
 }

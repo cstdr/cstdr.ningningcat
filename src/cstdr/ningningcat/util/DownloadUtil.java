@@ -21,7 +21,7 @@ public class DownloadUtil {
 
     private static DownloadUtil mDownloadUtil;
 
-    private static DownloadManager mDownloadManager;
+    private DownloadManager mDownloadManager;
 
     private DownloadUtil() {
         if(mDownloadManager == null) {
