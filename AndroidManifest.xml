@@ -15,7 +15,7 @@
 
     <uses-sdk
         android:minSdkVersion="10"
-        android:targetSdkVersion="16" />
+        android:targetSdkVersion="17" />
 
     <application
         android:name=".NncApp"
