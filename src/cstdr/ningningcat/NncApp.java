@@ -120,15 +120,13 @@ public class NncApp extends Application {
                 new String[]{String.valueOf(System.currentTimeMillis())});
         } else {
             IS_FIRST_LAUNCH=true;
-            // if(!ShortcutUtil.hasShortcut(mContext)) { // 测试发现某些机型报错
             ShortcutUtil.addShortcut(this);
-            // }
             ToastUtil.longToast(this, getString(R.string.msg_first_launch));
             SPUtil.getInstance(mInstance).commitStrArrayToSP(new String[]{getString(R.string.spkey_first_launch_time)},
                 new String[]{String.valueOf(System.currentTimeMillis())});
         }
 
-        mCurrentUrl=SPUtil.getInstance(mInstance).getString(getString(R.string.spkey_index), getString(R.string.index)); // 获取首页
+        mCurrentUrl=SPUtil.getInstance(mInstance).getString(getString(R.string.spkey_index), Constants.INDEX_DEFAULT_URL); // 获取首页
     }
 
     // //////////////////////////////////////////////////////////////////////////////////

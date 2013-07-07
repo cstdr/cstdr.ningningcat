@@ -4,7 +4,6 @@
     <string name="app_name">宁宁猫浏览器</string>
     <string name="website_hint">谷歌搜索或直接输入网址</string>
     <string name="http">http://</string>
-    <string name="index">http://m.hao123.com/</string>
     <!-- menu -->
     <string name="menu_favorite">我的收藏</string>
     <string name="menu_share">分享</string>
