@@ -9,7 +9,7 @@ import android.util.Log;
  */
 public class LOG {
 
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	public static void cstdr(String tag, Object msg) {
 		Log.d(tag, msg + "");

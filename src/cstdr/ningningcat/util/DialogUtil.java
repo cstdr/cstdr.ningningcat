@@ -160,8 +160,7 @@ public class DialogUtil {
 		}
 		favoriteDialog = new AlertDialog.Builder(context)
 				.setTitle(title)
-				.setItems(
-						new String[] { "添加快捷方式到桌面", "设为首页", "重命名", "分享", "删除" },
+				.setItems(new String[]{"添加快捷方式到桌面", "设为首页", "重命名", "分享", "删除"},
 						new OnClickListener() {
 
 							@Override

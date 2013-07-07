@@ -31,8 +31,8 @@ public class ShortcutUtil {
 		boolean hasShortcut = false;
 		Uri uri = Uri.parse(CONTENT_URI);
 		Cursor cursor = context.getContentResolver().query(uri,
-				new String[] { "title", "iconResource" }, "title=?",
-				new String[] { context.getString(R.string.app_name) }, null);
+				new String[]{"title", "iconResource"}, "title=?",
+				new String[]{context.getString(R.string.app_name)}, null);
 		if (cursor != null && cursor.getCount() > 0) {
 			hasShortcut = true;
 		}

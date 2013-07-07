@@ -22,8 +22,8 @@ public class FavoriteAdapter extends BaseAdapter {
 	// private int[] mColorArray={Color.BLUE, Color.RED, Color.YELLOW,
 	// Color.BLUE, Color.GREEN, Color.RED};
 
-	private int[] mColorArray = { 0xFFa7c7c6, 0xFFe4d9bb, 0xFFfcc4b7,
-			0xFFdd9598, 0xFFba928a };
+	private int[] mColorArray = {0xFFa7c7c6, 0xFFe4d9bb, 0xFFfcc4b7,
+			0xFFdd9598, 0xFFba928a};
 
 	public FavoriteAdapter(Context context) {
 		mContext = context;
