@@ -4,13 +4,15 @@ An Android Browser.
 This APP is just for fun.
 
 ## Download
+国内各大市场已经上线，可以搜索下载！
+
+豌豆荚：[http://www.wandoujia.com/apps/cstdr.ningningcat][WanDouJia]
+
 Local download please click [here][LocalDownload].
 
 You can scan QR code to get the app !
 
 [![QR code][QRCode]][LocalDownload]
-
-Other channel will come soon:)
 
 ## My Email & QQ
 If you have any questions or suggestions, please contact me:)
@@ -32,3 +34,4 @@ GPLv3, full text of license see [here][LocalLicense].
 [Email]: mailto:cstdingran@gmail.com "Send email to cstdr"
 [QQ]: http://wpa.qq.com/msgrd?v=3&uin=280114396&site=qq&menu=yes "QQ with me"  
 [QRCode]: https://github.com/cstdr/cstdr.ningningcat/raw/master/download_qr.png "QR code to get the app !"
+[WanDouJia]: http://www.wandoujia.com/apps/cstdr.ningningcat "豌豆荚下载"
