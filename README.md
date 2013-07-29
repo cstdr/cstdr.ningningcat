@@ -3,6 +3,8 @@ An Android Browser.
 
 This APP is just for fun.
 
+更多请看[Wiki][Wiki]~
+
 ## Download
 国内各大市场已经上线，可以搜索下载！
 
@@ -27,7 +29,7 @@ GPLv3, full text of license see [here][LocalLicense].
 
 
 
-
+[Wiki]: https://github.com/cstdr/cstdr.ningningcat/wiki "Wiki"
 [LocalLicense]: https://github.com/cstdr/cstdr.ningningcat/blob/master/LICENSE.txt "GPLv3"
 [License]: http://www.gnu.org/licenses/gpl-3.0.html "GPLv3"
 [LocalDownload]: https://github.com/cstdr/cstdr.ningningcat/raw/master/cstdr.ningningcat.apk "Local Download"
