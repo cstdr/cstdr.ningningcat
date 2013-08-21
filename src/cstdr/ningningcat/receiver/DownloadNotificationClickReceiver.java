@@ -17,8 +17,7 @@ public class DownloadNotificationClickReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getAction().equals(ACTION_NOTIFICATION_CLICK)) {
-			Intent downloadsIntent = new Intent(
-					DownloadManager.ACTION_VIEW_DOWNLOADS);
+			Intent downloadsIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
 			context.startActivity(downloadsIntent);
 		}
 	}

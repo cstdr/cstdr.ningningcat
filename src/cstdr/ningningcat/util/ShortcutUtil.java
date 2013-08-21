@@ -16,8 +16,7 @@ public class ShortcutUtil {
 
 	private static final String AUTHORITY = "com.android.launcher.settings";
 
-	private static final String CONTENT_URI = "content://" + AUTHORITY
-			+ "/favorites?notify=true";
+	private static final String CONTENT_URI = "content://" + AUTHORITY + "/favorites?notify=true";
 
 	private static final String ACTION_INSTALL_SHORTCUT = "com.android.launcher.action.INSTALL_SHORTCUT";
 
@@ -30,9 +29,8 @@ public class ShortcutUtil {
 	public static boolean hasShortcut(Context context) {
 		boolean hasShortcut = false;
 		Uri uri = Uri.parse(CONTENT_URI);
-		Cursor cursor = context.getContentResolver().query(uri,
-				new String[]{"title", "iconResource"}, "title=?",
-				new String[]{context.getString(R.string.app_name)}, null);
+		Cursor cursor = context.getContentResolver().query(uri, new String[] { "title", "iconResource" }, "title=?",
+				new String[] { context.getString(R.string.app_name) }, null);
 		if (cursor != null && cursor.getCount() > 0) {
 			hasShortcut = true;
 		}
@@ -46,12 +44,10 @@ public class ShortcutUtil {
 	 */
 	public static void addShortcut(Context context) {
 		Intent shortcut = new Intent(ACTION_INSTALL_SHORTCUT);
-		shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME,
-				context.getString(R.string.app_name));
+		shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, context.getString(R.string.app_name));
 		shortcut.putExtra("duplicate", false); // 避免重复添加快捷方式
 		shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-				Intent.ShortcutIconResource.fromContext(context,
-						R.drawable.icon));
+				Intent.ShortcutIconResource.fromContext(context, R.drawable.icon));
 
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN); // 这样卸载APP的时候，快捷方式也会删除
 		shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER); // 如果堆栈中已经此Activity，则不再new一个新的
@@ -68,14 +64,12 @@ public class ShortcutUtil {
 	 * @param title
 	 * @param url
 	 */
-	public static void addShortcutToDesktop(Context context, String title,
-			String url) {
+	public static void addShortcutToDesktop(Context context, String title, String url) {
 		Intent shortcut = new Intent(ACTION_INSTALL_SHORTCUT);
 		shortcut.putExtra(Intent.EXTRA_SHORTCUT_NAME, title);
 		shortcut.putExtra("duplicate", false);
 		shortcut.putExtra(Intent.EXTRA_SHORTCUT_ICON_RESOURCE,
-				Intent.ShortcutIconResource.fromContext(context,
-						R.drawable.icon));
+				Intent.ShortcutIconResource.fromContext(context, R.drawable.icon));
 
 		Intent shortcutIntent = new Intent(Intent.ACTION_MAIN);
 		shortcutIntent.addCategory(Intent.CATEGORY_LAUNCHER);

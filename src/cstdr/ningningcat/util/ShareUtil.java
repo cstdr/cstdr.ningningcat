@@ -36,8 +36,7 @@ public class ShareUtil {
 	 */
 	public static void shareFavoriteList(Context context, List<Favorite> list) {
 		if (list.isEmpty()) {
-			ToastUtil.shortToast(context,
-					context.getString(R.string.msg_no_favorite));
+			ToastUtil.shortToast(context, context.getString(R.string.msg_no_favorite));
 			return;
 		}
 		Intent baseIntent = new Intent(Intent.ACTION_SEND);
@@ -46,8 +45,7 @@ public class ShareUtil {
 		StringBuffer content = new StringBuffer();
 		content.append("我通过@宁宁猫浏览器  分享了收藏夹：\n");
 		for (Favorite favorite : list) {
-			content.append("#").append(favorite.getTitle()).append("# ")
-					.append(favorite.getUrl()).append(" \n");
+			content.append("#").append(favorite.getTitle()).append("# ").append(favorite.getUrl()).append(" \n");
 		}
 		baseIntent.putExtra(Intent.EXTRA_TEXT, content.toString());
 		Intent shareIntent = Intent.createChooser(baseIntent, "选择你想分享的方式");

@@ -42,8 +42,7 @@ public class UIUtil {
 	 * @param v
 	 */
 	public static void hideInputWindow(final View v) {
-		InputMethodManager imm = (InputMethodManager) v.getContext()
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
 	}
 
@@ -53,8 +52,7 @@ public class UIUtil {
 	 * @param v
 	 */
 	public static void showInputWindow(final View v) {
-		InputMethodManager imm = (InputMethodManager) v.getContext()
-				.getSystemService(Context.INPUT_METHOD_SERVICE);
+		InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
 		imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
 	}
 
@@ -64,14 +62,11 @@ public class UIUtil {
 	 * @param context
 	 */
 	public static void changeBrightMode(Context context, Activity activity) {
-		int brightModeNow = SPUtil.getInstance(context).getInt(
-				context.getString(R.string.spkey_bright_mode_now),
+		int brightModeNow = SPUtil.getInstance(context).getInt(context.getString(R.string.spkey_bright_mode_now),
 				BRIGHT_MODE_UNDOWN);
-		int brightModeLast = SPUtil.getInstance(context).getInt(
-				context.getString(R.string.spkey_bright_mode_last),
+		int brightModeLast = SPUtil.getInstance(context).getInt(context.getString(R.string.spkey_bright_mode_last),
 				BRIGHT_MODE_UNDOWN);
-		int lastBrightness = SPUtil.getInstance(context).getInt(
-				context.getString(R.string.spkey_last_brightness), 0);
+		int lastBrightness = SPUtil.getInstance(context).getInt(context.getString(R.string.spkey_last_brightness), 0);
 		if (brightModeNow == BRIGHT_MODE_UNDOWN) {
 			// 第一次获取当前亮度模式，并存入SP
 			if (isAutoBrightness(activity)) {
@@ -83,21 +78,21 @@ public class UIUtil {
 			brightModeLast = brightModeNow;
 		}
 		switch (brightModeNow) {
-			case BRIGHT_MODE_NIGHT : // 夜间
-				if (brightModeLast == BRIGHT_MODE_AUTO) {
-					startAutoBrightness(activity);
-				} else if (brightModeLast == BRIGHT_MODE_DAY) {
-					setScreenBrightness(activity, lastBrightness);
-					saveScreenBrightness(activity, lastBrightness);
-				}
-				break;
-			case BRIGHT_MODE_AUTO : // 自动亮度
-				stopAutoBrightness(activity);
-			case BRIGHT_MODE_DAY : // 白天
-				lastBrightness = getScreenBrightness(activity);
-				setScreenBrightness(activity, NIGHT_MODE_BRIGHTNESS);
-				saveScreenBrightness(activity, NIGHT_MODE_BRIGHTNESS);
-				break;
+		case BRIGHT_MODE_NIGHT: // 夜间
+			if (brightModeLast == BRIGHT_MODE_AUTO) {
+				startAutoBrightness(activity);
+			} else if (brightModeLast == BRIGHT_MODE_DAY) {
+				setScreenBrightness(activity, lastBrightness);
+				saveScreenBrightness(activity, lastBrightness);
+			}
+			break;
+		case BRIGHT_MODE_AUTO: // 自动亮度
+			stopAutoBrightness(activity);
+		case BRIGHT_MODE_DAY: // 白天
+			lastBrightness = getScreenBrightness(activity);
+			setScreenBrightness(activity, NIGHT_MODE_BRIGHTNESS);
+			saveScreenBrightness(activity, NIGHT_MODE_BRIGHTNESS);
+			break;
 		}
 		if (brightModeNow == BRIGHT_MODE_NIGHT) {
 			brightModeNow = brightModeLast;
@@ -107,10 +102,10 @@ public class UIUtil {
 			brightModeNow = BRIGHT_MODE_NIGHT;
 		}
 		SPUtil.getInstance(context).commitIntArrayToSP(
-				new String[]{context.getString(R.string.spkey_bright_mode_now),
+				new String[] { context.getString(R.string.spkey_bright_mode_now),
 						context.getString(R.string.spkey_bright_mode_last),
-						context.getString(R.string.spkey_last_brightness)},
-				new int[]{brightModeNow, brightModeLast, lastBrightness});
+						context.getString(R.string.spkey_last_brightness) },
+				new int[] { brightModeNow, brightModeLast, lastBrightness });
 
 	}
 
@@ -124,8 +119,7 @@ public class UIUtil {
 		boolean isAuto = false;
 		ContentResolver cr = activity.getContentResolver();
 		try {
-			isAuto = Settings.System.getInt(cr,
-					Settings.System.SCREEN_BRIGHTNESS_MODE) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
+			isAuto = Settings.System.getInt(cr, Settings.System.SCREEN_BRIGHTNESS_MODE) == Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC;
 		} catch (SettingNotFoundException e) {
 			LOG.exception(e);
 		}
@@ -164,8 +158,7 @@ public class UIUtil {
 		int brightness = 0;
 		ContentResolver cr = activity.getContentResolver();
 		try {
-			brightness = Settings.System.getInt(cr,
-					Settings.System.SCREEN_BRIGHTNESS);
+			brightness = Settings.System.getInt(cr, Settings.System.SCREEN_BRIGHTNESS);
 		} catch (SettingNotFoundException e) {
 			LOG.exception(e);
 		}
@@ -179,8 +172,7 @@ public class UIUtil {
 	 * @param brightness
 	 */
 	public static void setScreenBrightness(Activity activity, int brightness) {
-		WindowManager.LayoutParams params = activity.getWindow()
-				.getAttributes();
+		WindowManager.LayoutParams params = activity.getWindow().getAttributes();
 		params.screenBrightness = Float.valueOf(brightness) / 255F;
 		activity.getWindow().setAttributes(params);
 	}
@@ -214,8 +206,7 @@ public class UIUtil {
 		} else {
 			double dLength = (double) length / 1024 / 1024;
 			BigDecimal b = new BigDecimal(dLength);
-			size = String.valueOf(b.setScale(2, BigDecimal.ROUND_HALF_UP))
-					+ "MB";
+			size = String.valueOf(b.setScale(2, BigDecimal.ROUND_HALF_UP)) + "MB";
 		}
 		return size;
 	}
@@ -231,8 +222,7 @@ public class UIUtil {
 				LOG.cstdr(TAG, "metrics.widthPixels = " + metrics.widthPixels);
 				LOG.cstdr(TAG, "metrics.heightPixels = " + metrics.heightPixels);
 				LOG.cstdr(TAG, "metrics.density = " + metrics.density);
-				LOG.cstdr(TAG, "(float) metrics.widthPixels / 720f = "
-						+ metrics.widthPixels / 720f);
+				LOG.cstdr(TAG, "(float) metrics.widthPixels / 720f = " + metrics.widthPixels / 720f);
 			}
 			NncApp.setUI_SCALE_X(metrics.widthPixels / 720f);
 		}

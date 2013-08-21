@@ -59,8 +59,7 @@ public class WebLayout extends DRRelativeLayout {
 
 	public WebLayout(Context context) {
 		super(context);
-		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
+		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		initWebView();
 		initNavLayout();
 		initAdd();
@@ -71,16 +70,14 @@ public class WebLayout extends DRRelativeLayout {
 	}
 
 	private void initWebView() {
-		webviewLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		webviewLP = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		webview = new DRWebView(mContext);
 		webview.setLayoutParams(webviewLP);
 		this.addView(webview);
 	}
 
 	private void initNavLayout() {
-		navLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				getIntScaleX(114));
+		navLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT, getIntScaleX(114));
 		navLayoutLP.addRule(ALIGN_PARENT_TOP);
 		navLayout = new RelativeLayout(mContext);
 		navLayout.setLayoutParams(navLayoutLP);
@@ -101,8 +98,7 @@ public class WebLayout extends DRRelativeLayout {
 	}
 
 	private void initWebsiteLayout() {
-		websiteLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+		websiteLayoutLP = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		websiteLayoutLP.setMargins(0, getIntScaleX(1), getIntScaleX(2), 0);
 		websiteLayoutLP.addRule(RIGHT_OF, ID_ADD);
 		websiteLayout = new RelativeLayout(mContext);
@@ -113,8 +109,7 @@ public class WebLayout extends DRRelativeLayout {
 	}
 
 	private void initWebsite() {
-		websiteLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+		websiteLP = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		websiteLP.setMargins(0, getIntScaleX(4), 0, 0);
 		websiteLP.addRule(ALIGN_PARENT_LEFT);
 		websiteLP.addRule(LEFT_OF, ID_REWRITE);
@@ -132,8 +127,7 @@ public class WebLayout extends DRRelativeLayout {
 	}
 
 	private void initRewrite() {
-		rewriteLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
+		rewriteLP = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		rewriteLP.addRule(ALIGN_PARENT_RIGHT);
 		rewriteLP.addRule(CENTER_VERTICAL);
 		rewriteLP.setMargins(0, 0, getIntScaleX(4), 0);
@@ -147,8 +141,7 @@ public class WebLayout extends DRRelativeLayout {
 
 	private void initProgress() {
 		LayoutInflater inflater = LayoutInflater.from(mContext);
-		progress = (ProgressBar) inflater.inflate(
-				R.layout.progress_bar_horizontal, null);
+		progress = (ProgressBar) inflater.inflate(R.layout.progress_bar_horizontal, null);
 		// progress=(ProgressBar)findViewById(R.id.progress_bar_horizontal);
 		// 直接findView会报空指针
 		this.addView(progress);

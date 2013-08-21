@@ -22,8 +22,7 @@ public class SPUtil {
 
 	private SPUtil(Context context) {
 		if (mSP == null || mEditor == null) {
-			mSP = context.getSharedPreferences(
-					context.getString(R.string.sp_main), Context.MODE_PRIVATE);
+			mSP = context.getSharedPreferences(context.getString(R.string.sp_main), Context.MODE_PRIVATE);
 			mEditor = mSP.edit();
 		}
 	}
@@ -50,8 +49,7 @@ public class SPUtil {
 	public void commitStrArrayToSP(String[] keys, String[] values) {
 		if (LOG.DEBUG) {
 			if (keys.length == values.length) {
-				LOG.cstdr(TAG, "keys.length and values.length is same:"
-						+ keys.length);
+				LOG.cstdr(TAG, "keys.length and values.length is same:" + keys.length);
 			} else {
 				return;
 			}

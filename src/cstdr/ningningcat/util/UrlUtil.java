@@ -64,9 +64,8 @@ public class UrlUtil {
 	 * @return
 	 */
 	private static boolean isWebsite(String url) {
-		if (url.contains(".com") || url.contains(".cn") || url.contains(".net")
-				|| url.contains(".org") || url.contains(".edu")
-				|| url.contains(".gov")) {
+		if (url.contains(".com") || url.contains(".cn") || url.contains(".net") || url.contains(".org")
+				|| url.contains(".edu") || url.contains(".gov")) {
 			return true;
 		}
 		return false;

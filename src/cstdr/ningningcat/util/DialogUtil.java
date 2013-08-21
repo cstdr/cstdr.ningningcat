@@ -60,13 +60,11 @@ public class DialogUtil {
 	 * @param message
 	 * @param result
 	 */
-	public static void showJsAlertDialog(Context context, String message,
-			final JsResult result) {
+	public static void showJsAlertDialog(Context context, String message, final JsResult result) {
 		if (jsAlertDialog != null && jsAlertDialog.isShowing()) {
 			return;
 		}
-		jsAlertDialog = new AlertDialog.Builder(context)
-				.setTitle(R.string.title_alert).setMessage(message)
+		jsAlertDialog = new AlertDialog.Builder(context).setTitle(R.string.title_alert).setMessage(message)
 				.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
 					@Override
@@ -84,30 +82,24 @@ public class DialogUtil {
 	 * @param message
 	 * @param result
 	 */
-	public static void showJsConfirmDialog(Context context, String message,
-			final JsResult result) {
+	public static void showJsConfirmDialog(Context context, String message, final JsResult result) {
 		if (jsConfirmDialog != null && jsConfirmDialog.isShowing()) {
 			return;
 		}
-		jsConfirmDialog = new AlertDialog.Builder(context)
-				.setTitle(R.string.title_confirm)
-				.setMessage(message)
+		jsConfirmDialog = new AlertDialog.Builder(context).setTitle(R.string.title_confirm).setMessage(message)
 				.setPositiveButton(android.R.string.ok, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						result.confirm();
 					}
-				})
-				.setNegativeButton(android.R.string.cancel,
-						new OnClickListener() {
+				}).setNegativeButton(android.R.string.cancel, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								result.cancel();
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						result.cancel();
+					}
+				}).create();
 		jsConfirmDialog.show();
 	}
 
@@ -120,28 +112,22 @@ public class DialogUtil {
 		if (settingOpenDialog != null && settingOpenDialog.isShowing()) {
 			return;
 		}
-		settingOpenDialog = new AlertDialog.Builder(context)
-				.setTitle(R.string.title_no_connect)
+		settingOpenDialog = new AlertDialog.Builder(context).setTitle(R.string.title_no_connect)
 				.setMessage(R.string.msg_no_connect_setting)
-				.setPositiveButton(R.string.btn_noconnect,
-						new OnClickListener() {
+				.setPositiveButton(R.string.btn_noconnect, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
 
-							}
-						})
-				.setNegativeButton(R.string.btn_settings,
-						new OnClickListener() {
+					}
+				}).setNegativeButton(R.string.btn_settings, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								Intent intent = new Intent(ACTION_SETTINGS);
-								context.startActivity(intent);
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						Intent intent = new Intent(ACTION_SETTINGS);
+						context.startActivity(intent);
+					}
+				}).create();
 		settingOpenDialog.show();
 	}
 
@@ -153,22 +139,19 @@ public class DialogUtil {
 	 * @param position
 	 * @param listener
 	 */
-	public static void showFavoriteDialog(Context context, String title,
-			final int position, final DialogItemClickListener listener) {
+	public static void showFavoriteDialog(Context context, String title, final int position,
+			final DialogItemClickListener listener) {
 		if (favoriteDialog != null && favoriteDialog.isShowing()) {
 			return;
 		}
-		favoriteDialog = new AlertDialog.Builder(context)
-				.setTitle(title)
-				.setItems(new String[]{"添加快捷方式到桌面", "设为首页", "重命名", "分享", "删除"},
-						new OnClickListener() {
+		favoriteDialog = new AlertDialog.Builder(context).setTitle(title)
+				.setItems(new String[] { "添加快捷方式到桌面", "设为首页", "重命名", "分享", "删除" }, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								listener.onClick(position, which);
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						listener.onClick(position, which);
+					}
+				}).create();
 		favoriteDialog.show();
 	}
 
@@ -180,26 +163,23 @@ public class DialogUtil {
 	 * @param url
 	 * @param listener
 	 */
-	public static void showRenameDialog(Context context, String title,
-			final String url, final DialogRenameListener listener) {
+	public static void showRenameDialog(Context context, String title, final String url,
+			final DialogRenameListener listener) {
 		if (renameDialog != null && renameDialog.isShowing()) {
 			return;
 		}
 		final EditText editText = new EditText(context);
-		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		editText.setLayoutParams(params);
 		editText.setText(title);
 		editText.setMaxHeight(1);
-		renameDialog = new AlertDialog.Builder(context).setTitle(title)
-				.setView(editText)
+		renameDialog = new AlertDialog.Builder(context).setTitle(title).setView(editText)
 				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 					}
-				})
-				.setNegativeButton(R.string.btn_rename, new OnClickListener() {
+				}).setNegativeButton(R.string.btn_rename, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -221,53 +201,36 @@ public class DialogUtil {
 	 * @param context
 	 * @param adapter
 	 */
-	public static void deleteFavoriteList(final Context context,
-			final FavoriteAdapter adapter) {
-		if (deleteFavoriteListDialog != null
-				&& deleteFavoriteListDialog.isShowing()) {
+	public static void deleteFavoriteList(final Context context, final FavoriteAdapter adapter) {
+		if (deleteFavoriteListDialog != null && deleteFavoriteListDialog.isShowing()) {
 			return;
 		}
 		if (NncApp.getInstance().getFavoriteList().isEmpty()) {
-			ToastUtil.shortToast(context,
-					context.getString(R.string.msg_no_favorite));
+			ToastUtil.shortToast(context, context.getString(R.string.msg_no_favorite));
 			return;
 		}
-		deleteFavoriteListDialog = new AlertDialog.Builder(context)
-				.setMessage(R.string.msg_list_delete_confirm)
+		deleteFavoriteListDialog = new AlertDialog.Builder(context).setMessage(R.string.msg_list_delete_confirm)
 				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
 					}
-				})
-				.setNegativeButton(R.string.btn_delete_favorite_list,
-						new OnClickListener() {
+				}).setNegativeButton(R.string.btn_delete_favorite_list, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								int id = NncApp
-										.getInstance()
-										.getWritableDB()
-										.delete(DatabaseUtil.mTableName, null,
-												null);
-								if (id > 0) {
-									ArrayList<Favorite> list = NncApp
-											.getInstance().getFavoriteList();
-									list = FavoriteActivity
-											.getFavoriteList(list);
-									adapter.notifyDataSetChanged();
-									ToastUtil.shortToast(
-											context,
-											context.getString(R.string.msg_list_delete));
-								} else {
-									ToastUtil.shortToast(
-											context,
-											context.getString(R.string.msg_database_fail));
-								}
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						int id = NncApp.getInstance().getWritableDB().delete(DatabaseUtil.mTableName, null, null);
+						if (id > 0) {
+							ArrayList<Favorite> list = NncApp.getInstance().getFavoriteList();
+							list = FavoriteActivity.getFavoriteList(list);
+							adapter.notifyDataSetChanged();
+							ToastUtil.shortToast(context, context.getString(R.string.msg_list_delete));
+						} else {
+							ToastUtil.shortToast(context, context.getString(R.string.msg_database_fail));
+						}
+					}
+				}).create();
 		deleteFavoriteListDialog.show();
 	}
 
@@ -278,33 +241,25 @@ public class DialogUtil {
 	 * @param adapter
 	 * @param position
 	 */
-	public static void deleteFavorite(final Context context,
-			final FavoriteAdapter adapter, final int position) {
+	public static void deleteFavorite(final Context context, final FavoriteAdapter adapter, final int position) {
 		if (deleteFavoriteDialog != null && deleteFavoriteDialog.isShowing()) {
 			return;
 		}
-		deleteFavoriteDialog = new AlertDialog.Builder(context)
-				.setMessage(R.string.msg_web_delete_confirm)
+		deleteFavoriteDialog = new AlertDialog.Builder(context).setMessage(R.string.msg_web_delete_confirm)
 				.setPositiveButton(R.string.btn_cancel, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 
 					}
-				})
-				.setNegativeButton(R.string.btn_delete_favorite,
-						new OnClickListener() {
+				}).setNegativeButton(R.string.btn_delete_favorite, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								String url = NncApp.getInstance()
-										.getFavoriteList().get(position)
-										.getUrl();
-								FavoriteActivity.deleteFavorite(context, url,
-										adapter);
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						String url = NncApp.getInstance().getFavoriteList().get(position).getUrl();
+						FavoriteActivity.deleteFavorite(context, url, adapter);
+					}
+				}).create();
 		deleteFavoriteDialog.show();
 	}
 
@@ -317,30 +272,23 @@ public class DialogUtil {
 		if (wifiOpenDialog != null && wifiOpenDialog.isShowing()) {
 			return;
 		}
-		wifiOpenDialog = new AlertDialog.Builder(context)
-				.setTitle(R.string.title_no_connect)
+		wifiOpenDialog = new AlertDialog.Builder(context).setTitle(R.string.title_no_connect)
 				.setMessage(R.string.msg_no_connect_wifiopen)
-				.setPositiveButton(R.string.btn_noconnect,
-						new OnClickListener() {
+				.setPositiveButton(R.string.btn_noconnect, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
 
-							}
-						})
-				.setNegativeButton(R.string.btn_wifiopen,
-						new OnClickListener() {
+					}
+				}).setNegativeButton(R.string.btn_wifiopen, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								if (NetworkUtil.openWifi(context)) {
-									ToastUtil.longToast(context, context
-											.getString(R.string.msg_wifi_open));
-								}
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						if (NetworkUtil.openWifi(context)) {
+							ToastUtil.longToast(context, context.getString(R.string.msg_wifi_open));
+						}
+					}
+				}).create();
 		wifiOpenDialog.show();
 	}
 
@@ -362,29 +310,24 @@ public class DialogUtil {
 	 * 
 	 * @param context
 	 */
-	public static void showFeedbackDialog(final Context context,
-			final ExitListener listener) {
+	public static void showFeedbackDialog(final Context context, final ExitListener listener) {
 		if (feedbackDialog != null && feedbackDialog.isShowing()) {
 			return;
 		}
-		feedbackDialog = new AlertDialog.Builder(context)
-				.setMessage(R.string.msg_first_launch_feedback)
+		feedbackDialog = new AlertDialog.Builder(context).setMessage(R.string.msg_first_launch_feedback)
 				.setPositiveButton(R.string.btn_exit, new OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						listener.doExit();
 					}
-				})
-				.setNegativeButton(R.string.btn_feedback,
-						new OnClickListener() {
+				}).setNegativeButton(R.string.btn_feedback, new OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface dialog,
-									int which) {
-								UMFeedbackService.openUmengFeedbackSDK(context);
-							}
-						}).create();
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						UMFeedbackService.openUmengFeedbackSDK(context);
+					}
+				}).create();
 		feedbackDialog.show();
 	}
 }

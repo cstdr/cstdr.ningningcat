@@ -26,8 +26,7 @@ public class DatabaseUtil extends SQLiteOpenHelper {
 
 	public static final String COLUMN_PAGEVIEW = "pageview";
 
-	public DatabaseUtil(Context context, String name, CursorFactory factory,
-			int version) {
+	public DatabaseUtil(Context context, String name, CursorFactory factory, int version) {
 		super(context, name, factory, version);
 	}
 
@@ -35,8 +34,7 @@ public class DatabaseUtil extends SQLiteOpenHelper {
 	public void onCreate(SQLiteDatabase db) {
 		db.execSQL("create table favorite(title varchar(20) not null, url varchar(100) not null, date TIMESTAMP default CURRENT_TIMESTAMP, pageview INTEGER default 0)");
 		db.execSQL("create unique index INDEX_URL on favorite(url)");
-		db.execSQL("insert into favorite(title, url) values(\""
-				+ Constants.INDEX_DEFAULT_NAME + "\", \""
+		db.execSQL("insert into favorite(title, url) values(\"" + Constants.INDEX_DEFAULT_NAME + "\", \""
 				+ Constants.INDEX_DEFAULT_URL + "\")");
 	}
 

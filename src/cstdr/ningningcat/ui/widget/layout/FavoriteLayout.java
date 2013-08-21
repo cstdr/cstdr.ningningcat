@@ -19,15 +19,13 @@ public class FavoriteLayout extends DRLinearLayout {
 
 	public FavoriteLayout(Context context) {
 		super(context);
-		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
+		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.setOrientation(VERTICAL);
 		initListView();
 	}
 
 	private void initListView() {
-		listLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		listLP = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		list = new ListView(mContext);
 		list.setLayoutParams(listLP);
 		list.setDividerHeight(getIntScaleX(1));

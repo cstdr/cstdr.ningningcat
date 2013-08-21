@@ -34,11 +34,9 @@ public class CoverActivity extends Activity {
 
 			@Override
 			public void run() {
-				Intent intent = new Intent(CoverActivity.this,
-						WebActivity.class);
+				Intent intent = new Intent(CoverActivity.this, WebActivity.class);
 				startActivity(intent);
-				overridePendingTransition(R.anim.cover_put_in,
-						R.anim.cover_put_out); // TODO
+				overridePendingTransition(R.anim.cover_put_in, R.anim.cover_put_out); // TODO
 				finish();
 			}
 		}, 2000);

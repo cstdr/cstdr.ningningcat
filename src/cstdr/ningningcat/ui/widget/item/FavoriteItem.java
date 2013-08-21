@@ -36,8 +36,7 @@ public class FavoriteItem extends DRRelativeLayout {
 	public FavoriteItem(Context context) {
 		super(context);
 		// 这里注意要用ListView.LayoutParams，否则会因为父控件的LayoutParams和子控件不同报错
-		this.setLayoutParams(new ListView.LayoutParams(
-				LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+		this.setLayoutParams(new ListView.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
 		initIcon();
 		initTitle();
 		initUrl();
@@ -53,8 +52,7 @@ public class FavoriteItem extends DRRelativeLayout {
 	}
 
 	private void initTitle() {
-		titleLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+		titleLP = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		titleLP.addRule(RIGHT_OF, ID_ICON);
 		titleLP.setMargins(getIntScaleX(8), getIntScaleX(4), 0, 0);
 		title = new TextView(mContext);
@@ -68,8 +66,7 @@ public class FavoriteItem extends DRRelativeLayout {
 	}
 
 	private void initUrl() {
-		urlLP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.WRAP_CONTENT);
+		urlLP = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT);
 		urlLP.addRule(ALIGN_LEFT, ID_TITLE);
 		urlLP.addRule(BELOW, ID_TITLE);
 		urlLP.setMargins(0, 0, 0, 0);

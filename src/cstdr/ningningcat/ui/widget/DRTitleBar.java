@@ -21,8 +21,7 @@ public class DRTitleBar extends TextView {
 	}
 
 	private void init() {
-		LayoutParams LP = new LayoutParams(LayoutParams.MATCH_PARENT,
-				(int) (NncApp.getUI_SCALE_X() * 48));
+		LayoutParams LP = new LayoutParams(LayoutParams.MATCH_PARENT, (int) (NncApp.getUI_SCALE_X() * 48));
 		this.setLayoutParams(LP);
 		this.setBackgroundColor(Color.DKGRAY);
 		this.setSingleLine();

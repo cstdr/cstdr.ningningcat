@@ -62,18 +62,15 @@ public class NncApp extends Application {
 
 		@Override
 		public void onSubmitFB(Activity activity) {
-			EditText name = (EditText) activity
-					.findViewById(R.id.feedback_name);
+			EditText name = (EditText) activity.findViewById(R.id.feedback_name);
 			Map<String, String> remarkMap = new HashMap<String, String>();
 			remarkMap.put("name", name.getText().toString());
 			UMFeedbackService.setRemarkMap(remarkMap);
 		}
 
 		@Override
-		public void onResetFB(Activity activity,
-				Map<String, String> contactMap, Map<String, String> remarkMap) {
-			EditText name = (EditText) activity
-					.findViewById(R.id.feedback_name);
+		public void onResetFB(Activity activity, Map<String, String> contactMap, Map<String, String> remarkMap) {
+			EditText name = (EditText) activity.findViewById(R.id.feedback_name);
 			if (remarkMap != null) {
 				name.setText(remarkMap.get("name"));
 			}
@@ -91,8 +88,7 @@ public class NncApp extends Application {
 		SDK_INT = android.os.Build.VERSION.SDK_INT;
 		mInstance = this;
 		handler = new Handler();
-		mDBHelper = new DatabaseUtil(mInstance, DatabaseUtil.mDatabaseName,
-				null, 1);
+		mDBHelper = new DatabaseUtil(mInstance, DatabaseUtil.mDatabaseName, null, 1);
 		mFavoriteList = new ArrayList<Favorite>();
 		mFavoriteList = FavoriteActivity.getFavoriteList(mFavoriteList);
 		initSharedPreferences();
@@ -105,8 +101,7 @@ public class NncApp extends Application {
 			@Override
 			public void run() {
 				if (LOG.DEBUG) {
-					LOG.cstdr(TAG, "CacheUtil.getCacheSize(mInstance) = "
-							+ CacheUtil.getCacheSize(mInstance));
+					LOG.cstdr(TAG, "CacheUtil.getCacheSize(mInstance) = " + CacheUtil.getCacheSize(mInstance));
 				}
 				if (CacheUtil.getCacheSize(mInstance) > Constants.CACHE_MAX_SIZE) {
 					CacheUtil.clearCache(mInstance);
@@ -120,23 +115,22 @@ public class NncApp extends Application {
 	 * 初始化SharedPreferences
 	 */
 	private void initSharedPreferences() {
-		if (SPUtil.getInstance(mInstance).getString(
-				getString(R.string.spkey_first_launch_time), null) != null) {
+		if (SPUtil.getInstance(mInstance).getString(getString(R.string.spkey_first_launch_time), null) != null) {
 			IS_FIRST_LAUNCH = false;
 			SPUtil.getInstance(mInstance).commitStrArrayToSP(
-					new String[]{getString(R.string.spkey_last_launch_time)},
-					new String[]{String.valueOf(System.currentTimeMillis())});
+					new String[] { getString(R.string.spkey_last_launch_time) },
+					new String[] { String.valueOf(System.currentTimeMillis()) });
 		} else {
 			IS_FIRST_LAUNCH = true;
 			ShortcutUtil.addShortcut(this);
 			ToastUtil.longToast(this, getString(R.string.msg_first_launch));
 			SPUtil.getInstance(mInstance).commitStrArrayToSP(
-					new String[]{getString(R.string.spkey_first_launch_time)},
-					new String[]{String.valueOf(System.currentTimeMillis())});
+					new String[] { getString(R.string.spkey_first_launch_time) },
+					new String[] { String.valueOf(System.currentTimeMillis()) });
 		}
 
-		mCurrentUrl = SPUtil.getInstance(mInstance).getString(
-				getString(R.string.spkey_index), Constants.INDEX_DEFAULT_URL); // 获取首页
+		mCurrentUrl = SPUtil.getInstance(mInstance).getString(getString(R.string.spkey_index),
+				Constants.INDEX_DEFAULT_URL); // 获取首页
 	}
 
 	// //////////////////////////////////////////////////////////////////////////////////

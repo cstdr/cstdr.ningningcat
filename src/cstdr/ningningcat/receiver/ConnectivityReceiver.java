@@ -21,8 +21,7 @@ public class ConnectivityReceiver extends BroadcastReceiver {
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getAction().equals(ACTION_CONNECT_CHANGE)) {
 			NncApp nncApp = NncApp.getInstance();
-			if (intent.getBooleanExtra(
-					ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
+			if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)) {
 				if (nncApp.isNetworkMode()) { // 这里有点复杂的判断，漏掉了在运行中网络改变的情况
 					nncApp.setNetworkMode(false);
 					DialogUtil.showNoConnectDialog(context);

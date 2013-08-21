@@ -26,8 +26,7 @@ public class DownloadUtil {
 
 	private DownloadUtil() {
 		if (mDownloadManager == null) {
-			mDownloadManager = (DownloadManager) NncApp.getInstance()
-					.getSystemService(Context.DOWNLOAD_SERVICE);
+			mDownloadManager = (DownloadManager) NncApp.getInstance().getSystemService(Context.DOWNLOAD_SERVICE);
 		}
 	}
 
@@ -51,8 +50,8 @@ public class DownloadUtil {
 	 * @param mimeType
 	 * @param contentLength
 	 */
-	public void startDownload(String url, String userAgent,
-			String contentDisposition, String mimeType, long contentLength) {
+	public void startDownload(String url, String userAgent, String contentDisposition, String mimeType,
+			long contentLength) {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "url = " + url);
 			LOG.cstdr(TAG, "userAgent = " + userAgent);
@@ -68,19 +67,16 @@ public class DownloadUtil {
 		if (TextUtils.isEmpty(contentDisposition)) {
 			fileName = uri.getLastPathSegment();
 		} else {
-			fileName = contentDisposition.replaceFirst("attachment; filename=",
-					"");
+			fileName = contentDisposition.replaceFirst("attachment; filename=", "");
 			fileName = fileName.replace("\"", "");
 		}
-		request.setDestinationInExternalPublicDir(
-				Environment.DIRECTORY_DOWNLOADS, fileName);
+		request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
 		// request.setAllowedNetworkTypes(Request.NETWORK_WIFI); // 只允许WIFI下
 		// request.setAllowedOverRoaming(false);
 		request.setTitle(fileName);
 		String description = "";
 		if (contentLength > 0) { // 同一个APK文件，在不同的WIFI环境下载，有时获取不到文件长度，返回值为-1
-			description = UIUtil.changeSize(contentLength) + "-"
-					+ uri.getHost();
+			description = UIUtil.changeSize(contentLength) + "-" + uri.getHost();
 		} else {
 			description = uri.getHost();
 		}
@@ -102,8 +98,7 @@ public class DownloadUtil {
 		try {
 			cursor = mDownloadManager.query(query);
 			if (cursor.moveToFirst()) {
-				fileName = cursor.getString(cursor
-						.getColumnIndex(DownloadManager.COLUMN_TITLE));
+				fileName = cursor.getString(cursor.getColumnIndex(DownloadManager.COLUMN_TITLE));
 			}
 		} finally {
 			if (cursor != null) {

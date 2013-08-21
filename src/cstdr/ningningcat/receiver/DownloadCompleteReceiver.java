@@ -25,26 +25,20 @@ public class DownloadCompleteReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (intent.getAction().equals(ACTION_DOWNLOAD_COMPLETE)) {
-			long downloadId = intent.getLongExtra(
-					DownloadManager.EXTRA_DOWNLOAD_ID, 0);
+			long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0);
 			Query query = new Query();
 			query.setFilterById(downloadId);
-			Cursor c = DownloadUtil.getInstance().getDownloadManager()
-					.query(query);
+			Cursor c = DownloadUtil.getInstance().getDownloadManager().query(query);
 			if (c.moveToFirst()) {
 				if (c.getInt(c.getColumnIndex(DownloadManager.COLUMN_STATUS)) == DownloadManager.STATUS_SUCCESSFUL) {
-					ToastUtil.shortToast(context,
-							context.getString(R.string.msg_download_complete));
-					String fileUri = c.getString(c
-							.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
-					String mimeType = c.getString(c
-							.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE));
+					ToastUtil.shortToast(context, context.getString(R.string.msg_download_complete));
+					String fileUri = c.getString(c.getColumnIndex(DownloadManager.COLUMN_LOCAL_URI));
+					String mimeType = c.getString(c.getColumnIndex(DownloadManager.COLUMN_MEDIA_TYPE));
 					if (LOG.DEBUG) {
 						LOG.cstdr(TAG, "fileUri = " + fileUri);
 						LOG.cstdr(TAG, "mimeType = " + mimeType);
 					}
-					DownloadUtil.getInstance().openFile(context, fileUri,
-							mimeType);
+					DownloadUtil.getInstance().openFile(context, fileUri, mimeType);
 				}
 			}
 		}

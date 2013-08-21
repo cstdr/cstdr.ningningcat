@@ -149,32 +149,27 @@ public class WebActivity extends Activity implements EventConstant {
 				LOG.cstdr(TAG, "msg.what = " + msg.what);
 			}
 			switch (msg.what) {
-				case NAVIGATION_HIDE :
-					if (mWebsiteNavigation.isShown()
-							&& (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-						mWebsiteNavigation
-								.startAnimation(animNavigationFadeOut);
-						mLastScrollTimeMillis = System.currentTimeMillis();
-					}
-					if (NncApp.SDK_INT > 13) { // SDK在14以上才可以隐藏状态栏的图标
-						mDecorView
-								.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
-					}
-					break;
-				case NAVIGATION_SHOW :
-					if (!mWebsiteNavigation.isShown()
-							&& (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
-						mWebsiteNavigation.startAnimation(animNavigationFadeIn);
-						mLastScrollTimeMillis = System.currentTimeMillis();
-					}
-					if (NncApp.SDK_INT > 13) {
-						mDecorView
-								.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
-					}
-					if (msg.obj == null) { // 但参数为空时，自动隐藏导航栏
-						hideNavigation();
-					}
-					break;
+			case NAVIGATION_HIDE:
+				if (mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+					mWebsiteNavigation.startAnimation(animNavigationFadeOut);
+					mLastScrollTimeMillis = System.currentTimeMillis();
+				}
+				if (NncApp.SDK_INT > 13) { // SDK在14以上才可以隐藏状态栏的图标
+					mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
+				}
+				break;
+			case NAVIGATION_SHOW:
+				if (!mWebsiteNavigation.isShown() && (System.currentTimeMillis() - mLastScrollTimeMillis) > 1000) {
+					mWebsiteNavigation.startAnimation(animNavigationFadeIn);
+					mLastScrollTimeMillis = System.currentTimeMillis();
+				}
+				if (NncApp.SDK_INT > 13) {
+					mDecorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+				}
+				if (msg.obj == null) { // 但参数为空时，自动隐藏导航栏
+					hideNavigation();
+				}
+				break;
 			}
 		}
 	};
@@ -184,8 +179,7 @@ public class WebActivity extends Activity implements EventConstant {
 
 		@Override
 		public void handleMessage(Message msg) {
-			ToastUtil.shortToast(mContext,
-					getString(R.string.msg_loading_too_long));
+			ToastUtil.shortToast(mContext, getString(R.string.msg_loading_too_long));
 			hasShowedLoadingToast = true;
 		}
 	};
@@ -222,13 +216,11 @@ public class WebActivity extends Activity implements EventConstant {
 	private void initReceiver() {
 		if (mConnectitvityReceiver == null) {
 			mConnectitvityReceiver = new ConnectivityReceiver();
-			registerReceiver(mConnectitvityReceiver, new IntentFilter(
-					ConnectivityReceiver.ACTION_CONNECT_CHANGE));
+			registerReceiver(mConnectitvityReceiver, new IntentFilter(ConnectivityReceiver.ACTION_CONNECT_CHANGE));
 		}
 		if (mGotoReceiver == null) {
 			mGotoReceiver = new GotoReceiver();
-			registerReceiver(mGotoReceiver, new IntentFilter(
-					GotoReceiver.ACTION_GOTO));
+			registerReceiver(mGotoReceiver, new IntentFilter(GotoReceiver.ACTION_GOTO));
 		}
 		if (mDownloadCompleteReceiver == null) {
 			mDownloadCompleteReceiver = new DownloadCompleteReceiver();
@@ -237,10 +229,8 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 		if (mDownloadNotificationClickReceiver == null) {
 			mDownloadNotificationClickReceiver = new DownloadNotificationClickReceiver();
-			registerReceiver(
-					mDownloadNotificationClickReceiver,
-					new IntentFilter(
-							DownloadNotificationClickReceiver.ACTION_NOTIFICATION_CLICK));
+			registerReceiver(mDownloadNotificationClickReceiver, new IntentFilter(
+					DownloadNotificationClickReceiver.ACTION_NOTIFICATION_CLICK));
 		}
 	}
 
@@ -318,18 +308,16 @@ public class WebActivity extends Activity implements EventConstant {
 					mWebView.requestFocusFromTouch(); // 不能用requestFocus()，焦点会乱跑
 				}
 				switch (event.getAction()) {
-					case MotionEvent.ACTION_DOWN :
-						// 使用户在点击顶部区域可以显示导航栏，再点击隐藏，这样处理其实不恰当
-						if (event.getY() < 48) {
-							if (mWebsiteNavigation.isShown()) {
-								mNavigationHandler
-										.sendEmptyMessage(NAVIGATION_HIDE);
-							} else {
-								mNavigationHandler
-										.sendEmptyMessage(NAVIGATION_SHOW);
-							}
+				case MotionEvent.ACTION_DOWN:
+					// 使用户在点击顶部区域可以显示导航栏，再点击隐藏，这样处理其实不恰当
+					if (event.getY() < 48) {
+						if (mWebsiteNavigation.isShown()) {
+							mNavigationHandler.sendEmptyMessage(NAVIGATION_HIDE);
+						} else {
+							mNavigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
 						}
-						break;
+					}
+					break;
 				}
 				return false;
 			}
@@ -338,8 +326,7 @@ public class WebActivity extends Activity implements EventConstant {
 
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus
-						&& mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+				if (!hasFocus && mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
 					mNavigationHandler.removeMessages(NAVIGATION_HIDE); // 点击输入框后焦点才发生变化
 				}
 			}
@@ -349,8 +336,7 @@ public class WebActivity extends Activity implements EventConstant {
 			@Override
 			public void onScrollChange(int l, int t, int oldl, int oldt) {
 				// 但WebView滑动到底部时显示导航栏
-				if ((mWebView.getContentHeight() * mWebView.getScale()
-						- mWebView.getHeight() - t) < 5) {
+				if ((mWebView.getContentHeight() * mWebView.getScale() - mWebView.getHeight() - t) < 5) {
 					Message msg = new Message();
 					msg.what = NAVIGATION_SHOW;
 					msg.obj = true;
@@ -378,8 +364,7 @@ public class WebActivity extends Activity implements EventConstant {
 		mWebsite.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
 			@Override
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (LOG.DEBUG) {
 					LOG.cstdr(TAG, "onEditorAction : actionId=" + actionId);
 				}
@@ -391,8 +376,7 @@ public class WebActivity extends Activity implements EventConstant {
 				return false;
 			}
 		});
-		mHistoryAdapter = new HistoryAdapter(mContext,
-				R.layout.list_autocomplete);
+		mHistoryAdapter = new HistoryAdapter(mContext, R.layout.list_autocomplete);
 		mHistoryUrlList = new LinkedList<String>();
 		mWebsite.setThreshold(1); // 最小匹配字符为1个字符
 		// mWebsite.setTokenizer(new
@@ -401,15 +385,11 @@ public class WebActivity extends Activity implements EventConstant {
 		mWebsite.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
-			public void onItemClick(AdapterView<?> adapter, View view,
-					int position, long arg3) {
-				String titleAndUrl = (String) adapter
-						.getItemAtPosition(position);
+			public void onItemClick(AdapterView<?> adapter, View view, int position, long arg3) {
+				String titleAndUrl = (String) adapter.getItemAtPosition(position);
 				String url = titleAndUrl.substring(titleAndUrl.indexOf("\n") + 1);
 				if (LOG.DEBUG) {
-					LOG.cstdr(TAG,
-							"mWebsite.setOnItemClickListener : onItemClick -> "
-									+ UrlUtil.httpUrl2Url(url));
+					LOG.cstdr(TAG, "mWebsite.setOnItemClickListener : onItemClick -> " + UrlUtil.httpUrl2Url(url));
 				}
 				loadUrlStr(UrlUtil.url2HttpUrl(url));
 			}
@@ -417,13 +397,11 @@ public class WebActivity extends Activity implements EventConstant {
 		mWebsite.addTextChangedListener(new TextWatcher() {
 
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
 			@Override
@@ -441,16 +419,13 @@ public class WebActivity extends Activity implements EventConstant {
 	 * 添加导航栏中收藏按鈕配置
 	 */
 	private void initAddFavorite() {
-		animFavoriteAdd = AnimationUtils.loadAnimation(mContext,
-				R.anim.favorite_add);
-		animFavoriteDelete = AnimationUtils.loadAnimation(mContext,
-				R.anim.favorite_delete);
+		animFavoriteAdd = AnimationUtils.loadAnimation(mContext, R.anim.favorite_add);
+		animFavoriteDelete = AnimationUtils.loadAnimation(mContext, R.anim.favorite_delete);
 		animFavoriteAdd.setAnimationListener(new AnimationListener() {
 
 			@Override
 			public void onAnimationStart(Animation animation) {
-				mAddFavorite
-						.setImageResource(R.drawable.navigation_add_favorite_pressed);
+				mAddFavorite.setImageResource(R.drawable.navigation_add_favorite_pressed);
 			}
 
 			@Override
@@ -473,8 +448,7 @@ public class WebActivity extends Activity implements EventConstant {
 
 			@Override
 			public void onAnimationEnd(Animation animation) {
-				mAddFavorite
-						.setImageResource(R.drawable.navigation_add_favorite);
+				mAddFavorite.setImageResource(R.drawable.navigation_add_favorite);
 			}
 		});
 		mAddFavorite = mWebLayout.getAdd();
@@ -493,8 +467,7 @@ public class WebActivity extends Activity implements EventConstant {
 						String title = NncApp.getInstance().getCurrentTitle();
 						String url = NncApp.getInstance().getCurrentUrl();
 						if (FavoriteActivity.hasUrlInDB(url)) {
-							FavoriteActivity
-									.deleteFavorite(mContext, url, null);
+							FavoriteActivity.deleteFavorite(mContext, url, null);
 							mAddFavorite.startAnimation(animFavoriteDelete);
 						} else {
 							FavoriteActivity.addFavorite(mContext, title, url);
@@ -511,10 +484,8 @@ public class WebActivity extends Activity implements EventConstant {
 	 */
 	private void initNavigation() {
 		mWebsiteNavigation = mWebLayout.getNavLayout();
-		animNavigationFadeOut = AnimationUtils.loadAnimation(mContext,
-				R.anim.navigation_fade_out);
-		animNavigationFadeIn = AnimationUtils.loadAnimation(mContext,
-				R.anim.navigation_fade_in);
+		animNavigationFadeOut = AnimationUtils.loadAnimation(mContext, R.anim.navigation_fade_out);
+		animNavigationFadeIn = AnimationUtils.loadAnimation(mContext, R.anim.navigation_fade_in);
 		animNavigationFadeOut.setAnimationListener(new AnimationListener() {
 
 			@Override
@@ -578,8 +549,7 @@ public class WebActivity extends Activity implements EventConstant {
 
 		@Override
 		public void onProgressChanged(WebView view, int newProgress) {
-			if (!hasShowedLoadingToast
-					&& mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
+			if (!hasShowedLoadingToast && mNavigationHandler.hasMessages(NAVIGATION_HIDE)) {
 				mNavigationHandler.removeMessages(NAVIGATION_HIDE);
 			}
 			if (mLoadingHandler.hasMessages(LOADING_TOO_LONG)) {
@@ -592,8 +562,7 @@ public class WebActivity extends Activity implements EventConstant {
 			} else {
 				mWebLayout.setProgressVisibility(View.VISIBLE);
 				if (!hasShowedLoadingToast) {
-					mLoadingHandler.sendEmptyMessageDelayed(LOADING_TOO_LONG,
-							5000);
+					mLoadingHandler.sendEmptyMessageDelayed(LOADING_TOO_LONG, 5000);
 				}
 			}
 			super.onProgressChanged(view, newProgress);
@@ -606,15 +575,13 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 
 		@Override
-		public boolean onJsAlert(WebView view, String url, String message,
-				JsResult result) {
+		public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
 			DialogUtil.showJsAlertDialog(mContext, message, result);
 			return true;
 		}
 
 		@Override
-		public boolean onJsConfirm(WebView view, String url, String message,
-				JsResult result) {
+		public boolean onJsConfirm(WebView view, String url, String message, JsResult result) {
 			DialogUtil.showJsConfirmDialog(mContext, message, result);
 			return true;
 		}
@@ -626,8 +593,7 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 
 		@Override
-		public void onReachedMaxAppCacheSize(long requiredStorage, long quota,
-				QuotaUpdater quotaUpdater) {
+		public void onReachedMaxAppCacheSize(long requiredStorage, long quota, QuotaUpdater quotaUpdater) {
 			// 当达到上限时，清理缓存
 			new Thread() {
 
@@ -663,19 +629,16 @@ public class WebActivity extends Activity implements EventConstant {
 			mWebsite.setText(UrlUtil.httpUrl2Url(url)); // url除去协议http://
 			NncApp.getInstance().setCurrentUrl(url);
 			if (FavoriteActivity.hasUrlInDB(url)) {
-				mAddFavorite
-						.setImageResource(R.drawable.navigation_add_favorite_pressed);
+				mAddFavorite.setImageResource(R.drawable.navigation_add_favorite_pressed);
 			} else {
-				mAddFavorite
-						.setImageResource(R.drawable.navigation_add_favorite);
+				mAddFavorite.setImageResource(R.drawable.navigation_add_favorite);
 			}
 			mNavigationHandler.sendEmptyMessage(NAVIGATION_SHOW);
 			super.onPageStarted(view, url, favicon);
 		}
 
 		@Override
-		public void onReceivedError(WebView view, int errorCode,
-				String description, String failingUrl) {
+		public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 			DialogUtil.showNoConnectDialog(mContext);
 		}
 
@@ -688,8 +651,7 @@ public class WebActivity extends Activity implements EventConstant {
 				public void run() {
 					// 当非断网情况且数据库中有该收藏，则记录浏览量
 					if (NncApp.getInstance().getCurrentTitle() != null
-							&& !NncApp.getInstance().getCurrentTitle()
-									.equals(Constants.TITLE_NULL)
+							&& !NncApp.getInstance().getCurrentTitle().equals(Constants.TITLE_NULL)
 							&& FavoriteActivity.hasUrlInDB(url)) {
 						FavoriteActivity.addPageview(url);
 					}
@@ -707,18 +669,15 @@ public class WebActivity extends Activity implements EventConstant {
 	class DRDownloadListener implements DownloadListener {
 
 		@Override
-		public void onDownloadStart(String url, String userAgent,
-				String contentDisposition, String mimetype, long contentLength) {
+		public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimetype,
+				long contentLength) {
 			if (LOG.DEBUG) {
 				LOG.cstdr(TAG, "MyDownloadListener : mimetype -> " + mimetype);
 			}
 			// ZIP_MIMETYPE下载完文件无法直接执行 TODO
-			if (mimetype.equals(Constants.APK_MIMETYPE)
-					|| mimetype.equals(Constants.ZIP_MIMETYPE)) {
-				ToastUtil.shortToast(mContext,
-						getString(R.string.msg_download_start, url));
-				DownloadUtil.getInstance().startDownload(url, userAgent,
-						contentDisposition, mimetype, contentLength);
+			if (mimetype.equals(Constants.APK_MIMETYPE) || mimetype.equals(Constants.ZIP_MIMETYPE)) {
+				ToastUtil.shortToast(mContext, getString(R.string.msg_download_start, url));
+				DownloadUtil.getInstance().startDownload(url, userAgent, contentDisposition, mimetype, contentLength);
 			} else {
 				Intent intent = new Intent(Intent.ACTION_VIEW);
 				Uri uri = Uri.parse(url);
@@ -743,76 +702,68 @@ public class WebActivity extends Activity implements EventConstant {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (LOG.DEBUG) {
-			LOG.cstdr(TAG,
-					"onOptionsItemSelected : itemId = " + item.getItemId());
+			LOG.cstdr(TAG, "onOptionsItemSelected : itemId = " + item.getItemId());
 		}
 		switch (item.getItemId()) {
-			case R.id.menu_favorite : // 查看已收藏页面
-				MobclickAgent.onEvent(mContext, MENU_GOTO_FAVORITE_LIST);
-				Intent intent = new Intent(WebActivity.this,
-						FavoriteActivity.class);
-				intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
-				startActivity(intent);
-				break;
-			case R.id.menu_share : // 分享
-				MobclickAgent.onEvent(mContext, MENU_SHARE);
-				ShareUtil.shareFavorite(mContext, NncApp.getInstance()
-						.getCurrentTitle(), NncApp.getInstance()
-						.getCurrentUrl());
-				break;
-			case R.id.menu_exit : // 退出
-				MobclickAgent.onEvent(mContext, MENU_EXIT);
-				exit();
-				break;
-			case R.id.menu_more : // 更多设置
-				MobclickAgent.onEvent(mContext, MENU_MORE);
-				break;
-			// case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
-			// UIUtil.changeBrightMode(mContext, mActivity);
-			// break;
-			case R.id.menu_download_list : // 下载列表
-				MobclickAgent.onEvent(mContext, MENU_DOWNLOAD_LIST);
-				Intent downloadsIntent = new Intent(
-						DownloadManager.ACTION_VIEW_DOWNLOADS);
-				startActivity(downloadsIntent);
-				break;
-			case R.id.menu_update : // 更新
-				MobclickAgent.onEvent(mContext, MENU_UPDATE);
-				update();
-				break;
-			case R.id.menu_clear_cachedata : // 清除缓存数据（包括缓存文件、表单数据和Cookie）
-				MobclickAgent.onEvent(mContext, MENU_CLEAR_CACHEDATA);
-				new Thread() {
+		case R.id.menu_favorite: // 查看已收藏页面
+			MobclickAgent.onEvent(mContext, MENU_GOTO_FAVORITE_LIST);
+			Intent intent = new Intent(WebActivity.this, FavoriteActivity.class);
+			intent.setFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+			startActivity(intent);
+			break;
+		case R.id.menu_share: // 分享
+			MobclickAgent.onEvent(mContext, MENU_SHARE);
+			ShareUtil.shareFavorite(mContext, NncApp.getInstance().getCurrentTitle(), NncApp.getInstance()
+					.getCurrentUrl());
+			break;
+		case R.id.menu_exit: // 退出
+			MobclickAgent.onEvent(mContext, MENU_EXIT);
+			exit();
+			break;
+		case R.id.menu_more: // 更多设置
+			MobclickAgent.onEvent(mContext, MENU_MORE);
+			break;
+		// case R.id.menu_nightmode: // 切换夜间模式（暂时不做） TODO
+		// UIUtil.changeBrightMode(mContext, mActivity);
+		// break;
+		case R.id.menu_download_list: // 下载列表
+			MobclickAgent.onEvent(mContext, MENU_DOWNLOAD_LIST);
+			Intent downloadsIntent = new Intent(DownloadManager.ACTION_VIEW_DOWNLOADS);
+			startActivity(downloadsIntent);
+			break;
+		case R.id.menu_update: // 更新
+			MobclickAgent.onEvent(mContext, MENU_UPDATE);
+			update();
+			break;
+		case R.id.menu_clear_cachedata: // 清除缓存数据（包括缓存文件、表单数据和Cookie）
+			MobclickAgent.onEvent(mContext, MENU_CLEAR_CACHEDATA);
+			new Thread() {
 
-					@Override
-					public void run() {
-						CacheUtil.clearCache(mContext);
-						CacheUtil.clearFormData(mContext);
-						CacheUtil.clearCookie();
-						NncApp.getInstance().getHandler().post(new Runnable() {
+				@Override
+				public void run() {
+					CacheUtil.clearCache(mContext);
+					CacheUtil.clearFormData(mContext);
+					CacheUtil.clearCookie();
+					NncApp.getInstance().getHandler().post(new Runnable() {
 
-							@Override
-							public void run() {
-								ToastUtil
-										.shortToast(
-												mContext,
-												getString(R.string.msg_delete_cachedata));
-							}
-						});
-					}
-				}.start();
-				break;
-			case R.id.menu_report : // 反馈
-				MobclickAgent.onEvent(mContext, MENU_REPORT);
-				UMFeedbackService.enableNewReplyNotification(mContext,
-						NotificationType.NotificationBar);
-				UMFeedbackService.openUmengFeedbackSDK(mContext);
-				break;
-			case R.id.menu_about : // 关于
-				MobclickAgent.onEvent(mContext, MENU_ABOUT);
-				ToastUtil.shortToast(mContext, getString(R.string.msg_about));
-				loadUrlStr(Constants.ABOUT_URL);
-				break;
+						@Override
+						public void run() {
+							ToastUtil.shortToast(mContext, getString(R.string.msg_delete_cachedata));
+						}
+					});
+				}
+			}.start();
+			break;
+		case R.id.menu_report: // 反馈
+			MobclickAgent.onEvent(mContext, MENU_REPORT);
+			UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
+			UMFeedbackService.openUmengFeedbackSDK(mContext);
+			break;
+		case R.id.menu_about: // 关于
+			MobclickAgent.onEvent(mContext, MENU_ABOUT);
+			ToastUtil.shortToast(mContext, getString(R.string.msg_about));
+			loadUrlStr(Constants.ABOUT_URL);
+			break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -845,25 +796,20 @@ public class WebActivity extends Activity implements EventConstant {
 			UmengUpdateAgent.setUpdateListener(new UmengUpdateListener() {
 
 				@Override
-				public void onUpdateReturned(int updateStatus,
-						UpdateResponse updateInfo) {
+				public void onUpdateReturned(int updateStatus, UpdateResponse updateInfo) {
 					switch (updateStatus) {
-						case 0 : // 有更新
-							UmengUpdateAgent.showUpdateDialog(mContext,
-									updateInfo);
-							break;
-						case 1 : // 没有更新
-							ToastUtil.shortToast(mContext,
-									getString(R.string.msg_update_no));
-							break;
-						case 2 : // 非Wifi下
-							ToastUtil.shortToast(mContext,
-									getString(R.string.msg_update_nowifi));
-							break;
-						case 3 : // 连接超时
-							ToastUtil.shortToast(mContext,
-									getString(R.string.msg_update_timeout));
-							break;
+					case 0: // 有更新
+						UmengUpdateAgent.showUpdateDialog(mContext, updateInfo);
+						break;
+					case 1: // 没有更新
+						ToastUtil.shortToast(mContext, getString(R.string.msg_update_no));
+						break;
+					case 2: // 非Wifi下
+						ToastUtil.shortToast(mContext, getString(R.string.msg_update_nowifi));
+						break;
+					case 3: // 连接超时
+						ToastUtil.shortToast(mContext, getString(R.string.msg_update_timeout));
+						break;
 					}
 				}
 			});
@@ -922,8 +868,7 @@ public class WebActivity extends Activity implements EventConstant {
 		if (LOG.DEBUG) {
 			LOG.cstdr(TAG, "============onResume============");
 		}
-		UMFeedbackService.enableNewReplyNotification(mContext,
-				NotificationType.NotificationBar);
+		UMFeedbackService.enableNewReplyNotification(mContext, NotificationType.NotificationBar);
 		super.onResume();
 		MobclickAgent.onResume(this);
 		CookieSyncManager.getInstance().startSync(); // set up for sync
@@ -959,13 +904,9 @@ public class WebActivity extends Activity implements EventConstant {
 				if (!mHistoryUrlList.contains(url)) {
 					mHistoryUrlList.add(url);
 					if (LOG.DEBUG) {
-						LOG.cstdr(
-								TAG,
-								"setAutoComplete -> "
-										+ UrlUtil.httpUrl2Url(url));
+						LOG.cstdr(TAG, "setAutoComplete -> " + UrlUtil.httpUrl2Url(url));
 					}
-					mHistoryAdapter
-							.add(title + "\n" + UrlUtil.httpUrl2Url(url));
+					mHistoryAdapter.add(title + "\n" + UrlUtil.httpUrl2Url(url));
 				}
 			}
 		}
@@ -981,8 +922,7 @@ public class WebActivity extends Activity implements EventConstant {
 			LOG.cstdr(TAG, "============onNewIntent============");
 		}
 		String action = intent.getAction();
-		if (action != null && action.equals(Intent.ACTION_MAIN)
-				&& (intent.getData() == null)) { // 当后台宁宁猫运行，再点击icon的时候，不会再刷新页面
+		if (action != null && action.equals(Intent.ACTION_MAIN) && (intent.getData() == null)) { // 当后台宁宁猫运行，再点击icon的时候，不会再刷新页面
 			return;
 		}
 		setIntent(intent);
@@ -1002,15 +942,13 @@ public class WebActivity extends Activity implements EventConstant {
 		}
 		if (action != null) {
 			if (action.equals(GotoReceiver.ACTION_GOTO)) { // 内部跳转请求，如收藏夹点击
-				MobclickAgent.onEvent(mContext,
-						ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK);
+				MobclickAgent.onEvent(mContext, ACTION_GOTO_FAVORITE_LIST_ITEM_CLICK);
 				String url = intent.getStringExtra(DatabaseUtil.COLUMN_URL);
 				if (LOG.DEBUG) {
 					LOG.cstdr(TAG, "processData : url =  " + url);
 				}
 				loadUrlStr(url);
-			} else if (action.equals(Intent.ACTION_VIEW)
-					|| action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
+			} else if (action.equals(Intent.ACTION_VIEW) || action.equals(Intent.ACTION_MAIN)) { // 处理外部请求，包括链接请求和桌面快捷方式请求
 				MobclickAgent.onEvent(mContext, ACTION_GOTO_INTENT);
 				Uri uri = intent.getData();
 				if (LOG.DEBUG) {

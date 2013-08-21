@@ -19,8 +19,7 @@ public class NetworkUtil {
 	 * @return
 	 */
 	public static boolean checkNetwork(Context context) {
-		ConnectivityManager cm = (ConnectivityManager) context
-				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo info = cm.getActiveNetworkInfo();
 		if (info != null && info.isConnected()) {
 			return true;
@@ -36,8 +35,7 @@ public class NetworkUtil {
 	 * @return
 	 */
 	public static boolean isWifiEnabled(Context context) {
-		WifiManager wifiManager = (WifiManager) context
-				.getSystemService(Context.WIFI_SERVICE);
+		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 		return wifiManager.isWifiEnabled();
 	}
 
@@ -48,8 +46,7 @@ public class NetworkUtil {
 	 * @return
 	 */
 	public static boolean openWifi(Context context) {
-		WifiManager wifiManager = (WifiManager) context
-				.getSystemService(Context.WIFI_SERVICE);
+		WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
 		return wifiManager.setWifiEnabled(true);
 	}
 

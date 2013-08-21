@@ -29,11 +29,9 @@ public class CoverLayout extends DRRelativeLayout {
 
 	public CoverLayout(Context context) {
 		super(context);
-		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT));
+		this.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 		this.setBackgroundResource(R.drawable.cover);
-		Animation animCover = AnimationUtils.loadAnimation(mContext,
-				android.R.anim.fade_in); // 简单的渐进动画效果，显示更平滑
+		Animation animCover = AnimationUtils.loadAnimation(mContext, android.R.anim.fade_in); // 简单的渐进动画效果，显示更平滑
 		this.setAnimation(animCover);
 		initLogo();
 		initName();
@@ -50,8 +48,7 @@ public class CoverLayout extends DRRelativeLayout {
 	}
 
 	private void initLogo() {
-		nameLP = new LayoutParams(LayoutParams.WRAP_CONTENT,
-				LayoutParams.WRAP_CONTENT);
+		nameLP = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
 		nameLP.addRule(CENTER_HORIZONTAL);
 		nameLP.addRule(BELOW, ID_LOGO);
 		name = new TextView(mContext);
