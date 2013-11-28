@@ -20,9 +20,9 @@ public class UrlUtil {
 		if (editUrl != null && editUrl.length() > 0) {
 			if (isWebsite(editUrl)) {
 				return url2HttpUrl(editUrl);
-			} else { // 不是网址则默认谷歌搜索，但是有时谷歌不稳定
-				// return "http://m.baidu.com/s?word=" + editUrl; // 百度
-				return Constants.GOOGLE_URL + editUrl; // 谷歌
+			} else { // 不是网址则默认百度搜索，因为有时谷歌不稳定
+				// return Constants.GOOGLE_URL + editUrl; // 谷歌
+				return Constants.BAIDU_URL + editUrl; // 百度
 			}
 		}
 		return null;

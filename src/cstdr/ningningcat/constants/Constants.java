@@ -37,6 +37,9 @@ public interface Constants {
 	/** 谷歌搜索前缀 **/
 	String GOOGLE_URL = "http://www.google.com.hk/m?q=";
 
+	/** 谷歌搜索前缀 **/
+	String BAIDU_URL = "http://m.baidu.com/s?word=";
+
 	/** APK的文件类型 **/
 	String APK_MIMETYPE = "application/vnd.android.package-archive";
 

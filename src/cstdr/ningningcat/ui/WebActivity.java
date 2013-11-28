@@ -971,7 +971,8 @@ public class WebActivity extends Activity implements EventConstant {
 				if (LOG.DEBUG) {
 					LOG.cstdr(TAG, "processData : words =  " + words);
 				}
-				loadUrlStr(Constants.GOOGLE_URL + words);
+				// loadUrlStr(Constants.GOOGLE_URL + words);
+				loadUrlStr(Constants.BAIDU_URL + words);
 			}
 		} else { // 断网后重连时，重新加载当前网址
 			loadUrlStr(NncApp.getInstance().getCurrentUrl());
