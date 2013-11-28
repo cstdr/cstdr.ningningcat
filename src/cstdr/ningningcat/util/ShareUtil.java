@@ -54,7 +54,7 @@ public class ShareUtil {
 	}
 
 	/**
-	 * 分享网址到Pocket（因为我自己用的很多，所以增加的奇葩功能:)）
+	 * 分享微信公众帐号文章网址到Pocket（因为我自己用的很多，所以增加的奇葩功能:)）
 	 * 
 	 * @param context
 	 * @param url
