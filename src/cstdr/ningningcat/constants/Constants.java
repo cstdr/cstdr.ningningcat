@@ -49,4 +49,6 @@ public interface Constants {
 	/** 默认首页url **/
 	String INDEX_DEFAULT_URL = "http://m.hao123.com/";
 
+	/** 微信域名 **/
+	String WECHAT_DOMAIN = "mp.weixin.qq.com";
 }

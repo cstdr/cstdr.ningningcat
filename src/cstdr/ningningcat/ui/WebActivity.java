@@ -955,7 +955,13 @@ public class WebActivity extends Activity implements EventConstant {
 					LOG.cstdr(TAG, "processData : uri =  " + uri);
 				}
 				if (uri != null) {
-					loadUrlStr(UrlUtil.url2HttpUrl(uri.toString()));
+					String uriStr = uri.toString();
+					if (uriStr.contains(Constants.WECHAT_DOMAIN)) {
+						ShareUtil.shareUrlToPocket(mContext, uriStr);
+						exit();
+					} else {
+						loadUrlStr(UrlUtil.url2HttpUrl(uriStr));
+					}
 				} else { // 首次打开宁宁猫，加载首页
 					loadUrlStr(NncApp.getInstance().getCurrentUrl());
 				}

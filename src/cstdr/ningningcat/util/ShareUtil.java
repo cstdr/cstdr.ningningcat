@@ -52,4 +52,19 @@ public class ShareUtil {
 		shareIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		context.startActivity(shareIntent);
 	}
+
+	/**
+	 * 分享网址到Pocket（因为我自己用的很多，所以增加的奇葩功能:)）
+	 * 
+	 * @param context
+	 * @param url
+	 */
+	public static void shareUrlToPocket(Context context, String url) {
+		Intent intent = new Intent();
+		intent.setPackage("com.ideashower.readitlater.pro");
+		intent.setType("text/plain");
+		intent.putExtra(Intent.EXTRA_TEXT, url);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		context.startActivity(intent);
+	}
 }
