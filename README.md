@@ -37,3 +37,7 @@ GPLv3, full text of license see [here][LocalLicense].
 [QQ]: http://wpa.qq.com/msgrd?v=3&uin=280114396&site=qq&menu=yes "QQ with me"  
 [QRCode]: https://github.com/cstdr/cstdr.ningningcat/raw/master/download_qr.png "QR code to get the app !"
 [WanDouJia]: http://www.wandoujia.com/apps/cstdr.ningningcat "豌豆荚下载"
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/cstdr/cstdr.ningningcat/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
